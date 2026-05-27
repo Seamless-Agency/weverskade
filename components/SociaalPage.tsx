@@ -28,6 +28,7 @@ interface SociaalPageData {
   approachLabel?: string;
   approachItems?: { number: string; title: string; description: string }[];
   impactBlocks?: { title: string; description: string; image?: string }[];
+  teamImage?: string;
   cta?: { label?: string; heading?: string; linkText?: string; linkUrl?: string };
 }
 
@@ -480,6 +481,21 @@ export default function SociaalPage({ data }: { data?: SociaalPageData } = {}) {
               </p>
             </div>
           </div>
+
+          {/* ── Team image ── */}
+          {data?.teamImage && (
+            <div className="mt-[8.333vw] max-md:mt-10">
+              <div className="relative w-full h-[41.667vw] overflow-hidden max-md:h-[65vw]">
+                <Image
+                  src={data.teamImage}
+                  alt="Team Weverskade"
+                  fill
+                  sizes="95vw"
+                  className="object-cover"
+                />
+              </div>
+            </div>
+          )}
 
           {/* ── CTA — brown inline ── */}
           <div

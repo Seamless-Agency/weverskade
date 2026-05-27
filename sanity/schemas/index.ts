@@ -8,6 +8,7 @@ import { project } from './documents/project'
 import { nieuwsArtikel } from './documents/nieuwsArtikel'
 import { vacature } from './documents/vacature'
 import { teamLid } from './documents/teamLid'
+import { formSubmission } from './documents/formSubmission'
 
 // Singletons
 import { siteSettings } from './singletons/siteSettings'
@@ -31,6 +32,7 @@ export const schemaTypes = [
   nieuwsArtikel,
   vacature,
   teamLid,
+  formSubmission,
   // Singletons
   siteSettings,
   footer,

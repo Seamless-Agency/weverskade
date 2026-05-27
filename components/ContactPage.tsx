@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import LineSplit from "@/components/LineSplit";
+import { submitFormSubmission } from "@/lib/formSubmissionClient";
 
 const DEFAULT_INTRO_TEXT =
   "We gaan graag in gesprek over projecten, samenwerkingen of andere vragen. Neem gerust contact met ons op.";
@@ -16,11 +17,20 @@ interface ContactPageData {
 
 export default function ContactPage({ data }: { data?: ContactPageData } = {}) {
   const [animate, setAnimate] = useState(false);
+  const [submitState, setSubmitState] = useState<
+    "idle" | "submitting" | "success" | "error"
+  >("idle");
+  const [submitMessage, setSubmitMessage] = useState("");
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    message: "",
+  });
 
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      setAnimate(true);
-      return;
+      const raf = requestAnimationFrame(() => setAnimate(true));
+      return () => cancelAnimationFrame(raf);
     }
 
     if (window.__pageTransitioning) {
@@ -38,6 +48,37 @@ export default function ContactPage({ data }: { data?: ContactPageData } = {}) {
       cancelAnimationFrame(rafInner);
     };
   }, []);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSubmitState("submitting");
+    setSubmitMessage("");
+
+    try {
+      await submitFormSubmission({
+        formType: "contact",
+        sourceLabel: "Contactpagina",
+        name: formData.name,
+        email: formData.email,
+        message: formData.message,
+        pageUrl: window.location.href,
+      });
+      setFormData({
+        name: "",
+        email: "",
+        message: "",
+      });
+      setSubmitState("success");
+      setSubmitMessage("Bedankt, uw bericht is verstuurd.");
+    } catch (error) {
+      setSubmitState("error");
+      setSubmitMessage(
+        error instanceof Error
+          ? error.message
+          : "Het formulier kon niet worden verstuurd."
+      );
+    }
+  };
 
   return (
     <section className="bg-off-white min-h-screen">
@@ -100,10 +141,7 @@ export default function ContactPage({ data }: { data?: ContactPageData } = {}) {
           </LineSplit>
 
           {/* Form — Figma: fields 444px (30.833vw) wide */}
-          <form
-            className="mt-[2.5vw] max-md:mt-6"
-            onSubmit={(e) => e.preventDefault()}
-          >
+          <form className="mt-[2.5vw] max-md:mt-6" onSubmit={handleSubmit}>
             {/* Uw naam */}
             <div
               className="will-change-transform"
@@ -117,8 +155,13 @@ export default function ContactPage({ data }: { data?: ContactPageData } = {}) {
             >
               <input
                 type="text"
-                name="naam"
+                name="name"
                 placeholder="Uw naam"
+                required
+                value={formData.name}
+                onChange={(e) =>
+                  setFormData((prev) => ({ ...prev, name: e.target.value }))
+                }
                 className="w-[30.833vw] max-md:w-full bg-transparent border-b border-off-black/20 pb-[0.694vw] max-md:pb-2 font-heading font-normal text-[1.25vw] max-md:text-[16px] text-off-black placeholder:text-off-black outline-none block"
               />
             </div>
@@ -138,6 +181,11 @@ export default function ContactPage({ data }: { data?: ContactPageData } = {}) {
                 type="email"
                 name="email"
                 placeholder="Email"
+                required
+                value={formData.email}
+                onChange={(e) =>
+                  setFormData((prev) => ({ ...prev, email: e.target.value }))
+                }
                 className="w-[30.833vw] max-md:w-full bg-transparent border-b border-off-black/20 pb-[0.694vw] max-md:pb-2 font-heading font-normal text-[1.25vw] max-md:text-[16px] text-off-black placeholder:text-off-black outline-none block"
               />
             </div>
@@ -154,8 +202,12 @@ export default function ContactPage({ data }: { data?: ContactPageData } = {}) {
               }}
             >
               <textarea
-                name="bericht"
+                name="message"
                 placeholder="Vraag of opmerking"
+                value={formData.message}
+                onChange={(e) =>
+                  setFormData((prev) => ({ ...prev, message: e.target.value }))
+                }
                 rows={3}
                 className="w-[30.833vw] max-md:w-full bg-transparent border-b border-off-black/20 pb-[0.694vw] max-md:pb-2 font-heading font-normal text-[1.25vw] max-md:text-[16px] text-off-black placeholder:text-off-black outline-none resize-none block"
               />
@@ -175,12 +227,22 @@ export default function ContactPage({ data }: { data?: ContactPageData } = {}) {
               <div className="w-[30.833vw] flex justify-end max-md:w-full">
                 <button
                   type="submit"
+                  disabled={submitState === "submitting"}
                   className="bg-off-black text-off-white font-heading font-normal text-[1.25vw] max-md:text-[16px] px-[1.389vw] py-[0.417vw] max-md:px-5 max-md:py-2 cursor-pointer border-none"
                 >
-                  Verzenden
+                  {submitState === "submitting" ? "Versturen..." : "Verzenden"}
                 </button>
               </div>
             </div>
+            {submitMessage ? (
+              <p
+                className={`mt-4 w-[30.833vw] max-md:w-full font-body text-[0.972vw] leading-[1.25] max-md:text-[13px] ${
+                  submitState === "error" ? "text-red-700" : "text-off-black"
+                }`}
+              >
+                {submitMessage}
+              </p>
+            ) : null}
           </form>
 
           {/* Contact info — inside right column, Figma: y=1040, gap from form ~77px */}

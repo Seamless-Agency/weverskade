@@ -10,6 +10,7 @@ export const maatschappelijkPage = defineType({
     { name: 'approach', title: 'Onze Aanpak' },
     { name: 'circle', title: 'Cirkel Sectie' },
     { name: 'impactBlocks', title: 'Impact Blokken' },
+    { name: 'team', title: 'Team Sectie' },
     { name: 'cta', title: 'Call to Action' },
   ],
   fields: [
@@ -102,6 +103,15 @@ export const maatschappelijkPage = defineType({
         },
       ],
       fieldset: 'impactBlocks',
+    }),
+    // Team
+    defineField({
+      name: 'teamImage',
+      title: 'Team afbeelding',
+      type: 'image',
+      options: { hotspot: true },
+      fieldset: 'team',
+      description: 'Groepsfoto van het team, getoond onderaan de pagina',
     }),
     // CTA
     defineField({

@@ -1,6 +1,5 @@
 import type { StructureResolver } from 'sanity/structure'
 import { orderableDocumentListDeskItem } from '@sanity/orderable-document-list'
-import { singletonTypes } from './schemas'
 
 export const structure: StructureResolver = (S, context) =>
   S.list()
@@ -55,6 +54,14 @@ export const structure: StructureResolver = (S, context) =>
         .title('Vacatures')
         .schemaType('vacature')
         .child(S.documentTypeList('vacature').title('Vacatures')),
+      S.listItem()
+        .title('Formulier inzendingen')
+        .schemaType('formSubmission')
+        .child(
+          S.documentTypeList('formSubmission')
+            .title('Formulier inzendingen')
+            .defaultOrdering([{ field: 'submittedAt', direction: 'desc' }])
+        ),
       orderableDocumentListDeskItem({
         type: 'teamLid',
         title: 'Team',

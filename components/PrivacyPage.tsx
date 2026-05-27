@@ -98,39 +98,8 @@ export default function PrivacyPage() {
             </Paragraph>
           </Section>
 
-          {/* Section: 1.1 Inschrijfformulier */}
-          <Section title="1.1 Inschrijfformulier" startWhen={bodyReady}>
-            <Paragraph startWhen={bodyReady}>
-              Als klant geeft u persoonsgegevens op in ons inschrijfformulier. Wij vragen de
-              volgende persoonsgegevens:
-            </Paragraph>
-            <BulletList
-              startWhen={bodyReady}
-              items={[
-                "Voornaam",
-                "Tussenvoegsel",
-                "Achternaam",
-                "E-mailadres",
-                "Adres",
-                "Postcode",
-                "Plaats",
-                "Huidige woonsituatie",
-                "Leeftijd(categorie)",
-                "Werkzame sector",
-                "Indicatie bruto jaarinkomen",
-                "Maatschappelijke betrokkenheid tot het Westland",
-                "Voorkeur type woning",
-                "Voorkeur verdieping",
-              ]}
-            />
-            <Paragraph startWhen={bodyReady}>
-              Uw gegevens worden door Weverskade B.V. opgeslagen ten behoeve van een juiste match
-              tussen woning, huurder en verhuurder.
-            </Paragraph>
-          </Section>
-
-          {/* Section: 1.2 Contactformulier */}
-          <Section title="1.2 Contactformulier" startWhen={bodyReady}>
+          {/* Section: 1.1 Contactformulier */}
+          <Section title="1.1 Contactformulier" startWhen={bodyReady}>
             <Paragraph startWhen={bodyReady}>
               Als klant geeft u persoonsgegevens op in ons contactformulier. Wij vragen de
               volgende persoonsgegevens:

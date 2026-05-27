@@ -13,7 +13,19 @@ export const wonenBijPage = defineType({
     defineField({
       name: 'heroTitle',
       title: 'Hero titel',
+      type: 'text',
+      rows: 4,
+    }),
+    defineField({
+      name: 'introLabel',
+      title: 'Intro label',
       type: 'string',
+    }),
+    defineField({
+      name: 'introText',
+      title: 'Intro tekst',
+      type: 'text',
+      rows: 3,
     }),
     defineField({
       name: 'ctaLabel',
@@ -23,7 +35,8 @@ export const wonenBijPage = defineType({
     defineField({
       name: 'ctaHeading',
       title: 'CTA heading',
-      type: 'string',
+      type: 'text',
+      rows: 4,
     }),
     defineField({
       name: 'ctaLinkText',

@@ -7,6 +7,7 @@ import {
   ALL_VACATURES_QUERY,
   FOOTER_QUERY,
 } from "@/sanity/lib/queries";
+import { sanityImageUrl } from "@/sanity/lib/helpers";
 
 export const metadata = {
   title: "Werken bij | Weverskade",
@@ -24,7 +25,22 @@ export default async function WerkenBij() {
   const werkenData =
     pageData || vacaturesData?.length > 0
       ? {
-          heroTitle: pageData?.heroTitle,
+          heroTitle: pageData?.heroTitle === "Werken bij Weverskade"
+            ? undefined
+            : pageData?.heroTitle,
+          heroImage: pageData?.heroImage
+            ? sanityImageUrl(pageData.heroImage, "/images/werken-bij-hero.webp")
+            : undefined,
+          statementText: pageData?.statementText,
+          aboutImage: pageData?.aboutImage
+            ? sanityImageUrl(pageData.aboutImage, "/images/werken-bij-team.webp")
+            : undefined,
+          aboutLabel: pageData?.aboutLabel,
+          aboutText: pageData?.aboutText,
+          ctaLabel: pageData?.ctaLabel,
+          ctaHeading: pageData?.ctaHeading,
+          ctaLinkText: pageData?.ctaLinkText,
+          contactEmail: pageData?.contactEmail,
           vacatures: vacaturesData?.map((v: any) => ({
             slug: v.slug?.current ?? "",
             title: v.title,
@@ -47,13 +63,11 @@ export default async function WerkenBij() {
 
   return (
     <>
-      <div data-nav-theme="light">
-        <WerkenBijPage data={werkenData} />
-      </div>
+      <WerkenBijPage data={werkenData} />
       <div data-nav-theme="blue">
         <FooterReveal>
           <Footer bg="bg-blue" data={footerProps} />
-      </FooterReveal>
+        </FooterReveal>
       </div>
     </>
   );

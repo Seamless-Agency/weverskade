@@ -30,6 +30,9 @@ export default async function Maatschappelijk() {
           ...block,
           image: block.image ? sanityImageUrl(block.image, "") : undefined,
         })),
+        teamImage: pageData.teamImage
+          ? sanityImageUrl(pageData.teamImage, "")
+          : undefined,
         cta: pageData.cta,
       }
     : undefined;

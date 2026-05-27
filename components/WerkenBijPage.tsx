@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import LineSplit from "@/components/LineSplit";
+import Image from "next/image";
+import HeroOverOns from "@/components/HeroOverOns";
+import ScrollHeroLineSplit from "@/components/ScrollHeroLineSplit";
 import { usePageNavigation } from "@/hooks/usePageNavigation";
 import { vacatures as defaultVacatures } from "@/data/vacatures";
 
@@ -13,144 +14,183 @@ interface WerkenBijVacature {
 
 interface WerkenBijPageData {
   heroTitle?: string;
+  heroImage?: string;
+  statementText?: string;
+  aboutImage?: string;
+  aboutLabel?: string;
+  aboutText?: string;
+  ctaLabel?: string;
+  ctaHeading?: string;
+  ctaLinkText?: string;
+  contactEmail?: string;
   vacatures?: WerkenBijVacature[];
 }
 
-export default function WerkenBijPage({ data }: { data?: WerkenBijPageData } = {}) {
+export default function WerkenBijPage({
+  data,
+}: { data?: WerkenBijPageData } = {}) {
   const vacatures = data?.vacatures ?? defaultVacatures;
-  const [animate, setAnimate] = useState(false);
   const navigate = usePageNavigation();
+  const contactEmail = data?.contactEmail ?? "info@weverskade.com";
 
-  useEffect(() => {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      setAnimate(true);
-      return;
-    }
-
-    if (window.__pageTransitioning) {
-      const timer = setTimeout(() => setAnimate(true), 550);
-      return () => clearTimeout(timer);
-    }
-
-    let rafOuter = 0;
-    let rafInner = 0;
-    rafOuter = requestAnimationFrame(() => {
-      rafInner = requestAnimationFrame(() => setAnimate(true));
-    });
-    return () => {
-      cancelAnimationFrame(rafOuter);
-      cancelAnimationFrame(rafInner);
-    };
-  }, []);
-
-  // Each vacature row gets enough time for its content to cascade in
-  // before the next row starts — keeps it fluid and sequential
-  const rowStagger = 0.25;
-  const rowBaseDelay = 0.25;
+  const aboutText =
+    data?.aboutText ??
+    "Vanuit een brede vastgoedportefeuille werken we aan uiteenlopende projecten op het gebied van wonen, ontwikkelen, beleggen en beheer. Daarbij staan kwaliteit, samenwerking en aandacht voor mens en omgeving centraal.\n\nWe geloven in een open en betrokken werkomgeving waarin ruimte is voor eigen initiatief, ontwikkeling en samenwerking. Of je nu werkt aan een nieuw woonproject, het beheer van een gebouw of de verdere groei van onze organisatie: bij Weverskade draag je direct bij aan plekken waar mensen wonen, werken en zich thuis voelen.";
+  const aboutParagraphs = aboutText.split("\n\n");
 
   return (
-    <section className="bg-off-white min-h-screen">
-      {/* Hero title */}
-      <div className="pt-[13.194vw] pl-[18.542vw] pr-[2.431vw] pb-[6.944vw] max-md:pt-[28vw] max-md:px-5 max-md:pb-10">
-        <div className="overflow-hidden">
-          <h1
-            className="font-heading font-normal text-[5.556vw] leading-[1.05] tracking-[-0.111vw] text-off-black max-md:text-[40px] max-md:leading-[42px] max-md:tracking-[-0.8px] will-change-transform"
-            style={{
-              transform: animate ? "translateY(0)" : "translateY(110%)",
-              transition: animate
-                ? "transform 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.15s"
-                : "none",
-            }}
-          >
-            {data?.heroTitle ?? "Werken bij Weverskade"}
-          </h1>
-        </div>
+    <>
+      {/* ═══ HERO ═══ */}
+      <div data-nav-theme="light">
+        <HeroOverOns
+          title={data?.heroTitle ?? "Werken bij"}
+          image={data?.heroImage ?? "/images/werken-bij-hero.webp"}
+        />
       </div>
 
-      {/* Vacatures table */}
+      {/* ═══ STATEMENT + ABOUT — off-white ═══ */}
+      <div data-nav-theme="light">
+        <section className="bg-off-white px-[2.639vw] pb-[11.667vw] max-md:px-0 max-md:pb-12">
+          <ScrollHeroLineSplit
+            text={
+              data?.statementText ??
+              "Werken bij Weverskade betekent werken in een team van gedreven en vakkundige professionals die samen bouwen aan plekken van blijvende waarde."
+            }
+            indent="15.278vw"
+            className="font-body font-medium text-[4.028vw] leading-[4.097vw] text-off-black max-md:text-[28px] max-md:leading-[30px] max-md:px-5"
+          />
+
+          <div className="flex items-start mt-[13.056vw] gap-[5.972vw] max-md:flex-col max-md:mt-8 max-md:gap-8">
+            <div className="w-[42.083vw] h-[50.347vw] overflow-hidden shrink-0 max-md:w-full max-md:h-[130vw]">
+              <Image
+                src={
+                  data?.aboutImage ?? "/images/werken-bij-team.webp"
+                }
+                alt="Team Weverskade"
+                width={2731}
+                height={3267}
+                sizes="(max-width: 768px) 100vw, 42.083vw"
+                className="w-full h-full object-cover"
+              />
+            </div>
+
+            <div className="flex flex-col justify-between h-[50.347vw] max-md:h-auto max-md:px-5">
+              <p className="font-body font-medium text-[1.597vw] leading-[2.153vw] tracking-[-0.032vw] text-off-black max-md:text-[17px] max-md:leading-[22px] max-md:tracking-[-0.34px] max-md:mb-6">
+                {data?.aboutLabel ?? "Werken bij Weverskade"}
+              </p>
+              <div className="max-w-[31.458vw] max-md:max-w-none">
+                {aboutParagraphs.map((p, i) => (
+                  <p
+                    key={i}
+                    className={`font-body font-medium text-[1.597vw] leading-[2.153vw] tracking-[-0.032vw] text-off-black max-md:text-[17px] max-md:leading-[22px] max-md:tracking-[-0.34px]${
+                      i < aboutParagraphs.length - 1
+                        ? " mb-[2.083vw]"
+                        : ""
+                    }`}
+                  >
+                    {p}
+                  </p>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      {/* ═══ CTA — blue ═══ */}
+      <div data-nav-theme="blue">
+        <section className="bg-blue pt-[13.681vw] pb-[17.014vw] px-[2.431vw] max-md:pt-16 max-md:pb-16 max-md:px-5">
+          <div className="flex items-start max-md:flex-col max-md:gap-4">
+            <p className="font-heading font-normal text-[1.389vw] leading-[1.2] text-off-white shrink-0 w-[31.458vw] pl-[8.333vw] max-md:w-auto max-md:text-[17px] max-md:pl-0">
+              {data?.ctaLabel ?? "Neem contact op"}
+            </p>
+            <div>
+              <h2 className="font-body font-medium text-[3.75vw] leading-[3.681vw] text-off-white max-w-[55.625vw] mb-[2.778vw] max-md:text-[28px] max-md:leading-[30px] max-md:max-w-none max-md:mb-6">
+                {data?.ctaHeading ?? (
+                  <>
+                    Staat jouw vacature er niet tussen? Denk je dat je bij
+                    Weverskade past? Stuur gerust je cv en een korte motivatie
+                    naar{" "}
+                    <a
+                      href={`mailto:${contactEmail}`}
+                      className="text-off-white underline decoration-solid"
+                    >
+                      {contactEmail}
+                    </a>
+                  </>
+                )}
+              </h2>
+              <a
+                href="/contact"
+                onClick={(e) => navigate(e, "/contact")}
+                className="link-underline font-body font-medium text-[0.972vw] leading-normal text-off-white pb-[0.347vw] max-md:text-[14px] max-md:pb-1"
+              >
+                {data?.ctaLinkText ?? "Naar de contactpagina"}
+              </a>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      {/* ═══ VACATURES — off-white ═══ */}
+      <div data-nav-theme="light">
+        <VacaturesSection
+          vacatures={vacatures}
+          contactEmail={contactEmail}
+          navigate={navigate}
+        />
+      </div>
+    </>
+  );
+}
+
+function VacaturesSection({
+  vacatures,
+  contactEmail,
+  navigate,
+}: {
+  vacatures: WerkenBijVacature[];
+  contactEmail: string;
+  navigate: (e: React.MouseEvent<HTMLAnchorElement>, href: string) => void;
+}) {
+  return (
+    <section className="bg-off-white">
+      <div className="pt-[9.861vw] pl-[18.542vw] pr-[2.431vw] pb-[5.694vw] max-md:pt-12 max-md:px-5 max-md:pb-8">
+        <h2 className="font-heading font-normal text-[5.556vw] leading-[1.05] tracking-[-0.111vw] text-off-black max-md:text-[40px] max-md:leading-[42px] max-md:tracking-[-0.8px]">
+          Overzicht vacatures
+        </h2>
+      </div>
+
       <div className="pl-[19.028vw] pr-[14.514vw] max-md:px-5">
-        {/* Column headers */}
         <div className="flex max-md:hidden">
           <div className="w-[48%]">
-            <p
-              className="font-body font-medium text-[1.389vw] leading-normal text-off-black will-change-transform"
-              style={{
-                opacity: animate ? 1 : 0,
-                transform: animate ? "translateY(0)" : "translateY(1.389vw)",
-                transition: animate
-                  ? "opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.2s, transform 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.2s"
-                  : "none",
-              }}
-            >
+            <p className="font-body font-medium text-[1.389vw] leading-normal text-off-black">
               Vacature titel
             </p>
           </div>
           <div className="flex-1">
-            <p
-              className="font-body font-medium text-[1.389vw] leading-normal text-off-black will-change-transform"
-              style={{
-                opacity: animate ? 1 : 0,
-                transform: animate ? "translateY(0)" : "translateY(1.389vw)",
-                transition: animate
-                  ? "opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.3s, transform 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.3s"
-                  : "none",
-              }}
-            >
+            <p className="font-body font-medium text-[1.389vw] leading-normal text-off-black">
               Omschrijving
             </p>
           </div>
         </div>
 
-        {/* Vacature rows */}
         <div className="mt-[2.083vw] max-md:mt-4">
           {vacatures.map((vacature, index) => {
-            const delay = rowBaseDelay + index * rowStagger;
             const isLast = index === vacatures.length - 1;
-
             return (
               <div key={vacature.slug} className="relative">
-                {/* Animated top line */}
-                <div
-                  className="h-px bg-off-black/20 origin-left will-change-transform"
-                  style={{
-                    transform: animate ? "scaleX(1)" : "scaleX(0)",
-                    transition: animate
-                      ? `transform 1.4s cubic-bezier(0.08, 0.82, 0.17, 1) ${delay}s`
-                      : "none",
-                  }}
-                />
-
+                <div className="h-px bg-off-black/20" />
                 <div className="flex py-[2.778vw] max-md:flex-col max-md:py-6">
-                  {/* Vacature title */}
                   <div className="w-[48%] max-md:w-full max-md:mb-4">
-                    <div className="overflow-hidden">
-                      <p
-                        className="font-heading font-normal text-[1.389vw] leading-normal text-off-black max-md:text-[20px] will-change-transform"
-                        style={{
-                          transform: animate
-                            ? "translateY(0)"
-                            : "translateY(110%)",
-                          transition: animate
-                            ? `transform 0.9s cubic-bezier(0.16, 1, 0.3, 1) ${delay + 0.08}s`
-                            : "none",
-                        }}
-                      >
-                        {vacature.title}
-                      </p>
-                    </div>
+                    <p className="font-heading font-normal text-[1.389vw] leading-normal text-off-black max-md:text-[20px]">
+                      {vacature.title}
+                    </p>
                   </div>
-
-                  {/* Description + link */}
                   <div className="flex-1">
-                    <LineSplit
-                      animate={animate}
-                      delay={delay + 0.12}
-                      stagger={0.06}
-                      className="font-body font-medium text-[1.25vw] leading-[1.528vw] text-off-black max-w-[31.389vw] max-md:text-[16px] max-md:leading-[22px] max-md:max-w-none"
-                    >
+                    <p className="font-body font-medium text-[1.25vw] leading-[1.528vw] text-off-black max-w-[31.389vw] max-md:text-[16px] max-md:leading-[22px] max-md:max-w-none">
                       {vacature.shortDescription}
-                    </LineSplit>
-
+                    </p>
                     <div className="mt-[1.389vw] max-md:mt-4">
                       <a
                         href={`/werken-bij/${vacature.slug}`}
@@ -158,38 +198,45 @@ export default function WerkenBijPage({ data }: { data?: WerkenBijPageData } = {
                           navigate(e, `/werken-bij/${vacature.slug}`)
                         }
                         className="link-underline font-body font-medium text-[0.972vw] leading-normal text-off-black pb-[0.347vw] max-md:text-[14px] max-md:pb-1"
-                        style={{
-                          opacity: animate ? 1 : 0,
-                          transition: animate
-                            ? `opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1) ${delay + 0.22}s`
-                            : "none",
-                        }}
                       >
                         Naar vacature
                       </a>
                     </div>
                   </div>
                 </div>
-
-                {/* Animated bottom line (last row only) */}
-                {isLast && (
-                  <div
-                    className="h-px bg-off-black/20 origin-left will-change-transform"
-                    style={{
-                      transform: animate ? "scaleX(1)" : "scaleX(0)",
-                      transition: animate
-                        ? `transform 1.4s cubic-bezier(0.08, 0.82, 0.17, 1) ${delay + 0.15}s`
-                        : "none",
-                    }}
-                  />
-                )}
+                {isLast && <div className="h-px bg-off-black/20" />}
               </div>
             );
           })}
+
+          {vacatures.length === 0 && (
+            <div className="relative">
+              <div className="h-px bg-off-black/20" />
+              <div className="flex py-[2.778vw] max-md:flex-col max-md:py-6">
+                <div className="w-[48%] max-md:w-full max-md:mb-4">
+                  <p className="font-heading font-normal text-[1.389vw] leading-normal text-off-black max-md:text-[20px]">
+                    Op dit moment zijn er geen vacatures
+                  </p>
+                </div>
+                <div className="flex-1">
+                  <p className="font-body font-medium text-[1.25vw] leading-[1.528vw] text-off-black max-w-[31.389vw] max-md:text-[16px] max-md:leading-[22px] max-md:max-w-none">
+                    Staat jouw vacature er niet tussen? Denk je dat je bij
+                    Weverskade past? Stuur gerust je cv en een korte motivatie
+                    naar{" "}
+                    <a
+                      href={`mailto:${contactEmail}`}
+                      className="underline"
+                    >
+                      {contactEmail}
+                    </a>
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
-      {/* Bottom spacing */}
       <div className="pb-[11.111vw] max-md:pb-16" />
     </section>
   );

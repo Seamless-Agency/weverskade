@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import LineSplit from "@/components/LineSplit";
 import ScrollHeroLineSplit from "@/components/ScrollHeroLineSplit";
@@ -8,11 +8,22 @@ import CTASection from "@/components/CTASection";
 import GebouwMap from "@/components/GebouwMap";
 import VimeoBackground from "@/components/VimeoBackground";
 import GebouwImageCarousel from "@/components/GebouwImageCarousel";
+import { usePageNavigation } from "@/hooks/usePageNavigation";
+import { submitFormSubmission } from "@/lib/formSubmissionClient";
 import type { GebouwProject } from "@/data/gebouwen";
 
 interface GebouwPageProps {
   project: GebouwProject;
 }
+
+type WonenFormData = {
+  name: string;
+  email: string;
+  phone: string;
+  interestedProject: string;
+  message: string;
+  agreed: boolean;
+};
 
 /* ─── Detail line mask-slide helper ─── */
 function DetailLine({
@@ -41,56 +52,18 @@ function DetailLine({
   );
 }
 
-/* ─── Scroll-triggered LineSplit wrapper ─── */
-function ScrollLineSplit({
-  children,
-  delay = 0.3,
-  stagger = 0.08,
-  className = "",
-}: {
-  children: string;
-  delay?: number;
-  stagger?: number;
-  className?: string;
-}) {
-  const [visible, setVisible] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setVisible(true);
-          observer.disconnect();
-        }
-      },
-      { threshold: 0.15 }
-    );
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, []);
-
-  return (
-    <div ref={ref}>
-      <LineSplit
-        animate={visible}
-        delay={delay}
-        stagger={stagger}
-        className={className}
-      >
-        {children}
-      </LineSplit>
-    </div>
-  );
-}
-
 export default function GebouwPage({ project }: GebouwPageProps) {
+  const navigate = usePageNavigation();
   const [animate, setAnimate] = useState(false);
-  const [formData, setFormData] = useState({
+  const [submitState, setSubmitState] = useState<
+    "idle" | "submitting" | "success" | "error"
+  >("idle");
+  const [submitMessage, setSubmitMessage] = useState("");
+  const [formData, setFormData] = useState<WonenFormData>({
     name: "",
     email: "",
+    phone: "",
+    interestedProject: "",
     message: "",
     agreed: false,
   });
@@ -101,8 +74,8 @@ export default function GebouwPage({ project }: GebouwPageProps) {
 
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      setAnimate(true);
-      return;
+      const raf = requestAnimationFrame(() => setAnimate(true));
+      return () => cancelAnimationFrame(raf);
     }
 
     if (window.__pageTransitioning) {
@@ -153,9 +126,38 @@ export default function GebouwPage({ project }: GebouwPageProps) {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Form submitted:", formData);
+    setSubmitState("submitting");
+    setSubmitMessage("");
+
+    try {
+      await submitFormSubmission({
+        formType: "gebouw_wonen",
+        sourceLabel: `Woningen beschikbaar - ${project.name}`,
+        ...formData,
+        projectName: project.name,
+        projectSlug: project.slug,
+        pageUrl: window.location.href,
+      });
+      setFormData({
+        name: "",
+        email: "",
+        phone: "",
+        interestedProject: "",
+        message: "",
+        agreed: false,
+      });
+      setSubmitState("success");
+      setSubmitMessage("Bedankt, uw formulier is verstuurd.");
+    } catch (error) {
+      setSubmitState("error");
+      setSubmitMessage(
+        error instanceof Error
+          ? error.message
+          : "Het formulier kon niet worden verstuurd."
+      );
+    }
   };
 
   // Build detail lines array for staggered animation. Empty fields are
@@ -188,8 +190,25 @@ export default function GebouwPage({ project }: GebouwPageProps) {
 
   return (
     <section className="bg-off-white min-h-screen">
+      {/* ─── Terug naar overzicht ─── */}
+      <div className="pt-[18.889vw] pl-[2.361vw] max-md:pt-[24vw] max-md:px-5">
+        <a
+          href="/portefeuille"
+          onClick={(e) => navigate(e, "/portefeuille")}
+          className="link-underline font-body font-medium text-[1.389vw] leading-normal text-off-black pb-[0.347vw] max-md:text-[14px] max-md:pb-1"
+          style={{
+            opacity: animate ? 1 : 0,
+            transition: animate
+              ? "opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.1s"
+              : "none",
+          }}
+        >
+          Terug naar overzicht
+        </a>
+      </div>
+
       {/* ─── Hero: Name + Tagline ─── */}
-      <div className="pt-[25.139vw] px-[2.431vw] max-md:pt-[30vw] max-md:px-5">
+      <div className="pt-[3.889vw] px-[2.431vw] max-md:pt-4 max-md:px-5">
         <div className="grid grid-cols-2 gap-x-[2.431vw] max-md:grid-cols-1 max-md:gap-x-0 max-md:gap-y-2">
           {/* Project name — mask-slide */}
           <div className="overflow-hidden">
@@ -381,10 +400,27 @@ export default function GebouwPage({ project }: GebouwPageProps) {
 
       {/* ─── Quote section (non-wonen) OR Contact form (wonen) ─── */}
       {project.wonenBeschikbaar ? (
-        <WonenFormSection project={project} onSubmit={handleSubmit} formData={formData} setFormData={setFormData} />
+        <WonenFormSection
+          onSubmit={handleSubmit}
+          formData={formData}
+          setFormData={setFormData}
+          submitState={submitState}
+          submitMessage={submitMessage}
+        />
       ) : (
         <QuoteSection project={project} />
       )}
+
+      {/* ─── Bottom: Terug naar overzicht ─── */}
+      <div className="pl-[2.361vw] pb-[5.833vw] max-md:px-5 max-md:pb-10">
+        <a
+          href="/portefeuille"
+          onClick={(e) => navigate(e, "/portefeuille")}
+          className="link-underline font-body font-medium text-[1.389vw] leading-normal text-off-black pb-[0.347vw] max-md:text-[14px] max-md:pb-1"
+        >
+          Terug naar overzicht
+        </a>
+      </div>
     </section>
   );
 }
@@ -450,17 +486,17 @@ function QuoteSection({ project }: { project: GebouwProject }) {
 
 /* ─── Wonen form section ─── */
 function WonenFormSection({
-  project,
   onSubmit,
   formData,
   setFormData,
+  submitState,
+  submitMessage,
 }: {
-  project: GebouwProject;
   onSubmit: (e: React.FormEvent) => void;
-  formData: { name: string; email: string; message: string; agreed: boolean };
-  setFormData: React.Dispatch<
-    React.SetStateAction<{ name: string; email: string; message: string; agreed: boolean }>
-  >;
+  formData: WonenFormData;
+  setFormData: React.Dispatch<React.SetStateAction<WonenFormData>>;
+  submitState: "idle" | "submitting" | "success" | "error";
+  submitMessage: string;
 }) {
   return (
     <div className="px-[2.431vw] mt-[8.125vw] pb-[16.875vw] max-md:px-5 max-md:mt-16 max-md:pb-16">
@@ -470,8 +506,8 @@ function WonenFormSection({
         </p>
         <div className="flex-1 max-md:w-full">
           <h2 className="font-body font-medium text-[3.75vw] leading-[3.681vw] text-off-black max-w-[54.931vw] mb-[2.778vw] max-md:text-[28px] max-md:leading-[32px] max-md:max-w-none max-md:mb-6">
-            Heeft u interesse in een appartement binnen dit project? Laat uw
-            gegevens achter en we nemen contact met u op.
+            Er zijn momenteel woningen beschikbaar voor dit project. Interesse?
+            Vul dan onderstaand formulier in.
           </h2>
 
           <form onSubmit={onSubmit} className="max-w-[46.944vw] max-md:max-w-none">
@@ -480,9 +516,13 @@ function WonenFormSection({
               <div>
                 <input
                   type="text"
+                  name="name"
                   placeholder="Naam"
+                  required
                   value={formData.name}
-                  onChange={(e) => setFormData((p) => ({ ...p, name: e.target.value }))}
+                  onChange={(e) =>
+                    setFormData((p) => ({ ...p, name: e.target.value }))
+                  }
                   className="w-full bg-transparent border-b border-off-black pb-[0.694vw] font-body font-medium text-[1.319vw] text-off-black placeholder:text-off-black outline-none max-md:text-[15px] max-md:pb-2"
                 />
               </div>
@@ -490,9 +530,39 @@ function WonenFormSection({
               <div>
                 <input
                   type="email"
+                  name="email"
                   placeholder="Emailadres"
+                  required
                   value={formData.email}
-                  onChange={(e) => setFormData((p) => ({ ...p, email: e.target.value }))}
+                  onChange={(e) =>
+                    setFormData((p) => ({ ...p, email: e.target.value }))
+                  }
+                  className="w-full bg-transparent border-b border-off-black pb-[0.694vw] font-body font-medium text-[1.319vw] text-off-black placeholder:text-off-black outline-none max-md:text-[15px] max-md:pb-2"
+                />
+              </div>
+              {/* Phone */}
+              <div>
+                <input
+                  type="tel"
+                  name="phone"
+                  placeholder="Telefoonnummer"
+                  value={formData.phone}
+                  onChange={(e) =>
+                    setFormData((p) => ({ ...p, phone: e.target.value }))
+                  }
+                  className="w-full bg-transparent border-b border-off-black pb-[0.694vw] font-body font-medium text-[1.319vw] text-off-black placeholder:text-off-black outline-none max-md:text-[15px] max-md:pb-2"
+                />
+              </div>
+              {/* Project interest */}
+              <div>
+                <input
+                  type="text"
+                  name="interestedProject"
+                  placeholder="In welk project heeft u interesse?"
+                  value={formData.interestedProject}
+                  onChange={(e) =>
+                    setFormData((p) => ({ ...p, interestedProject: e.target.value }))
+                  }
                   className="w-full bg-transparent border-b border-off-black pb-[0.694vw] font-body font-medium text-[1.319vw] text-off-black placeholder:text-off-black outline-none max-md:text-[15px] max-md:pb-2"
                 />
               </div>
@@ -501,10 +571,13 @@ function WonenFormSection({
             {/* Message */}
             <div className="mt-[2.083vw] max-md:mt-6">
               <textarea
+                name="message"
                 placeholder="Eventuele vraag of opmerking"
                 value={formData.message}
-                onChange={(e) => setFormData((p) => ({ ...p, message: e.target.value }))}
-                rows={1}
+                onChange={(e) =>
+                  setFormData((p) => ({ ...p, message: e.target.value }))
+                }
+                rows={4}
                 className="w-full bg-transparent border-b border-off-black pb-[0.694vw] font-body font-medium text-[1.319vw] text-off-black placeholder:text-off-black outline-none resize-none max-md:text-[15px] max-md:pb-2"
               />
             </div>
@@ -514,8 +587,12 @@ function WonenFormSection({
               <label className="flex items-start gap-[0.694vw] cursor-pointer max-md:gap-3">
                 <input
                   type="checkbox"
+                  name="agreed"
+                  required
                   checked={formData.agreed}
-                  onChange={(e) => setFormData((p) => ({ ...p, agreed: e.target.checked }))}
+                  onChange={(e) =>
+                    setFormData((p) => ({ ...p, agreed: e.target.checked }))
+                  }
                   className="shrink-0 mt-[0.208vw] w-[0.764vw] h-[0.764vw] border border-off-black appearance-none checked:bg-green checked:border-green cursor-pointer max-md:w-[16px] max-md:h-[16px] max-md:mt-[2px]"
                 />
                 <span className="font-body font-normal text-[0.764vw] leading-normal text-off-black max-w-[27.431vw] max-md:text-[11px] max-md:max-w-none">
@@ -529,11 +606,23 @@ function WonenFormSection({
               </label>
               <button
                 type="submit"
+                disabled={submitState === "submitting"}
                 className="bg-green text-off-white font-heading font-normal text-[1.181vw] tracking-[-0.024vw] px-[1.667vw] py-[0.694vw] rounded-full cursor-pointer border-none max-md:text-[15px] max-md:px-6 max-md:py-2.5"
               >
-                Formulier versturen
+                {submitState === "submitting"
+                  ? "Versturen..."
+                  : "Formulier versturen"}
               </button>
             </div>
+            {submitMessage ? (
+              <p
+                className={`mt-4 font-body text-[0.972vw] leading-[1.25] max-md:text-[13px] ${
+                  submitState === "error" ? "text-red-700" : "text-green"
+                }`}
+              >
+                {submitMessage}
+              </p>
+            ) : null}
           </form>
         </div>
       </div>

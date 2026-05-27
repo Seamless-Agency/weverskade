@@ -27,6 +27,8 @@ export default async function WonenBij() {
       ? {
           heroLabel: pageData?.heroLabel,
           heroTitle: pageData?.heroTitle,
+          introLabel: pageData?.introLabel,
+          introText: pageData?.introText,
           ctaLabel: pageData?.ctaLabel,
           ctaHeading: pageData?.ctaHeading,
           ctaLinkText: pageData?.ctaLinkText,
