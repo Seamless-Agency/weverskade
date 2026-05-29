@@ -21,7 +21,7 @@ type IncomingSubmission = {
 };
 
 const FORM_TYPES = new Set<FormType>(["contact", "wonen_bij", "gebouw_wonen"]);
-const EMAIL_TO = process.env.FORM_EMAIL_TO ?? "info@seamless.agency";
+const EMAIL_TO = process.env.FORM_EMAIL_TO ?? "info@weverskade.com";
 const EMAIL_FROM =
   process.env.FORM_EMAIL_FROM ?? "Weverskade <info@weverskade.com>";
 
