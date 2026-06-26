@@ -13,6 +13,15 @@ export const project = defineType({
     { name: 'content', title: 'Tekst & Quote' },
     { name: 'location', title: 'Locatie & Kaart' },
   ],
+  fieldsets: [
+    {
+      name: 'autoReply',
+      title: 'Automatische bevestigingsmail',
+      description:
+        'De e-mail die iemand automatisch ontvangt na het invullen van het "Woningen beschikbaar"-formulier op deze projectpagina.',
+      options: { collapsible: true, collapsed: true },
+    },
+  ],
   fields: [
     defineField({
       name: 'name',
@@ -154,6 +163,35 @@ export const project = defineType({
       type: 'boolean',
       group: 'visibility',
       initialValue: false,
+    }),
+    defineField({
+      name: 'autoReplyEnabled',
+      title: 'Bevestigingsmail versturen',
+      description:
+        'Zet uit om voor dit project tijdelijk geen automatische bevestiging naar de inzender te sturen.',
+      type: 'boolean',
+      initialValue: true,
+      group: 'visibility',
+      fieldset: 'autoReply',
+    }),
+    defineField({
+      name: 'autoReplySubject',
+      title: 'Onderwerp',
+      type: 'string',
+      initialValue: 'Bedankt voor je interesse',
+      group: 'visibility',
+      fieldset: 'autoReply',
+    }),
+    defineField({
+      name: 'autoReplyBody',
+      title: 'Bericht',
+      description: 'Gebruik een lege regel voor een nieuwe alinea.',
+      type: 'text',
+      rows: 10,
+      initialValue:
+        'Beste lezer,\n\nHartelijk dank voor je inschrijving en interesse in een van onze huurwoningen. Wij hebben je bericht in goede orde ontvangen.\n\nNaar verwachting volgt er voor dit project aan het einde van de zomer meer informatie. Zodra dit bekend is, nemen wij contact met je op.\n\nHartelijke groet,\nTeam Weverskade',
+      group: 'visibility',
+      fieldset: 'autoReply',
     }),
 
     // ─── Media ───

@@ -279,12 +279,27 @@ export async function POST(request: Request) {
       await client.patch(created._id).set({ resendEmailId }).commit();
     }
 
-    // Stuur de inzender een automatische bevestiging (alleen "wonen bij").
-    if (formType === "wonen_bij") {
+    // Stuur de inzender een automatische bevestiging. Projectpagina's
+    // (gebouw_wonen) gebruiken de tekst van het project zelf; de algemene
+    // "Wonen bij"-pagina gebruikt haar eigen tekst en dient als fallback.
+    if (formType === "wonen_bij" || formType === "gebouw_wonen") {
       try {
-        const autoReplySettings = await client.fetch<AutoReplySettings | null>(
-          `*[_type == "wonenBijPage"][0]{ autoReplyEnabled, autoReplySubject, autoReplyBody }`
-        );
+        let autoReplySettings: AutoReplySettings | null = null;
+
+        if (formType === "gebouw_wonen" && projectSlug) {
+          autoReplySettings = await client.fetch<AutoReplySettings | null>(
+            `*[_type == "project" && slug.current == $slug][0]{ autoReplyEnabled, autoReplySubject, autoReplyBody }`,
+            { slug: projectSlug }
+          );
+        }
+
+        // Geen eigen tekst op het project? Val terug op de algemene tekst.
+        if (!autoReplySettings || !clean(autoReplySettings.autoReplyBody)) {
+          autoReplySettings = await client.fetch<AutoReplySettings | null>(
+            `*[_type == "wonenBijPage"][0]{ autoReplyEnabled, autoReplySubject, autoReplyBody }`
+          );
+        }
+
         const autoReplyId = await sendAutoReply(email, autoReplySettings);
         if (autoReplyId) {
           console.log(`Auto-reply verstuurd voor ${created._id}: ${autoReplyId}`);
