@@ -203,6 +203,10 @@ async function seed() {
     ctaHeading: 'Heeft u een vraag over een specifiek project?',
     ctaLinkText: 'Naar de contactpagina',
     ctaLinkUrl: '/contact',
+    autoReplyEnabled: true,
+    autoReplySubject: 'Bedankt voor je interesse in Wonen bij Weverskade',
+    autoReplyBody:
+      'Beste lezer,\n\nHartelijk dank voor je inschrijving en interesse in een van onze huurwoningen. Wij hebben je bericht in goede orde ontvangen.\n\nNaar verwachting volgt er aan het einde van de zomer meer informatie. Zodra dit bekend is, nemen wij contact met je op.\n\nHartelijke groet,\nTeam Weverskade',
   })
 
   // ─── MAATSCHAPPELIJK PAGE ───

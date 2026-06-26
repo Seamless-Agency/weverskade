@@ -4,6 +4,15 @@ export const wonenBijPage = defineType({
   name: 'wonenBijPage',
   title: 'Wonen Bij',
   type: 'document',
+  fieldsets: [
+    {
+      name: 'autoReply',
+      title: 'Automatische bevestigingsmail',
+      description:
+        'De e-mail die iemand automatisch ontvangt nadat hij of zij zich via het inschrijfformulier op deze pagina aanmeldt.',
+      options: { collapsible: true, collapsed: true },
+    },
+  ],
   fields: [
     defineField({
       name: 'heroLabel',
@@ -47,6 +56,32 @@ export const wonenBijPage = defineType({
       name: 'ctaLinkUrl',
       title: 'CTA link URL',
       type: 'string',
+    }),
+    defineField({
+      name: 'autoReplyEnabled',
+      title: 'Bevestigingsmail versturen',
+      description:
+        'Zet uit om tijdelijk geen automatische bevestiging naar de inzender te sturen.',
+      type: 'boolean',
+      initialValue: true,
+      fieldset: 'autoReply',
+    }),
+    defineField({
+      name: 'autoReplySubject',
+      title: 'Onderwerp',
+      type: 'string',
+      initialValue: 'Bedankt voor je interesse in Wonen bij Weverskade',
+      fieldset: 'autoReply',
+    }),
+    defineField({
+      name: 'autoReplyBody',
+      title: 'Bericht',
+      description: 'Gebruik een lege regel voor een nieuwe alinea.',
+      type: 'text',
+      rows: 10,
+      initialValue:
+        'Beste lezer,\n\nHartelijk dank voor je inschrijving en interesse in een van onze huurwoningen. Wij hebben je bericht in goede orde ontvangen.\n\nNaar verwachting volgt er aan het einde van de zomer meer informatie. Zodra dit bekend is, nemen wij contact met je op.\n\nHartelijke groet,\nTeam Weverskade',
+      fieldset: 'autoReply',
     }),
   ],
   preview: {

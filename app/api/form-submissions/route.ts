@@ -127,6 +127,70 @@ async function sendEmail(submission: Required<Pick<IncomingSubmission, "formType
   return result?.id as string | undefined;
 }
 
+type AutoReplySettings = {
+  autoReplyEnabled?: boolean;
+  autoReplySubject?: string;
+  autoReplyBody?: string;
+};
+
+function bodyToHtmlParagraphs(body: string) {
+  return body
+    .trim()
+    .split(/\n{2,}/)
+    .map(
+      (paragraph) =>
+        `<p style="margin:0 0 16px;">${escapeHtml(paragraph).replaceAll("\n", "<br>")}</p>`
+    )
+    .join("");
+}
+
+// Auto-reply (bevestigingsmail) naar de inzender. Tekst komt uit het CMS
+// (wonenBijPage). Best-effort: een fout hier mag de inzending niet laten falen.
+async function sendAutoReply(recipientEmail: string, settings: AutoReplySettings | null) {
+  const apiKey = process.env.RESEND_API_KEY;
+
+  if (!apiKey || !settings || settings.autoReplyEnabled === false) {
+    return undefined;
+  }
+
+  const subject = clean(settings.autoReplySubject);
+  const body = clean(settings.autoReplyBody);
+
+  if (!subject || !body) {
+    return undefined;
+  }
+
+  const response = await fetch("https://api.resend.com/emails", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${apiKey}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      from: EMAIL_FROM,
+      to: [recipientEmail],
+      reply_to: EMAIL_TO,
+      subject,
+      text: body,
+      html: `
+      <div style="font-family:Arial,sans-serif;font-size:15px;line-height:1.6;color:#181915;">
+        ${bodyToHtmlParagraphs(body)}
+      </div>
+    `,
+    }),
+  });
+
+  const result = await response.json().catch(() => null);
+
+  if (!response.ok) {
+    throw new Error(
+      result?.message ?? "Resend kon de bevestigingsmail niet versturen."
+    );
+  }
+
+  return result?.id as string | undefined;
+}
+
 export async function POST(request: Request) {
   try {
     if (!projectId || !dataset) {
@@ -213,6 +277,23 @@ export async function POST(request: Request) {
 
     if (resendEmailId) {
       await client.patch(created._id).set({ resendEmailId }).commit();
+    }
+
+    // Stuur de inzender een automatische bevestiging (alleen "wonen bij").
+    if (formType === "wonen_bij") {
+      try {
+        const autoReplySettings = await client.fetch<AutoReplySettings | null>(
+          `*[_type == "wonenBijPage"][0]{ autoReplyEnabled, autoReplySubject, autoReplyBody }`
+        );
+        const autoReplyId = await sendAutoReply(email, autoReplySettings);
+        if (autoReplyId) {
+          console.log(`Auto-reply verstuurd voor ${created._id}: ${autoReplyId}`);
+        }
+      } catch (autoReplyError) {
+        // Inzending is opgeslagen en de melding is verstuurd; een mislukte
+        // bevestigingsmail mag de gebruiker geen foutmelding geven.
+        console.error("Auto-reply (bevestigingsmail) mislukt", autoReplyError);
+      }
     }
 
     return NextResponse.json({
