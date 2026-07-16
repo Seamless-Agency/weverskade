@@ -71,21 +71,31 @@ export default function TurnstileWidget({
   const containerRef = useRef<HTMLDivElement>(null);
   const widgetIdRef = useRef<string | null>(null);
   const callbacks = useRef({ onVerify, onError });
+  // Aantal automatische herstelpogingen na een client-side fout, begrensd om
+  // een oneindige challenge-loop te voorkomen.
+  const autoRetriesRef = useRef(0);
+  const retryTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     callbacks.current = { onVerify, onError };
   });
 
+  const resetWidget = () => {
+    const id = widgetIdRef.current;
+    if (id === null || !window.turnstile) return;
+
+    try {
+      window.turnstile.reset(id);
+    } catch {
+      // Widget al opgeruimd; er valt niets te resetten.
+    }
+  };
+
   useImperativeHandle(ref, () => ({
     reset: () => {
-      const id = widgetIdRef.current;
-      if (id === null || !window.turnstile) return;
-
-      try {
-        window.turnstile.reset(id);
-      } catch {
-        // Widget al opgeruimd; er valt niets te resetten.
-      }
+      // Handmatige reset (bv. na een verzendpoging) telt als schone lei.
+      autoRetriesRef.current = 0;
+      resetWidget();
     },
   }), []);
 
@@ -106,14 +116,33 @@ export default function TurnstileWidget({
           action,
           theme: "light",
           language: "nl",
-          callback: (token: string) => callbacks.current.onVerify(token),
+          retry: "auto",
+          callback: (token: string) => {
+            // Geslaagd: schone lei voor eventuele latere fouten.
+            autoRetriesRef.current = 0;
+            callbacks.current.onVerify(token);
+          },
           // Een verlopen of mislukt token is onbruikbaar: leeg het, zodat de
           // verzendknop weer op slot gaat tot Turnstile een nieuw token geeft.
           "expired-callback": () => callbacks.current.onVerify(""),
           "timeout-callback": () => callbacks.current.onVerify(""),
+          // Client-side fouten (bv. 600010) laten de widget anders doodlopen
+          // tot de bezoeker de pagina ververst. Reset 'm automatisch een paar
+          // keer met een korte pauze — dat is Cloudflares eigen retry-methode —
+          // zodat een tijdelijke fout vanzelf herstelt. Begrensd tegen loops.
           "error-callback": () => {
             callbacks.current.onVerify("");
             callbacks.current.onError?.();
+
+            if (autoRetriesRef.current >= 3) {
+              // Opgegeven: laat Cloudflare de fout loggen en de foutstaat tonen.
+              return false;
+            }
+
+            autoRetriesRef.current += 1;
+            retryTimerRef.current = setTimeout(resetWidget, 2000);
+            // We hebben de fout afgehandeld; Cloudflare hoeft niets extra's te doen.
+            return true;
           },
         });
       })
@@ -123,6 +152,12 @@ export default function TurnstileWidget({
 
     return () => {
       cancelled = true;
+
+      if (retryTimerRef.current) {
+        clearTimeout(retryTimerRef.current);
+        retryTimerRef.current = null;
+      }
+
       const id = widgetIdRef.current;
       widgetIdRef.current = null;
 
