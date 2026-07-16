@@ -1,8 +1,12 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import LineSplit from "@/components/LineSplit";
+import TurnstileWidget, {
+  isTurnstileEnabled,
+  type TurnstileHandle,
+} from "@/components/TurnstileWidget";
 import { submitFormSubmission } from "@/lib/formSubmissionClient";
 
 const DEFAULT_INTRO_TEXT =
@@ -21,6 +25,8 @@ export default function ContactPage({ data }: { data?: ContactPageData } = {}) {
     "idle" | "submitting" | "success" | "error"
   >("idle");
   const [submitMessage, setSubmitMessage] = useState("");
+  const [turnstileToken, setTurnstileToken] = useState("");
+  const turnstileRef = useRef<TurnstileHandle>(null);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -62,6 +68,7 @@ export default function ContactPage({ data }: { data?: ContactPageData } = {}) {
         email: formData.email,
         message: formData.message,
         pageUrl: window.location.href,
+        turnstileToken,
       });
       setFormData({
         name: "",
@@ -77,6 +84,10 @@ export default function ContactPage({ data }: { data?: ContactPageData } = {}) {
           ? error.message
           : "Het formulier kon niet worden verstuurd."
       );
+    } finally {
+      // Een token is eenmalig, dus na elke poging een nieuwe aanvragen.
+      setTurnstileToken("");
+      turnstileRef.current?.reset();
     }
   };
 
@@ -224,14 +235,25 @@ export default function ContactPage({ data }: { data?: ContactPageData } = {}) {
                   : "none",
               }}
             >
-              <div className="w-[30.833vw] flex justify-end max-md:w-full">
-                <button
-                  type="submit"
-                  disabled={submitState === "submitting"}
-                  className="bg-off-black text-off-white font-heading font-normal text-[1.25vw] max-md:text-[16px] px-[1.389vw] py-[0.417vw] max-md:px-5 max-md:py-2 cursor-pointer border-none"
-                >
-                  {submitState === "submitting" ? "Versturen..." : "Verzenden"}
-                </button>
+              <div className="w-[30.833vw] max-md:w-full">
+                <TurnstileWidget
+                  ref={turnstileRef}
+                  action="contact"
+                  onVerify={setTurnstileToken}
+                  className="mb-[1.042vw] max-md:mb-3"
+                />
+                <div className="flex justify-end">
+                  <button
+                    type="submit"
+                    disabled={
+                      submitState === "submitting" ||
+                      (isTurnstileEnabled && !turnstileToken)
+                    }
+                    className="bg-off-black text-off-white font-heading font-normal text-[1.25vw] max-md:text-[16px] px-[1.389vw] py-[0.417vw] max-md:px-5 max-md:py-2 cursor-pointer border-none disabled:opacity-40 disabled:cursor-not-allowed"
+                  >
+                    {submitState === "submitting" ? "Versturen..." : "Verzenden"}
+                  </button>
+                </div>
               </div>
             </div>
             {submitMessage ? (

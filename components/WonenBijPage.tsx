@@ -1,9 +1,13 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import LineSplit from "@/components/LineSplit";
 import ScrollHeroLineSplit from "@/components/ScrollHeroLineSplit";
+import TurnstileWidget, {
+  isTurnstileEnabled,
+  type TurnstileHandle,
+} from "@/components/TurnstileWidget";
 import { usePageNavigation } from "@/hooks/usePageNavigation";
 import { submitFormSubmission } from "@/lib/formSubmissionClient";
 
@@ -162,6 +166,8 @@ export default function WonenBijPage({ data }: { data?: WonenBijPageData } = {})
     "idle" | "submitting" | "success" | "error"
   >("idle");
   const [submitMessage, setSubmitMessage] = useState("");
+  const [turnstileToken, setTurnstileToken] = useState("");
+  const turnstileRef = useRef<TurnstileHandle>(null);
   const [formData, setFormData] = useState<InterestFormData>({
     name: "",
     email: "",
@@ -227,6 +233,7 @@ export default function WonenBijPage({ data }: { data?: WonenBijPageData } = {})
         sourceLabel: "Wonen bij Weverskade",
         ...formData,
         pageUrl: window.location.href,
+        turnstileToken,
       });
       setFormData({
         name: "",
@@ -245,6 +252,10 @@ export default function WonenBijPage({ data }: { data?: WonenBijPageData } = {})
           ? error.message
           : "Het formulier kon niet worden verstuurd."
       );
+    } finally {
+      // Een token is eenmalig, dus na elke poging een nieuwe aanvragen.
+      setTurnstileToken("");
+      turnstileRef.current?.reset();
     }
   };
 
@@ -510,6 +521,9 @@ export default function WonenBijPage({ data }: { data?: WonenBijPageData } = {})
         onSubmit={handleFormSubmit}
         submitState={submitState}
         submitMessage={submitMessage}
+        turnstileRef={turnstileRef}
+        turnstileToken={turnstileToken}
+        onTurnstileVerify={setTurnstileToken}
       />
     </section>
   );
@@ -522,6 +536,9 @@ function ContactFormSection({
   onSubmit,
   submitState,
   submitMessage,
+  turnstileRef,
+  turnstileToken,
+  onTurnstileVerify,
 }: {
   text: string;
   formData: InterestFormData;
@@ -529,6 +546,9 @@ function ContactFormSection({
   onSubmit: (e: React.FormEvent) => void;
   submitState: "idle" | "submitting" | "success" | "error";
   submitMessage: string;
+  turnstileRef: React.Ref<TurnstileHandle>;
+  turnstileToken: string;
+  onTurnstileVerify: (token: string) => void;
 }) {
   return (
     <div className="px-[2.431vw] mt-[8.125vw] pb-[16.875vw] max-md:px-5 max-md:mt-16 max-md:pb-16">
@@ -598,6 +618,13 @@ function ContactFormSection({
               className="mt-[2.014vw] w-full bg-transparent border-b border-off-black pb-[0.694vw] font-body font-medium text-[1.319vw] text-off-black placeholder:text-off-black outline-none resize-none max-md:mt-6 max-md:text-[15px] max-md:pb-2"
             />
 
+            <TurnstileWidget
+              ref={turnstileRef}
+              action="wonen-bij"
+              onVerify={onTurnstileVerify}
+              className="mt-[2.014vw] max-md:mt-6"
+            />
+
             <div className="flex items-start justify-between mt-[1.389vw] max-md:flex-col max-md:gap-6 max-md:mt-6">
               <label className="flex items-start gap-[0.694vw] cursor-pointer max-md:gap-3">
                 <input
@@ -621,8 +648,11 @@ function ContactFormSection({
               </label>
               <button
                 type="submit"
-                disabled={submitState === "submitting"}
-                className="bg-green text-off-white font-heading font-normal text-[1.181vw] tracking-[-0.024vw] px-[1.667vw] py-[0.694vw] rounded-full cursor-pointer border-none max-md:text-[15px] max-md:px-6 max-md:py-2.5"
+                disabled={
+                  submitState === "submitting" ||
+                  (isTurnstileEnabled && !turnstileToken)
+                }
+                className="bg-green text-off-white font-heading font-normal text-[1.181vw] tracking-[-0.024vw] px-[1.667vw] py-[0.694vw] rounded-full cursor-pointer border-none disabled:opacity-40 disabled:cursor-not-allowed max-md:text-[15px] max-md:px-6 max-md:py-2.5"
               >
                 {submitState === "submitting"
                   ? "Versturen..."

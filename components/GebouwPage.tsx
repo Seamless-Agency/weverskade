@@ -8,6 +8,10 @@ import CTASection from "@/components/CTASection";
 import GebouwMap from "@/components/GebouwMap";
 import VimeoBackground from "@/components/VimeoBackground";
 import GebouwImageCarousel from "@/components/GebouwImageCarousel";
+import TurnstileWidget, {
+  isTurnstileEnabled,
+  type TurnstileHandle,
+} from "@/components/TurnstileWidget";
 import { usePageNavigation } from "@/hooks/usePageNavigation";
 import { submitFormSubmission } from "@/lib/formSubmissionClient";
 import type { GebouwProject } from "@/data/gebouwen";
@@ -59,6 +63,8 @@ export default function GebouwPage({ project }: GebouwPageProps) {
     "idle" | "submitting" | "success" | "error"
   >("idle");
   const [submitMessage, setSubmitMessage] = useState("");
+  const [turnstileToken, setTurnstileToken] = useState("");
+  const turnstileRef = useRef<TurnstileHandle>(null);
   const [formData, setFormData] = useState<WonenFormData>({
     name: "",
     email: "",
@@ -139,6 +145,7 @@ export default function GebouwPage({ project }: GebouwPageProps) {
         projectName: project.name,
         projectSlug: project.slug,
         pageUrl: window.location.href,
+        turnstileToken,
       });
       setFormData({
         name: "",
@@ -157,6 +164,10 @@ export default function GebouwPage({ project }: GebouwPageProps) {
           ? error.message
           : "Het formulier kon niet worden verstuurd."
       );
+    } finally {
+      // Een token is eenmalig, dus na elke poging een nieuwe aanvragen.
+      setTurnstileToken("");
+      turnstileRef.current?.reset();
     }
   };
 
@@ -406,6 +417,9 @@ export default function GebouwPage({ project }: GebouwPageProps) {
           setFormData={setFormData}
           submitState={submitState}
           submitMessage={submitMessage}
+          turnstileRef={turnstileRef}
+          turnstileToken={turnstileToken}
+          onTurnstileVerify={setTurnstileToken}
         />
       ) : (
         <QuoteSection project={project} />
@@ -491,12 +505,18 @@ function WonenFormSection({
   setFormData,
   submitState,
   submitMessage,
+  turnstileRef,
+  turnstileToken,
+  onTurnstileVerify,
 }: {
   onSubmit: (e: React.FormEvent) => void;
   formData: WonenFormData;
   setFormData: React.Dispatch<React.SetStateAction<WonenFormData>>;
   submitState: "idle" | "submitting" | "success" | "error";
   submitMessage: string;
+  turnstileRef: React.Ref<TurnstileHandle>;
+  turnstileToken: string;
+  onTurnstileVerify: (token: string) => void;
 }) {
   return (
     <div className="px-[2.431vw] mt-[8.125vw] pb-[16.875vw] max-md:px-5 max-md:mt-16 max-md:pb-16">
@@ -582,6 +602,13 @@ function WonenFormSection({
               />
             </div>
 
+            <TurnstileWidget
+              ref={turnstileRef}
+              action="gebouw-wonen"
+              onVerify={onTurnstileVerify}
+              className="mt-[2.083vw] max-md:mt-6"
+            />
+
             {/* Checkbox + Submit */}
             <div className="flex items-start justify-between mt-[2.083vw] max-md:flex-col max-md:gap-6 max-md:mt-6">
               <label className="flex items-start gap-[0.694vw] cursor-pointer max-md:gap-3">
@@ -606,8 +633,11 @@ function WonenFormSection({
               </label>
               <button
                 type="submit"
-                disabled={submitState === "submitting"}
-                className="bg-green text-off-white font-heading font-normal text-[1.181vw] tracking-[-0.024vw] px-[1.667vw] py-[0.694vw] rounded-full cursor-pointer border-none max-md:text-[15px] max-md:px-6 max-md:py-2.5"
+                disabled={
+                  submitState === "submitting" ||
+                  (isTurnstileEnabled && !turnstileToken)
+                }
+                className="bg-green text-off-white font-heading font-normal text-[1.181vw] tracking-[-0.024vw] px-[1.667vw] py-[0.694vw] rounded-full cursor-pointer border-none disabled:opacity-40 disabled:cursor-not-allowed max-md:text-[15px] max-md:px-6 max-md:py-2.5"
               >
                 {submitState === "submitting"
                   ? "Versturen..."

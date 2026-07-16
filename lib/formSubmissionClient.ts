@@ -10,6 +10,7 @@ export type FormSubmissionPayload = {
   projectName?: string;
   projectSlug?: string;
   pageUrl?: string;
+  turnstileToken?: string;
 };
 
 export async function submitFormSubmission(payload: FormSubmissionPayload) {

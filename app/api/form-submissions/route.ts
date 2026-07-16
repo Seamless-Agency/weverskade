@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createClient } from "next-sanity";
 import { apiVersion, dataset, projectId } from "@/sanity/env";
+import { getClientIp, verifyTurnstile } from "@/lib/turnstile";
 
 export const runtime = "nodejs";
 
@@ -18,6 +19,7 @@ type IncomingSubmission = {
   projectName?: string;
   projectSlug?: string;
   pageUrl?: string;
+  turnstileToken?: string;
 };
 
 const FORM_TYPES = new Set<FormType>(["contact", "wonen_bij", "gebouw_wonen"]);
@@ -240,6 +242,30 @@ export async function POST(request: Request) {
       return NextResponse.json(
         { error: "Ga akkoord met de voorwaarden om het formulier te versturen." },
         { status: 400 }
+      );
+    }
+
+    // Spamcontrole vóór het opslaan en mailen: een afgekeurde inzending mag geen
+    // Sanity-document aanmaken en geen mail versturen.
+    const verdict = await verifyTurnstile(
+      clean(body.turnstileToken),
+      getClientIp(request)
+    );
+
+    if (!verdict.allowed) {
+      const details = verdict.errorCodes.length
+        ? ` (${verdict.errorCodes.join(", ")})`
+        : "";
+      console.warn(
+        `Turnstile weigerde een ${formType}-inzending: ${verdict.reason}${details}`
+      );
+
+      return NextResponse.json(
+        {
+          error:
+            "De spamcontrole is niet gelukt. Ververs de pagina en probeer het opnieuw.",
+        },
+        { status: 403 }
       );
     }
 
