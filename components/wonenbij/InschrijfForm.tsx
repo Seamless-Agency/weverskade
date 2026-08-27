@@ -130,51 +130,48 @@ export default function InschrijfForm({
   };
 
   const veldClass =
-    "w-full bg-transparent border-b border-off-black pb-[0.694vw] font-body font-medium text-[1.042vw] text-off-black placeholder:text-off-black outline-none max-md:text-[15px] max-md:pb-2";
+    "w-full bg-transparent border-b border-off-black pb-[1.292vw] font-body font-medium text-[1.042vw] leading-[1.208vw] text-off-black placeholder:text-off-black outline-none max-md:text-[15px] max-md:pb-2";
 
   return (
+    // Figma: op wit, label op x=37, kop op x=507, intro op x=505, formulier op
+    // x=496 breed 676; 134 boven het label, 298 tussen knop en footer
     <section
       id="inschrijven"
-      className="bg-off-white py-[9.028vw] max-md:py-14"
+      className="bg-white pt-[9.306vw] pb-[20.694vw] max-md:py-14"
       data-nav-theme="light"
     >
-      <div className="flex items-start px-[2.431vw] max-md:flex-col max-md:px-5 max-md:gap-4">
-        <p className="shrink-0 w-[30.903vw] font-heading font-normal text-[1.389vw] leading-[1.2] text-off-black max-md:w-auto max-md:text-[17px]">
+      <div className="flex items-start pl-[2.569vw] pr-[2.431vw] max-md:flex-col max-md:px-5 max-md:gap-4">
+        <p className="shrink-0 w-[31.875vw] font-heading font-normal text-[1.389vw] leading-[1.715vw] text-off-black max-md:w-auto max-md:text-[17px]">
           {label}
         </p>
         <div className="flex-1 max-md:w-full">
-          <h2 className="font-body font-medium text-[3.75vw] leading-[3.681vw] text-off-black max-w-[51.528vw] max-md:text-[28px] max-md:leading-[32px] max-md:max-w-none">
+          <h2 className="ml-[0.764vw] font-body font-medium text-[3.75vw] leading-[3.681vw] text-off-black max-w-[51.528vw] max-md:ml-0 max-md:text-[28px] max-md:leading-[32px] max-md:max-w-none">
             {heading}
           </h2>
-          <p className="mt-[1.667vw] max-w-[47.153vw] font-body font-medium text-[1.597vw] leading-[2.153vw] tracking-[-0.016vw] text-off-black max-md:mt-4 max-md:max-w-none max-md:text-[16px] max-md:leading-[23px]">
+          <p className="mt-[2.361vw] ml-[0.625vw] max-w-[47.153vw] font-body font-medium text-[1.597vw] leading-[2.153vw] tracking-[-0.016vw] text-off-black max-md:mt-4 max-md:ml-0 max-md:max-w-none max-md:text-[16px] max-md:leading-[23px]">
             {intro}
           </p>
 
-          <form onSubmit={handleSubmit} className="mt-[3.472vw] max-w-[46.944vw] max-md:mt-8 max-md:max-w-none">
+          <form onSubmit={handleSubmit} className="mt-[5.139vw] max-w-[46.944vw] max-md:mt-8 max-md:max-w-none">
             {/* Voorkeursveld tussen twee lijnen, zoals in het design */}
-            <div className="border-y border-off-black/60 py-[1.111vw] max-md:py-3">
-              <label className="block font-body font-semibold text-[1.042vw] text-off-black max-md:text-[14px]">
-                {voorkeurLabel}
-              </label>
-              <div className="relative mt-[0.417vw] max-md:mt-1">
-                <select
-                  name="voorkeur"
-                  value={form.voorkeur}
-                  onChange={(e) => set("voorkeur", e.target.value)}
-                  className="w-full appearance-none bg-transparent font-body font-medium text-[1.042vw] text-off-black outline-none cursor-pointer max-md:text-[14px]"
-                >
-                  <option value="">Geen voorkeur</option>
-                  {voorkeurOpties.map((optie) => (
-                    <option key={optie} value={optie}>
-                      {optie}
-                    </option>
-                  ))}
-                </select>
-                <ChevronIcon className="pointer-events-none absolute right-0 top-1/2 -translate-y-1/2 w-[1.111vw] h-auto text-off-black max-md:w-[13px]" />
-              </div>
+            <div className="relative border-y border-off-black pt-[1.736vw] pb-[1.847vw] max-md:py-3">
+              <select
+                name="voorkeur"
+                value={form.voorkeur}
+                onChange={(e) => set("voorkeur", e.target.value)}
+                className="w-full h-[1.208vw] appearance-none bg-transparent font-body font-medium text-[1.042vw] leading-[1.208vw] text-off-black outline-none cursor-pointer max-md:h-auto max-md:text-[14px]"
+              >
+                <option value="">{voorkeurLabel}</option>
+                {voorkeurOpties.map((optie) => (
+                  <option key={optie} value={optie}>
+                    {optie}
+                  </option>
+                ))}
+              </select>
+              <ChevronIcon className="pointer-events-none absolute right-0 top-1/2 -translate-y-1/2 w-[1.528vw] h-auto text-off-black max-md:w-[13px]" />
             </div>
 
-            <div className="mt-[2.639vw] grid grid-cols-2 gap-x-[1.389vw] gap-y-[2.431vw] max-md:mt-6 max-md:grid-cols-1 max-md:gap-y-6">
+            <div className="mt-[1.944vw] grid grid-cols-2 gap-x-[1.389vw] gap-y-[2.014vw] max-md:mt-6 max-md:grid-cols-1 max-md:gap-y-6">
               <input
                 type="text"
                 name="voornaam"
@@ -249,7 +246,7 @@ export default function InschrijfForm({
               value={form.message}
               onChange={(e) => set("message", e.target.value)}
               rows={3}
-              className={`mt-[2.431vw] resize-none max-md:mt-6 ${veldClass}`}
+              className={`mt-[2.222vw] h-[6.528vw] resize-none max-md:mt-6 max-md:h-auto ${veldClass}`}
             />
 
             <TurnstileWidget
@@ -259,17 +256,17 @@ export default function InschrijfForm({
               className="mt-[2.014vw] max-md:mt-6"
             />
 
-            <div className="flex items-start justify-between mt-[1.389vw] max-md:flex-col max-md:gap-6 max-md:mt-6">
-              <label className="flex items-start gap-[0.694vw] cursor-pointer max-md:gap-3">
+            <div className="flex items-start justify-between mt-[1.458vw] max-md:flex-col max-md:gap-6 max-md:mt-6">
+              <label className="flex items-start gap-[1.042vw] cursor-pointer max-md:gap-3">
                 <input
                   type="checkbox"
                   name="agreed"
                   required
                   checked={form.agreed}
                   onChange={(e) => set("agreed", e.target.checked)}
-                  className="shrink-0 mt-[0.208vw] w-[0.764vw] h-[0.764vw] border border-off-black appearance-none checked:bg-green checked:border-green cursor-pointer max-md:w-[16px] max-md:h-[16px] max-md:mt-[2px]"
+                  className="shrink-0 mt-[1.111vw] w-[0.764vw] h-[0.764vw] border border-off-black appearance-none checked:bg-green checked:border-green cursor-pointer max-md:w-[16px] max-md:h-[16px] max-md:mt-[2px]"
                 />
-                <span className="font-body font-normal text-[0.764vw] leading-normal text-off-black max-w-[27.431vw] max-md:text-[11px] max-md:max-w-none">
+                <span className="mt-[0.764vw] font-body font-normal text-[0.764vw] leading-[0.889vw] text-off-black max-w-[27.431vw] max-md:mt-0 max-md:text-[11px] max-md:leading-normal max-md:max-w-none">
                   Ik ga akkoord met de{" "}
                   <a href="/privacybeleid" className="underline decoration-solid">
                     algemene voorwaarden
@@ -284,7 +281,7 @@ export default function InschrijfForm({
                   submitState === "submitting" ||
                   (isTurnstileEnabled && !turnstileToken)
                 }
-                className="bg-green text-off-white font-heading font-normal text-[1.181vw] tracking-[-0.024vw] px-[1.667vw] py-[0.694vw] rounded-full cursor-pointer border-none disabled:opacity-40 disabled:cursor-not-allowed max-md:text-[15px] max-md:px-6 max-md:py-2.5"
+                className="inline-flex items-center justify-center w-[14.722vw] h-[3.194vw] bg-green text-off-white font-heading font-normal text-[1.181vw] leading-[1.458vw] tracking-[-0.024vw] rounded-full cursor-pointer border-none disabled:opacity-40 disabled:cursor-not-allowed max-md:w-auto max-md:h-auto max-md:text-[15px] max-md:px-6 max-md:py-2.5 max-md:leading-normal"
               >
                 {submitState === "submitting"
                   ? "Versturen..."

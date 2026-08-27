@@ -660,7 +660,7 @@ export const demoAanzichten: Aanzicht[] = [
 
 export const demoBegeleiding: BegeleidingSectie = {
   label: "Huren bij Weverskade",
-  titel: "Persoonlijk begeleid naar jouw nieuwe woning",
+  titel: "Persoonlijk begeleid naar\njouw nieuwe woning",
   punten: [
     "Duidelijke informatie en snelle terugkoppeling",
     "Persoonlijke aandacht voor jouw woonwensen",
