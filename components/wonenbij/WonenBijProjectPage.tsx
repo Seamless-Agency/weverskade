@@ -2,6 +2,7 @@
 
 import { useRef, useState } from "react";
 import Image from "next/image";
+import GebouwImageCarousel from "@/components/GebouwImageCarousel";
 import WonenBijHeader from "@/components/wonenbij/WonenBijHeader";
 import WoningzoekerSection from "@/components/wonenbij/WoningzoekerSection";
 import ProjectPlanning from "@/components/wonenbij/ProjectPlanning";
@@ -238,8 +239,17 @@ export default function WonenBijProjectPage({
           </div>
         </div>
 
+        {/* Zelfde carrousel als de live site (bewuste afwijking van Figma):
+            twee foto's vullen samen altijd de volle breedte, met snap en
+            scrubbare voortgangsbalk. Wrapper-mt = Figma-afstand 213 minus de
+            ingebouwde 20px van het component. */}
         {project.carouselFotos.length > 0 ? (
-          <FotoStrip fotos={project.carouselFotos} naam={project.naam} />
+          <div className="mt-[13.403vw] max-lg:mt-8">
+            <GebouwImageCarousel
+              images={project.carouselFotos}
+              projectName={project.naam}
+            />
+          </div>
         ) : null}
       </div>
 
@@ -458,54 +468,6 @@ function CarouselKnop({
         }`}
       />
     </button>
-  );
-}
-
-/* ─── Horizontale fotostrip met voortgangsbalk ──────────────────────── */
-
-function FotoStrip({ fotos, naam }: { fotos: string[]; naam: string }) {
-  const stripRef = useRef<HTMLDivElement>(null);
-  const [voortgang, setVoortgang] = useState(0);
-
-  const handleScroll = () => {
-    const el = stripRef.current;
-    if (!el) return;
-    const max = el.scrollWidth - el.clientWidth;
-    setVoortgang(max > 0 ? el.scrollLeft / max : 0);
-  };
-
-  return (
-    // Figma: strip 213 onder het tweede fotoblok, foto's 671 breed met 23 gap,
-    // voortgangsbalk 496 breed rechts (84 van de rand), 15 onder de strip
-    <div className="mt-[14.792vw] max-lg:mt-8">
-      <div
-        ref={stripRef}
-        onScroll={handleScroll}
-        className="flex gap-[1.597vw] overflow-x-auto px-[2.431vw] max-lg:gap-3 max-lg:px-5"
-        style={{ scrollbarWidth: "none" }}
-      >
-        {fotos.map((foto, i) => (
-          <div
-            key={foto + i}
-            className="relative shrink-0 w-[46.597vw] aspect-[671/519] overflow-hidden max-lg:w-[80vw]"
-          >
-            <Image
-              src={foto}
-              alt={`${naam} - sfeerbeeld ${i + 1}`}
-              fill
-              sizes="47vw"
-              className="object-cover"
-            />
-          </div>
-        ))}
-      </div>
-      <div className="mt-[1.042vw] ml-auto mr-[5.833vw] w-[34.444vw] h-[3px] rounded-full bg-off-black/15 max-lg:mt-4 max-lg:mx-auto max-lg:w-[60vw]">
-        <div
-          className="h-full rounded-full bg-off-black transition-[width] duration-150"
-          style={{ width: `${Math.max(10, voortgang * 100)}%` }}
-        />
-      </div>
-    </div>
   );
 }
 
