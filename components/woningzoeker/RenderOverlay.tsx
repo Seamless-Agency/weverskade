@@ -134,8 +134,22 @@ export default function RenderOverlay({
           const strokeOpacity = !isVisible ? 0.2 : 1;
 
           return (
+            <g key={woning.id}>
+            {/* Onzichtbare halo als extra tikvlak op touch-apparaten: de echte
+                vlakken zijn op een telefoon maar ~15-20px groot. */}
             <polygon
-              key={woning.id}
+              points={toPoints(woning.polygon)}
+              fill="transparent"
+              stroke="transparent"
+              strokeWidth={24}
+              strokeLinejoin="round"
+              vectorEffect="non-scaling-stroke"
+              className="hidden pointer-coarse:block cursor-pointer"
+              style={{ pointerEvents: isVisible ? "auto" : "none" }}
+              onClick={() => onSelect(woning.id)}
+              aria-hidden
+            />
+            <polygon
               points={toPoints(woning.polygon)}
               fill={meta.color}
               fillOpacity={fillOpacity}
@@ -164,6 +178,7 @@ export default function RenderOverlay({
             >
               <title>{`${woning.nummer} - ${meta.label}`}</title>
             </polygon>
+            </g>
           );
         })}
       </svg>
@@ -179,7 +194,7 @@ export default function RenderOverlay({
             style={{ left: `${anchor.x * 100}%`, top: `${anchor.y * 100}%` }}
           >
             <span
-              className={`inline-block whitespace-nowrap rounded-full px-[0.9vw] py-[0.45vw] font-body text-[0.83vw] font-medium leading-tight text-off-white backdrop-blur-sm transition-colors duration-200 max-md:px-3 max-md:py-1.5 max-md:text-[11px] ${
+              className={`inline-block whitespace-nowrap rounded-full px-[0.9vw] py-[0.45vw] font-body text-[0.83vw] font-medium leading-tight text-off-white backdrop-blur-sm transition-colors duration-200 max-lg:px-3 max-lg:py-1.5 max-lg:text-[11px] ${
                 isHovered ? "bg-green" : "bg-off-black/85"
               }`}
             >
@@ -198,11 +213,11 @@ export default function RenderOverlay({
             top: `${activeAnchor.y * 100}%`,
           }}
         >
-          <div className="whitespace-nowrap rounded-full bg-off-black/85 px-[0.9vw] py-[0.45vw] text-center backdrop-blur-sm max-md:px-3 max-md:py-1.5">
-            <span className="font-body text-[0.83vw] font-medium leading-tight text-off-white max-md:text-[11px]">
+          <div className="whitespace-nowrap rounded-full bg-off-black/85 px-[0.9vw] py-[0.45vw] text-center backdrop-blur-sm max-lg:px-3 max-lg:py-1.5">
+            <span className="font-body text-[0.83vw] font-medium leading-tight text-off-white max-lg:text-[11px]">
               {active.nummer}
             </span>
-            <span className="font-body text-[0.83vw] font-normal leading-tight text-off-white/70 max-md:text-[11px]">
+            <span className="font-body text-[0.83vw] font-normal leading-tight text-off-white/70 max-lg:text-[11px]">
               {" · "}
               {active.oppervlakte} m²
               {active.status === "beschikbaar"

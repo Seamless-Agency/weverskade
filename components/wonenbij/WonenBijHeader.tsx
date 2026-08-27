@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { usePageNavigation } from "@/hooks/usePageNavigation";
 import { PijlIcon } from "@/components/wonenbij/icons";
 
@@ -22,6 +23,7 @@ interface WonenBijHeaderProps {
 /**
  * Vaste kop van de wonen-bij omgeving: wordmark links, optionele ankerlinks
  * in het midden en een groene pill rechts. Absoluut over de hero heen.
+ * Onder lg vervangen een menu-knop + overlay de ankerlinks.
  */
 export default function WonenBijHeader({
   variant = "donker",
@@ -31,11 +33,28 @@ export default function WonenBijHeader({
   ctaArrow = false,
 }: WonenBijHeaderProps) {
   const navigate = usePageNavigation();
+  const [menuOpen, setMenuOpen] = useState(false);
   const textColor = variant === "licht" ? "text-off-white" : "text-off-black";
+
+  // Open menu: pagina-scroll bevriezen en met Escape kunnen sluiten.
+  useEffect(() => {
+    if (!menuOpen) return;
+    const vorige = document.documentElement.style.overflow;
+    document.documentElement.style.overflow = "hidden";
+    const opToets = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setMenuOpen(false);
+    };
+    window.addEventListener("keydown", opToets);
+    return () => {
+      document.documentElement.style.overflow = vorige;
+      window.removeEventListener("keydown", opToets);
+    };
+  }, [menuOpen]);
 
   const handleAnchor = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
     if (href.startsWith("#")) {
       e.preventDefault();
+      setMenuOpen(false);
       document
         .getElementById(href.slice(1))
         ?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -52,17 +71,17 @@ export default function WonenBijHeader({
   const metTerug = ctaArrow && !metNav;
 
   return (
-    <header className="absolute top-0 left-0 right-0 z-20 flex items-start justify-between px-[2.431vw] max-md:px-5 max-md:pt-5 max-md:items-center">
+    <header className="absolute top-0 left-0 right-0 z-20 flex items-start justify-between px-[2.431vw] max-lg:px-5 max-lg:pt-5 max-lg:items-center max-lg:gap-3">
       <a
         href="/wonenbij"
         onClick={(e) => navigate(e, "/wonenbij")}
-        className={`${metNav ? "mt-[2.431vw]" : metTerug ? "mt-[2.847vw]" : "mt-[4.097vw]"} font-body font-medium text-[2.5vw] leading-[2.9vw] tracking-[-0.05vw] no-underline ${textColor} max-md:mt-0 max-md:text-[22px] max-md:leading-none`}
+        className={`${metNav ? "mt-[2.431vw]" : metTerug ? "mt-[2.847vw]" : "mt-[4.097vw]"} font-body font-medium text-[2.5vw] leading-[2.9vw] tracking-[-0.05vw] whitespace-nowrap no-underline ${textColor} max-lg:mt-0 max-lg:text-[15px] max-lg:leading-none`}
       >
         Wonen bij Weverskade
       </a>
 
       <div
-        className={`${metNav ? "mt-[2.778vw]" : metTerug ? "mt-[2.847vw]" : "mt-[5.069vw]"} flex items-center gap-[3.472vw] max-md:mt-0`}
+        className={`${metNav ? "mt-[2.778vw]" : metTerug ? "mt-[2.847vw]" : "mt-[5.069vw]"} flex items-center gap-[3.472vw] max-lg:mt-0 max-lg:gap-2`}
       >
         {metNav ? (
           <nav className="flex items-center gap-[3.472vw] max-lg:hidden">
@@ -87,23 +106,98 @@ export default function WonenBijHeader({
               metTerug
                 ? "h-[3.194vw] gap-[1.319vw] pl-[1.111vw] pr-[1.736vw]"
                 : `h-[2.847vw] gap-[0.694vw] ${metNav ? "pl-[2.014vw] pr-[1.806vw]" : "px-[1.597vw]"}`
-            } max-md:h-auto max-md:px-4 max-md:py-2`}
+            } max-lg:h-11 max-lg:px-3 max-lg:py-0`}
           >
             {ctaArrow ? (
-              <PijlIcon className="w-[1.528vw] h-auto rotate-180 max-md:w-[16px]" />
+              <PijlIcon className="w-[1.528vw] h-auto rotate-180 max-lg:w-[16px]" />
             ) : null}
             <span
-              className={
+              className={`whitespace-nowrap ${
                 metTerug
-                  ? "font-heading font-normal text-[1.181vw] leading-[1.458vw] tracking-[-0.024vw] max-md:text-[13px] max-md:leading-none"
-                  : "font-body font-medium text-[0.903vw] leading-[1.047vw] max-md:text-[13px] max-md:leading-none"
-              }
+                  ? "font-heading font-normal text-[1.181vw] leading-[1.458vw] tracking-[-0.024vw] max-lg:text-[13px] max-lg:leading-none"
+                  : "font-body font-medium text-[0.903vw] leading-[1.047vw] max-lg:text-[13px] max-lg:leading-none"
+              }`}
             >
-              {ctaLabel}
+              {metTerug ? (
+                <>
+                  <span className="max-lg:hidden">{ctaLabel}</span>
+                  <span className="hidden max-lg:inline">Terug</span>
+                </>
+              ) : (
+                ctaLabel
+              )}
             </span>
           </a>
         ) : null}
+
+        {/* Menu-knop voor de ankerlinks op tablet/mobiel */}
+        {metNav ? (
+          <button
+            onClick={() => setMenuOpen(true)}
+            aria-label="Menu openen"
+            aria-expanded={menuOpen}
+            className={`hidden max-lg:flex items-center justify-center size-11 rounded-full border-none cursor-pointer ${
+              variant === "licht"
+                ? "bg-off-white/20 text-off-white"
+                : "bg-off-black/10 text-off-black"
+            }`}
+          >
+            <svg viewBox="0 0 18 12" className="w-[18px] h-auto" aria-hidden>
+              <path
+                d="M0 1h18M0 6h18M0 11h18"
+                stroke="currentColor"
+                strokeWidth="1.5"
+              />
+            </svg>
+          </button>
+        ) : null}
       </div>
+
+      {/* Fullscreen ankermenu (tablet/mobiel) */}
+      {metNav && menuOpen ? (
+        <div className="fixed inset-0 z-50 bg-off-black text-off-white overflow-y-auto lg:hidden">
+          <div className="flex items-center justify-between px-5 pt-5">
+            <span className="font-body font-medium text-[17px] leading-none">
+              Wonen bij Weverskade
+            </span>
+            <button
+              onClick={() => setMenuOpen(false)}
+              aria-label="Menu sluiten"
+              autoFocus
+              className="flex items-center justify-center size-11 rounded-full bg-off-white/15 text-off-white border-none cursor-pointer"
+            >
+              <svg viewBox="0 0 14 14" className="w-[14px] h-auto" aria-hidden>
+                <path
+                  d="M1 1l12 12M13 1L1 13"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                />
+              </svg>
+            </button>
+          </div>
+          <nav className="flex flex-col gap-1 px-5 pt-12 pb-8">
+            {anchors!.map((anchor) => (
+              <a
+                key={anchor.label}
+                href={anchor.href}
+                onClick={(e) => handleAnchor(e, anchor.href)}
+                className="py-3 font-heading font-normal text-[28px] leading-[34px] tracking-[-0.56px] text-off-white no-underline border-b border-off-white/15"
+              >
+                {anchor.label}
+              </a>
+            ))}
+            {ctaLabel && ctaHref ? (
+              <a
+                href={ctaHref}
+                onClick={(e) => handleAnchor(e, ctaHref)}
+                className="mt-8 inline-flex items-center justify-center self-start h-11 px-6 bg-green text-off-white rounded-full font-body font-medium text-[15px] no-underline"
+              >
+                {ctaLabel}
+              </a>
+            ) : null}
+          </nav>
+        </div>
+      ) : null}
     </header>
   );
 }

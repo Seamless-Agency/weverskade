@@ -65,7 +65,7 @@ function mapWoning(raw: any): Woning | null {
  * maar op de wonen-bij pagina staat de plaats al los in de hero. De
  * plaats-suffix gaat er dus af zolang die overeenkomt met het locatieveld.
  */
-function zonderPlaats(name: string, location?: string): string {
+export function zonderPlaats(name: string, location?: string): string {
   if (!location) return name;
   const match = name.match(/^(.*?)\s*[-–]\s*(.+)$/);
   if (match && match[2].trim().toLowerCase() === location.trim().toLowerCase()) {

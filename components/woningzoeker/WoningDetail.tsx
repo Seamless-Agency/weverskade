@@ -18,11 +18,11 @@ interface WoningDetailProps {
 
 function SpecRow({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex items-baseline justify-between gap-[1vw] border-b border-off-black/10 py-[0.55vw] max-md:gap-4 max-md:py-2">
-      <dt className="font-body text-[0.9vw] font-normal text-off-black/50 max-md:text-[13px]">
+    <div className="flex items-baseline justify-between gap-[1vw] border-b border-off-black/10 py-[0.55vw] max-lg:gap-4 max-lg:py-2">
+      <dt className="font-body text-[0.9vw] font-normal text-off-black/50 max-lg:text-[13px]">
         {label}
       </dt>
-      <dd className="text-right font-body text-[0.95vw] font-medium text-off-black max-md:text-[14px]">
+      <dd className="text-right font-body text-[0.95vw] font-medium text-off-black max-lg:text-[14px]">
         {value}
       </dd>
     </div>
@@ -92,7 +92,7 @@ export default function WoningDetail({
   };
 
   const inputClass =
-    "w-full border-b border-off-black/30 bg-transparent pb-[0.5vw] font-body text-[0.95vw] font-medium text-off-black outline-none placeholder:text-off-black/40 focus-visible:border-off-black max-md:pb-2 max-md:text-[15px]";
+    "w-full border-b border-off-black/30 bg-transparent pb-[0.5vw] font-body text-[0.95vw] font-medium text-off-black outline-none placeholder:text-off-black/40 focus-visible:border-off-black max-lg:pb-2 max-lg:text-[15px]";
 
   return (
     <div>
@@ -100,22 +100,22 @@ export default function WoningDetail({
       <button
         type="button"
         onClick={onClose}
-        className="link-underline mb-[1.2vw] font-body text-[0.9vw] font-medium text-off-black/60 max-md:mb-5 max-md:text-[13px]"
+        className="link-underline mb-[1.2vw] font-body text-[0.9vw] font-medium text-off-black/60 max-lg:mb-5 max-lg:text-[13px]"
       >
         ← Terug naar alle woningen
       </button>
 
-      <div className="flex items-start justify-between gap-[1vw] max-md:gap-4">
+      <div className="flex items-start justify-between gap-[1vw] max-lg:gap-4">
         <div>
-          <h3 className="font-body text-[2.2vw] font-medium leading-[1.1] text-off-black max-md:text-[28px]">
+          <h3 className="font-body text-[2.2vw] font-medium leading-[1.1] text-off-black max-lg:text-[28px]">
             {woning.nummer}
           </h3>
-          <p className="mt-[0.2vw] font-heading text-[1.1vw] font-normal leading-tight text-off-black/60 max-md:mt-1 max-md:text-[16px]">
+          <p className="mt-[0.2vw] font-heading text-[1.1vw] font-normal leading-tight text-off-black/60 max-lg:mt-1 max-lg:text-[16px]">
             {woning.woningType}
           </p>
         </div>
         <span
-          className="shrink-0 rounded-full px-[0.9vw] py-[0.4vw] font-heading text-[0.85vw] font-normal max-md:px-3.5 max-md:py-1.5 max-md:text-[12px]"
+          className="shrink-0 rounded-full px-[0.9vw] py-[0.4vw] font-heading text-[0.85vw] font-normal max-lg:px-3.5 max-lg:py-1.5 max-lg:text-[12px]"
           style={{ backgroundColor: meta.color, color: meta.textOnColor }}
         >
           {meta.label}
@@ -124,7 +124,7 @@ export default function WoningDetail({
 
       {/* ─── Plattegrond ─── */}
       {woning.plattegrond ? (
-        <div className="relative mt-[1.2vw] aspect-[4/3] w-full overflow-hidden border border-off-black/12 max-md:mt-5">
+        <div className="relative mt-[1.2vw] aspect-[4/3] w-full overflow-hidden border border-off-black/12 max-lg:mt-5">
           <Image
             src={woning.plattegrond}
             alt={`Plattegrond ${woning.nummer}`}
@@ -136,7 +136,7 @@ export default function WoningDetail({
       ) : null}
 
       {/* ─── Specificaties ─── */}
-      <dl className="mt-[1.2vw] max-md:mt-5">
+      <dl className="mt-[1.2vw] max-lg:mt-5">
         <SpecRow label="Oppervlakte" value={`${woning.oppervlakte} m²`} />
         <SpecRow label="Slaapkamers" value={String(woning.slaapkamers)} />
         <SpecRow
@@ -157,17 +157,17 @@ export default function WoningDetail({
 
       {/* ─── Interesseformulier ─── */}
       {isBeschikbaar ? (
-        <div className="mt-[1.8vw] max-md:mt-8">
-          <h4 className="font-body text-[1.3vw] font-medium leading-tight text-off-black max-md:text-[19px]">
+        <div className="mt-[1.8vw] max-lg:mt-8">
+          <h4 className="font-body text-[1.3vw] font-medium leading-tight text-off-black max-lg:text-[19px]">
             Interesse in deze woning?
           </h4>
-          <p className="mt-[0.35vw] font-body text-[0.9vw] font-normal leading-snug text-off-black/55 max-md:mt-1.5 max-md:text-[13px]">
+          <p className="mt-[0.35vw] font-body text-[0.9vw] font-normal leading-snug text-off-black/55 max-lg:mt-1.5 max-lg:text-[13px]">
             Laat je gegevens achter, dan nemen we contact met je op over{" "}
             {woning.nummer}.
           </p>
 
-          <form onSubmit={handleSubmit} className="mt-[1.2vw] max-md:mt-5">
-            <div className="grid grid-cols-2 gap-x-[1.2vw] gap-y-[1.2vw] max-md:grid-cols-1 max-md:gap-y-5">
+          <form onSubmit={handleSubmit} className="mt-[1.2vw] max-lg:mt-5">
+            <div className="grid grid-cols-2 gap-x-[1.2vw] gap-y-[1.2vw] max-lg:grid-cols-1 max-lg:gap-y-5">
               <input
                 type="text"
                 name="name"
@@ -200,7 +200,7 @@ export default function WoningDetail({
               onChange={(e) =>
                 setFormData((p) => ({ ...p, phone: e.target.value }))
               }
-              className={`${inputClass} mt-[1.2vw] max-md:mt-5`}
+              className={`${inputClass} mt-[1.2vw] max-lg:mt-5`}
             />
 
             <textarea
@@ -211,17 +211,17 @@ export default function WoningDetail({
               onChange={(e) =>
                 setFormData((p) => ({ ...p, message: e.target.value }))
               }
-              className={`${inputClass} mt-[1.2vw] resize-none max-md:mt-5`}
+              className={`${inputClass} mt-[1.2vw] resize-none max-lg:mt-5`}
             />
 
             <TurnstileWidget
               ref={turnstileRef}
               action="woningzoeker"
               onVerify={setTurnstileToken}
-              className="mt-[1.2vw] max-md:mt-5"
+              className="mt-[1.2vw] max-lg:mt-5"
             />
 
-            <label className="mt-[1.2vw] flex cursor-pointer items-start gap-[0.55vw] max-md:mt-5 max-md:gap-3">
+            <label className="mt-[1.2vw] flex cursor-pointer items-start gap-[0.55vw] max-lg:mt-5 max-lg:gap-3">
               <input
                 type="checkbox"
                 name="agreed"
@@ -230,9 +230,9 @@ export default function WoningDetail({
                 onChange={(e) =>
                   setFormData((p) => ({ ...p, agreed: e.target.checked }))
                 }
-                className="mt-[0.2vw] h-[0.75vw] w-[0.75vw] shrink-0 cursor-pointer appearance-none border border-off-black checked:border-green checked:bg-green max-md:mt-0.5 max-md:h-4 max-md:w-4"
+                className="mt-[0.2vw] h-[0.75vw] w-[0.75vw] shrink-0 cursor-pointer appearance-none border border-off-black checked:border-green checked:bg-green max-lg:mt-0.5 max-lg:h-4 max-lg:w-4"
               />
-              <span className="font-body text-[0.78vw] font-normal leading-snug text-off-black/70 max-md:text-[11px]">
+              <span className="font-body text-[0.78vw] font-normal leading-snug text-off-black/70 max-lg:text-[11px]">
                 Ik ga akkoord met het{" "}
                 <a href="/privacybeleid" className="underline decoration-solid">
                   privacybeleid
@@ -247,7 +247,7 @@ export default function WoningDetail({
                 submitState === "submitting" ||
                 (isTurnstileEnabled && !turnstileToken)
               }
-              className="mt-[1.2vw] cursor-pointer rounded-full border-none bg-green px-[1.5vw] py-[0.65vw] font-heading text-[1vw] font-normal tracking-[-0.02vw] text-off-white disabled:cursor-not-allowed disabled:opacity-40 max-md:mt-5 max-md:px-6 max-md:py-2.5 max-md:text-[15px]"
+              className="mt-[1.2vw] cursor-pointer rounded-full border-none bg-green px-[1.5vw] py-[0.65vw] font-heading text-[1vw] font-normal tracking-[-0.02vw] text-off-white disabled:cursor-not-allowed disabled:opacity-40 max-lg:mt-5 max-lg:px-6 max-lg:py-2.5 max-lg:text-[15px]"
             >
               {submitState === "submitting"
                 ? "Versturen..."
@@ -256,7 +256,7 @@ export default function WoningDetail({
 
             {submitMessage ? (
               <p
-                className={`mt-[0.8vw] font-body text-[0.85vw] leading-snug max-md:mt-3 max-md:text-[13px] ${
+                className={`mt-[0.8vw] font-body text-[0.85vw] leading-snug max-lg:mt-3 max-lg:text-[13px] ${
                   submitState === "error" ? "text-red-700" : "text-green"
                 }`}
                 role="status"
@@ -267,13 +267,13 @@ export default function WoningDetail({
           </form>
         </div>
       ) : (
-        <div className="mt-[1.8vw] border border-off-black/15 p-[1.2vw] max-md:mt-8 max-md:p-5">
-          <p className="font-body text-[0.95vw] font-medium leading-snug text-off-black max-md:text-[14px]">
+        <div className="mt-[1.8vw] border border-off-black/15 p-[1.2vw] max-lg:mt-8 max-lg:p-5">
+          <p className="font-body text-[0.95vw] font-medium leading-snug text-off-black max-lg:text-[14px]">
             {woning.status === "in-optie"
               ? "Deze woning is momenteel in optie."
               : "Deze woning is verhuurd."}
           </p>
-          <p className="mt-[0.35vw] font-body text-[0.9vw] font-normal leading-snug text-off-black/55 max-md:mt-1.5 max-md:text-[13px]">
+          <p className="mt-[0.35vw] font-body text-[0.9vw] font-normal leading-snug text-off-black/55 max-lg:mt-1.5 max-lg:text-[13px]">
             Bekijk de beschikbare woningen in het overzicht, of neem contact op
             voor de wachtlijst.
           </p>

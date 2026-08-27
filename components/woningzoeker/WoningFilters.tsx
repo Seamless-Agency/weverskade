@@ -50,9 +50,9 @@ export default function WoningFilters({
     filters.maxHuur >= huurBereik.max;
 
   return (
-    <div className="border-b border-off-black/12 pb-[1.4vw] max-md:pb-5">
+    <div className="border-b border-off-black/12 pb-[1.4vw] max-lg:pb-5">
       {/* ─── Status ─── */}
-      <div className="flex flex-wrap gap-[0.5vw] max-md:gap-2">
+      <div className="flex flex-wrap gap-[0.5vw] max-lg:gap-2">
         {STATUS_ORDER.map((status) => {
           const meta = STATUS_META[status];
           const actief = filters.statussen.includes(status);
@@ -62,7 +62,7 @@ export default function WoningFilters({
               type="button"
               onClick={() => toggleStatus(status)}
               aria-pressed={actief}
-              className={`flex items-center gap-[0.42vw] rounded-full border px-[0.9vw] py-[0.42vw] font-body text-[0.9vw] font-medium transition-colors max-md:gap-2 max-md:px-3.5 max-md:py-1.5 max-md:text-[13px] ${
+              className={`flex items-center gap-[0.42vw] rounded-full border px-[0.9vw] py-[0.42vw] font-body text-[0.9vw] font-medium transition-colors max-lg:gap-2 max-lg:px-4 max-lg:py-3 max-lg:text-[14px] ${
                 actief
                   ? "border-off-black bg-off-black text-off-white"
                   : "border-off-black/25 text-off-black/55 hover:border-off-black/50"
@@ -70,7 +70,7 @@ export default function WoningFilters({
             >
               <span
                 aria-hidden
-                className="h-[0.55vw] w-[0.55vw] shrink-0 rounded-full max-md:h-2 max-md:w-2"
+                className="h-[0.55vw] w-[0.55vw] shrink-0 rounded-full max-lg:h-2 max-lg:w-2"
                 style={{ backgroundColor: meta.color }}
               />
               {meta.label}
@@ -83,9 +83,9 @@ export default function WoningFilters({
       </div>
 
       {/* ─── Slaapkamers + huur ─── */}
-      <div className="mt-[1.1vw] flex items-end gap-[1.6vw] max-md:mt-5 max-md:flex-col max-md:items-stretch max-md:gap-4">
-        <label className="flex flex-1 flex-col gap-[0.35vw] max-md:gap-1.5">
-          <span className="font-body text-[0.8vw] font-medium uppercase tracking-[0.06em] text-off-black/45 max-md:text-[11px]">
+      <div className="mt-[1.1vw] flex items-end gap-[1.6vw] max-lg:mt-5 max-lg:flex-col max-lg:items-stretch max-lg:gap-4">
+        <label className="flex flex-1 flex-col gap-[0.35vw] max-lg:gap-1.5">
+          <span className="font-body text-[0.8vw] font-medium uppercase tracking-[0.06em] text-off-black/45 max-lg:text-[11px]">
             Slaapkamers
           </span>
           <select
@@ -93,7 +93,7 @@ export default function WoningFilters({
             onChange={(e) =>
               onChange({ ...filters, minSlaapkamers: Number(e.target.value) })
             }
-            className="w-full cursor-pointer appearance-none border-b border-off-black/30 bg-transparent pb-[0.35vw] font-body text-[1vw] font-medium text-off-black outline-none focus-visible:border-off-black max-md:pb-1.5 max-md:text-[15px]"
+            className="w-full cursor-pointer appearance-none border-b border-off-black/30 bg-transparent pb-[0.35vw] font-body text-[1vw] font-medium text-off-black outline-none focus-visible:border-off-black max-lg:pb-1.5 max-lg:text-[15px]"
           >
             <option value={0}>Alle</option>
             {slaapkamerOpties.map((n) => (
@@ -104,10 +104,10 @@ export default function WoningFilters({
           </select>
         </label>
 
-        <label className="flex flex-1 flex-col gap-[0.35vw] max-md:gap-1.5">
-          <span className="flex items-baseline justify-between font-body text-[0.8vw] font-medium uppercase tracking-[0.06em] text-off-black/45 max-md:text-[11px]">
+        <label className="flex flex-1 flex-col gap-[0.35vw] max-lg:gap-1.5">
+          <span className="flex items-baseline justify-between font-body text-[0.8vw] font-medium uppercase tracking-[0.06em] text-off-black/45 max-lg:text-[11px]">
             Max. huur
-            <span className="font-body text-[0.9vw] normal-case tracking-normal text-off-black max-md:text-[13px]">
+            <span className="font-body text-[0.9vw] normal-case tracking-normal text-off-black max-lg:text-[13px]">
               {filters.maxHuur >= huurBereik.max
                 ? "Geen maximum"
                 : `${formatHuur(filters.maxHuur)} p/m`}
@@ -128,8 +128,8 @@ export default function WoningFilters({
       </div>
 
       {/* ─── Resultaatregel ─── */}
-      <div className="mt-[1.1vw] flex items-baseline justify-between max-md:mt-5">
-        <p className="font-body text-[0.95vw] font-medium text-off-black max-md:text-[14px]">
+      <div className="mt-[1.1vw] flex items-baseline justify-between max-lg:mt-5">
+        <p className="font-body text-[0.95vw] font-medium text-off-black max-lg:text-[14px]">
           {resultaatAantal} van {totaalAantal} woningen
         </p>
         {!isDefault ? (
@@ -142,7 +142,7 @@ export default function WoningFilters({
                 maxHuur: huurBereik.max,
               })
             }
-            className="link-underline font-body text-[0.9vw] font-medium text-off-black/60 max-md:text-[13px]"
+            className="link-underline font-body text-[0.9vw] font-medium text-off-black/60 max-lg:text-[13px]"
           >
             Filters wissen
           </button>

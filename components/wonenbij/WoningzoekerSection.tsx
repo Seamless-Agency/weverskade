@@ -209,26 +209,26 @@ export default function WoningzoekerSection({
   return (
     // Figma: titel op x=31 (55 onder de fotosectie), resultaatregel op x=36,
     // sorteervelden rechts tot x=1399, lijst 35..666, render sluit op 666 aan.
-    <section id="aanbod" className="bg-white pt-[3.819vw] pb-[8.681vw] max-md:py-14" data-nav-theme="light">
+    <section id="aanbod" className="bg-white pt-[3.819vw] pb-[8.681vw] max-lg:py-14" data-nav-theme="light">
       <div>
-        <h2 className="pl-[2.153vw] font-heading font-normal text-[4.653vw] leading-[5.736vw] tracking-[-0.093vw] text-off-black max-md:pl-5 max-md:text-[36px] max-md:leading-none max-md:tracking-[-0.72px]">
+        <h2 className="pl-[2.153vw] font-heading font-normal text-[4.653vw] leading-[5.736vw] tracking-[-0.093vw] text-off-black max-lg:pl-5 max-lg:text-[36px] max-lg:leading-[1.1] max-lg:tracking-[-0.72px]">
           Woningzoeker
         </h2>
 
         {/* Resultaatregel + sorteervelden */}
-        <div className="mt-[2.014vw] flex items-center justify-between pl-[2.5vw] pr-[2.847vw] max-md:mt-8 max-md:flex-col max-md:items-start max-md:gap-4 max-md:px-5">
-          <p className="font-heading font-normal text-[1.667vw] leading-[2.056vw] text-off-black max-md:text-[18px] max-md:leading-none">
+        <div className="mt-[2.014vw] flex items-center justify-between pl-[2.5vw] pr-[2.847vw] max-lg:mt-8 max-lg:flex-col max-lg:items-start max-lg:gap-4 max-lg:px-5">
+          <p className="font-heading font-normal text-[1.667vw] leading-[2.056vw] text-off-black max-lg:text-[18px] max-lg:leading-[1.1]">
             {woningen.length ? gefilterd.length : woningTypes.length} woningen
             gevonden
           </p>
-          <div className="flex flex-wrap gap-[1.181vw] max-md:gap-2">
+          <div className="flex flex-wrap gap-[1.181vw] max-lg:grid max-lg:w-full max-lg:grid-cols-2 max-lg:gap-2">
             {SORT_LABELS.map(({ key, label, breedte }) => {
               const actief = sortKey === key;
               return (
                 <button
                   key={key}
                   onClick={() => toggleSort(key)}
-                  className={`flex items-center justify-between ${breedte} h-[1.875vw] pl-[0.694vw] pr-[1.528vw] font-body font-medium text-[1.111vw] tracking-[-0.022vw] cursor-pointer border-none transition-colors duration-200 max-md:w-auto max-md:h-auto max-md:gap-2 max-md:px-3 max-md:py-1.5 max-md:text-[13px] ${
+                  className={`flex items-center justify-between ${breedte} h-[1.875vw] pl-[0.694vw] pr-[1.528vw] font-body font-medium text-[1.111vw] tracking-[-0.022vw] cursor-pointer border-none transition-colors duration-200 max-lg:w-full max-lg:h-11 max-lg:gap-2 max-lg:px-3 max-lg:text-[14px] ${
                     actief
                       ? "bg-green text-off-white"
                       : "bg-off-white text-off-black"
@@ -237,7 +237,7 @@ export default function WoningzoekerSection({
                   {label}
                   <svg
                     viewBox="0 0 10 13"
-                    className={`w-[0.694vw] h-auto max-md:w-[8px] transition-transform duration-300 ${
+                    className={`w-[0.694vw] h-auto max-lg:w-[8px] transition-transform duration-300 ${
                       actief && !sortAsc ? "rotate-180" : ""
                     }`}
                     fill="none"
@@ -257,13 +257,13 @@ export default function WoningzoekerSection({
 
         {/* Lijst + render */}
         <div
-          className={`mt-[1.528vw] ml-[2.431vw] mr-[2.569vw] grid max-md:mt-6 max-md:mx-5 max-md:grid-cols-1 max-md:gap-y-8 ${
+          className={`mt-[1.528vw] ml-[2.431vw] mr-[2.569vw] grid max-lg:mt-6 max-lg:mx-5 max-lg:grid-cols-1 max-lg:gap-y-8 ${
             heeftRender ? "grid-cols-[43.819vw_1fr]" : "grid-cols-1"
           }`}
         >
           <div>
             {woningen.length ? (
-              <div className="mb-[1.4vw] max-md:mb-5">
+              <div className="mb-[1.4vw] max-lg:mb-5">
                 <WoningFilters
                   filters={filters}
                   onChange={setFilters}
@@ -282,11 +282,11 @@ export default function WoningzoekerSection({
                 onClick={(e) => navigate(e, `/wonenbij/${projectSlug}/${type.slug}`)}
                 onMouseEnter={() => setHoveredType(type.naam)}
                 onMouseLeave={() => setHoveredType(null)}
-                className={`grid grid-cols-[14.722vw_1fr] gap-x-[1.181vw] items-start border-t border-off-black/40 pt-[2.014vw] pb-[2.292vw] no-underline group transition-colors duration-200 hover:bg-off-white max-md:grid-cols-[100px_1fr] max-md:gap-x-4 max-md:py-4 ${
+                className={`grid grid-cols-[14.722vw_1fr] gap-x-[1.181vw] items-start border-t border-off-black/40 pt-[2.014vw] pb-[2.292vw] no-underline group transition-colors duration-200 hover:bg-off-white max-lg:grid-cols-[100px_1fr] max-lg:gap-x-4 max-lg:py-4 ${
                   i === zichtbareTypes.length - 1 ? "border-b" : ""
                 }`}
               >
-                <div className="relative w-full mt-[0.208vw] aspect-[212/138] overflow-hidden max-md:mt-0">
+                <div className="relative w-full mt-[0.208vw] aspect-[212/138] overflow-hidden max-lg:mt-0">
                   <Image
                     src={type.fotos[0] ?? "/images/wonenbij/aanbod-card.png"}
                     alt={type.naam}
@@ -296,35 +296,35 @@ export default function WoningzoekerSection({
                   />
                 </div>
                 <div className="relative">
-                  <p className="font-heading font-normal text-[1.667vw] leading-[2.056vw] text-off-black max-md:text-[17px] max-md:leading-[1.05]">
+                  <p className="font-heading font-normal text-[1.667vw] leading-[2.056vw] text-off-black max-lg:text-[17px] max-lg:leading-[1.05]">
                     {type.naam}
                   </p>
-                  <p className="font-body font-medium text-[0.833vw] leading-[1.389vw] text-off-black max-md:mt-1 max-md:text-[12px] max-md:leading-[17px]">
+                  <p className="font-body font-medium text-[0.833vw] leading-[1.389vw] text-off-black max-lg:mt-1 max-lg:text-[12px] max-lg:leading-[17px]">
                     {STATUS_TYPE_META[type.status]}
                   </p>
-                  <div className="mt-[2.222vw] max-md:mt-2">
+                  <div className="mt-[2.222vw] max-lg:mt-2">
                     {[
                       { icoon: "key-klein.svg", w: "w-[0.833vw]", tekst: `${formatPrijs(type.prijsVan)} p/m` },
                       { icoon: "bed-klein.svg", w: "w-[0.972vw]", tekst: `${type.slaapkamers} slaapkamers` },
                       { icoon: "m2-klein.svg", w: "w-[0.764vw]", tekst: `${type.oppervlakte} m²` },
                     ].map(({ icoon, w, tekst }) => (
-                      <div key={icoon} className="flex items-center h-[1.389vw] max-md:h-[17px]">
-                        <div className="ml-[0.139vw] w-[1.111vw] flex justify-center shrink-0 max-md:ml-0 max-md:w-[14px]">
+                      <div key={icoon} className="flex items-center h-[1.389vw] max-lg:h-[17px]">
+                        <div className="ml-[0.139vw] w-[1.111vw] flex justify-center shrink-0 max-lg:ml-0 max-lg:w-[14px]">
                           <Image
                             src={`/images/wonenbij/icons/${icoon}`}
                             alt=""
                             width={16}
                             height={12}
-                            className={`${w} h-auto max-md:w-[11px]`}
+                            className={`${w} h-auto max-lg:w-[11px]`}
                           />
                         </div>
-                        <p className="ml-[1.111vw] font-body font-medium text-[0.833vw] leading-[1.389vw] text-off-black max-md:ml-2 max-md:text-[12px] max-md:leading-[17px]">
+                        <p className="ml-[1.111vw] font-body font-medium text-[0.833vw] leading-[1.389vw] text-off-black max-lg:ml-2 max-lg:text-[12px] max-lg:leading-[17px]">
                           {tekst}
                         </p>
                       </div>
                     ))}
                   </div>
-                  <span className="absolute right-[3.611vw] top-[7.708vw] inline-flex items-center justify-center w-[8.056vw] h-[1.875vw] bg-green text-off-white rounded-full font-heading font-normal text-[0.764vw] leading-[0.944vw] tracking-[-0.015vw] max-md:static max-md:mt-2 max-md:inline-block max-md:w-auto max-md:h-auto max-md:px-3 max-md:py-1 max-md:text-[11px] max-md:leading-normal">
+                  <span className="absolute right-[3.611vw] top-[7.708vw] inline-flex items-center justify-center w-[8.056vw] h-[1.875vw] bg-green text-off-white rounded-full font-heading font-normal text-[0.764vw] leading-[0.944vw] tracking-[-0.015vw] max-lg:static max-lg:mt-2 max-lg:inline-block max-lg:w-auto max-lg:h-auto max-lg:px-3 max-lg:py-1 max-lg:text-[11px] max-lg:leading-normal">
                     Over deze woning
                   </span>
                 </div>
@@ -333,7 +333,7 @@ export default function WoningzoekerSection({
           </div>
 
           {heeftRender && actiefAanzicht ? (
-            <div className="max-md:order-first">
+            <div className="max-lg:order-first">
               <RenderOverlay
                 key={actiefAanzicht.key}
                 render={actiefAanzicht.render}
@@ -350,7 +350,7 @@ export default function WoningzoekerSection({
                 onZoneOpen={openAanzicht}
               />
               {views.length > 1 ? (
-                <div className="mt-[0.972vw] flex gap-[0.556vw] max-md:mt-3 max-md:gap-2">
+                <div className="mt-[0.972vw] flex gap-[0.556vw] max-lg:mt-3 max-lg:gap-2">
                   {views.map((view, i) => (
                     <button
                       key={view.key}
@@ -359,7 +359,7 @@ export default function WoningzoekerSection({
                         setHoveredWoningId(null);
                       }}
                       aria-pressed={i === aanzichtIndex}
-                      className={`rounded-full px-[1.111vw] py-[0.417vw] font-body font-medium text-[1.042vw] tracking-[-0.021vw] cursor-pointer border-none transition-colors duration-200 max-md:px-3 max-md:py-1.5 max-md:text-[13px] ${
+                      className={`rounded-full px-[1.111vw] py-[0.417vw] font-body font-medium text-[1.042vw] tracking-[-0.021vw] cursor-pointer border-none transition-colors duration-200 max-lg:px-4 max-lg:py-3 max-lg:text-[14px] ${
                         i === aanzichtIndex
                           ? "bg-off-black text-off-white"
                           : "bg-off-white text-off-black hover:bg-off-black/10"
@@ -370,7 +370,7 @@ export default function WoningzoekerSection({
                   ))}
                 </div>
               ) : null}
-              <p className="mt-[0.972vw] font-body font-medium text-[0.833vw] leading-[1.25] text-off-black/60 max-md:mt-2 max-md:text-[12px]">
+              <p className="mt-[0.972vw] font-body font-medium text-[0.833vw] leading-[1.25] text-off-black/60 max-lg:mt-2 max-lg:text-[12px]">
                 {actiefAanzicht.zones?.length && actiefAanzicht.woningen.length
                   ? "Klik op een ingetekende woning voor meer informatie, of op het gebouw voor de gevelweergave."
                   : actiefAanzicht.zones?.length

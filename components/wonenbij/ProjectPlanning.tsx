@@ -17,22 +17,22 @@ export default function ProjectPlanning({ fases }: { fases: PlanningFase[] }) {
   return (
     <section
       id="planning"
-      className="bg-blue pt-[7.431vw] pb-[8.889vw] max-md:py-14"
+      className="bg-blue pt-[7.431vw] pb-[8.889vw] max-lg:py-14"
       data-nav-theme="blue"
     >
-      <div className="pl-[18.542vw] pr-[2.431vw] max-md:px-5">
-        <h2 className="font-heading font-normal text-[4.653vw] leading-[5.736vw] tracking-[-0.093vw] text-off-white max-md:text-[36px] max-md:leading-none max-md:tracking-[-0.72px]">
+      <div className="pl-[18.542vw] pr-[2.431vw] max-lg:px-5">
+        <h2 className="font-heading font-normal text-[4.653vw] leading-[5.736vw] tracking-[-0.093vw] text-off-white max-lg:text-[36px] max-lg:leading-[1.1] max-lg:tracking-[-0.72px]">
           Projectplanning
         </h2>
       </div>
 
-      <div className="mt-[5.139vw] pl-[18.958vw] grid grid-cols-[16.111vw_16.111vw_16.111vw_16.111vw] max-md:mt-10 max-md:px-5 max-md:grid-cols-1 max-md:gap-10">
+      <div className="mt-[5.139vw] pl-[18.958vw] grid grid-cols-[16.111vw_16.111vw_16.111vw_16.111vw] max-lg:mt-10 max-lg:px-5 max-lg:grid-cols-1 max-lg:gap-10">
         {fases.map((fase, i) => (
           <div
             key={fase.titel + fase.periode}
-            className={`relative max-md:pl-0 ${
+            className={`relative max-lg:pl-0 ${
               i > 0
-                ? "max-md:border-t max-md:border-off-white/40 max-md:pt-8"
+                ? "max-lg:border-t max-lg:border-off-white/40 max-lg:pt-8"
                 : ""
             }`}
           >
@@ -42,11 +42,11 @@ export default function ProjectPlanning({ fases }: { fases: PlanningFase[] }) {
             {i > 0 ? (
               <span
                 aria-hidden
-                className="absolute left-[-1.875vw] top-[-0.347vw] bottom-[4.306vw] w-px bg-white max-md:hidden"
+                className="absolute left-[-1.875vw] top-[-0.347vw] bottom-[4.306vw] w-px bg-white max-lg:hidden"
               />
             ) : null}
-            <div className="flex items-start gap-[1.181vw] max-md:gap-3">
-              <span className="relative shrink-0 mt-[0.139vw] size-[1.806vw] max-md:size-[24px]">
+            <div className="flex items-start gap-[1.181vw] max-lg:gap-3">
+              <span className="relative shrink-0 mt-[0.139vw] size-[1.806vw] max-lg:size-[24px]">
                 {actieveIndex >= 0 && i < actieveIndex ? (
                   // Afgeronde fase: wit rondje met vinkje in de bandkleur
                   <svg viewBox="0 0 26 26" className="size-full" aria-hidden>
@@ -77,25 +77,25 @@ export default function ProjectPlanning({ fases }: { fases: PlanningFase[] }) {
                 ) : null}
               </span>
               <div>
-                <p className="font-body font-normal text-[0.833vw] leading-[1.458vw] text-off-white max-md:text-[12px] max-md:leading-[18px]">
+                <p className="font-body font-normal text-[0.833vw] leading-[1.458vw] text-off-white max-lg:text-[12px] max-lg:leading-[18px]">
                   {fase.periode}
                 </p>
-                <p className="font-heading font-normal text-[1.042vw] leading-[1.458vw] text-off-white max-md:text-[16px] max-md:leading-[22px]">
+                <p className="font-heading font-normal text-[1.042vw] leading-[1.458vw] text-off-white max-lg:text-[16px] max-lg:leading-[22px]">
                   {fase.titel}
                 </p>
               </div>
             </div>
 
-            <div className="mt-[1.667vw] ml-[0.278vw] mr-[2.708vw] font-body font-medium text-[0.833vw] leading-[1.181vw] tracking-[-0.017vw] text-off-white max-md:mt-4 max-md:mx-0 max-md:text-[13px] max-md:leading-[19px]">
+            <div className="mt-[1.667vw] ml-[0.278vw] mr-[2.708vw] font-body font-medium text-[0.833vw] leading-[1.181vw] tracking-[-0.017vw] text-off-white max-lg:mt-4 max-lg:mx-0 max-lg:text-[13px] max-lg:leading-[19px]">
               <p>{fase.omschrijving}</p>
               {fase.verwachtingen.length ? (
                 <>
-                  <p className="mt-[1.389vw] font-semibold leading-[1.389vw] max-md:mt-4 max-md:leading-[20px]">
+                  <p className="mt-[1.389vw] font-semibold leading-[1.389vw] max-lg:mt-4 max-lg:leading-[20px]">
                     {fase.verwachtingenTitel ?? "Dit mag je verwachten"}
                   </p>
-                  <ul className="list-disc ml-[1.25vw] max-md:ml-5">
+                  <ul className="list-disc ml-[1.25vw] max-lg:ml-5">
                     {fase.verwachtingen.map((punt) => (
-                      <li key={punt} className="leading-[1.389vw] max-md:leading-[20px]">
+                      <li key={punt} className="leading-[1.389vw] max-lg:leading-[20px]">
                         {punt}
                       </li>
                     ))}

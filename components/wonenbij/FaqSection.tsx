@@ -16,17 +16,17 @@ export default function FaqSection({ items }: { items: FaqItem[] }) {
   if (!items.length) return null;
 
   return (
-    <section id="faq" className="bg-off-white pt-[13.264vw] pb-[12.153vw] max-md:py-14" data-nav-theme="light">
-      <div className="relative px-[2.361vw] max-md:px-5">
-        <p className="absolute left-[2.361vw] top-[1.25vw] font-body font-medium text-[1.389vw] leading-[1.611vw] text-off-black max-md:static max-md:text-[17px]">
+    <section id="faq" className="bg-off-white pt-[13.264vw] pb-[12.153vw] max-lg:py-14" data-nav-theme="light">
+      <div className="relative px-[2.361vw] max-lg:px-5">
+        <p className="absolute left-[2.361vw] top-[1.25vw] font-body font-medium text-[1.389vw] leading-[1.611vw] text-off-black max-lg:static max-lg:text-[17px] max-lg:leading-[22px]">
           FAQ
         </p>
-        <div className="pl-[15.694vw] max-md:pl-0 max-md:mt-3">
-          <h2 className="font-heading font-normal text-[5.556vw] leading-[6.847vw] tracking-[-0.111vw] text-off-black max-md:text-[34px] max-md:leading-none max-md:tracking-[-0.68px]">
+        <div className="pl-[15.694vw] max-lg:pl-0 max-lg:mt-3">
+          <h2 className="font-heading font-normal text-[5.556vw] leading-[6.847vw] tracking-[-0.111vw] text-off-black max-lg:text-[34px] max-lg:leading-[1.1] max-lg:tracking-[-0.68px]">
             Veelgestelde vragen
           </h2>
 
-          <div className="mt-[4.028vw] ml-[0.556vw] w-[62.917vw] max-md:ml-0 max-md:mt-8 max-md:w-full">
+          <div className="mt-[4.028vw] ml-[0.556vw] w-[62.917vw] max-lg:ml-0 max-lg:mt-8 max-lg:w-full">
             {items.map((item, i) => {
               const open = openIndex === i;
               return (
@@ -39,15 +39,15 @@ export default function FaqSection({ items }: { items: FaqItem[] }) {
                   <button
                     onClick={() => setOpenIndex(open ? null : i)}
                     aria-expanded={open}
-                    className={`w-full flex items-start justify-between gap-[2vw] pt-[1.528vw] cursor-pointer bg-transparent border-none p-0 text-left max-md:py-4 max-md:gap-4 ${
+                    className={`w-full flex items-start justify-between gap-[2vw] pt-[1.528vw] cursor-pointer bg-transparent border-none p-0 text-left max-lg:py-4 max-lg:gap-4 ${
                       open ? "pb-0" : "pb-[5.486vw]"
                     }`}
                   >
-                    <span className="font-body font-medium text-[2.292vw] leading-[2.66vw] text-off-black max-md:text-[19px] max-md:leading-[1.15]">
+                    <span className="font-body font-medium text-[2.292vw] leading-[2.66vw] text-off-black max-lg:text-[19px] max-lg:leading-[1.15]">
                       {item.vraag}
                     </span>
                     <ChevronIcon
-                      className={`shrink-0 mt-[0.81vw] mr-[0.972vw] w-[2.083vw] h-auto text-off-black transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] max-md:mt-1 max-md:mr-0 max-md:w-[20px] ${
+                      className={`shrink-0 mt-[0.81vw] mr-[0.972vw] w-[2.083vw] h-auto text-off-black transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] max-lg:mt-1 max-lg:mr-0 max-lg:w-[20px] ${
                         open ? "rotate-180" : ""
                       }`}
                     />
@@ -61,7 +61,7 @@ export default function FaqSection({ items }: { items: FaqItem[] }) {
                     }}
                   >
                     <div className="overflow-hidden">
-                      <p className="mt-[2.757vw] pb-[3.056vw] max-w-[59.375vw] font-body font-medium text-[1.319vw] leading-[2.153vw] tracking-[-0.026vw] text-off-black max-md:mt-0 max-md:pb-5 max-md:max-w-none max-md:text-[15px] max-md:leading-[23px]">
+                      <p className="mt-[2.757vw] pb-[3.056vw] max-w-[59.375vw] font-body font-medium text-[1.319vw] leading-[2.153vw] tracking-[-0.026vw] text-off-black max-lg:mt-0 max-lg:pb-5 max-lg:max-w-none max-lg:text-[15px] max-lg:leading-[23px]">
                         {item.antwoord}
                       </p>
                     </div>

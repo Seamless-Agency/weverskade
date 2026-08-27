@@ -93,21 +93,21 @@ export default function WoningZoeker({ project }: WoningZoekerProps) {
   return (
     <section className="bg-off-white">
       {/* ─── Kop ─── */}
-      <div className="px-[2.431vw] pt-[2.8vw] max-md:px-5 max-md:pt-8">
-        <div className="flex items-end justify-between gap-[2vw] max-md:flex-col max-md:items-start max-md:gap-4">
+      <div className="px-[2.431vw] pt-[2.8vw] max-lg:px-5 max-lg:pt-8">
+        <div className="flex items-end justify-between gap-[2vw] max-lg:flex-col max-lg:items-start max-lg:gap-4">
           <div>
             <span
-              className="inline-block rounded-full px-[1vw] py-[0.4vw] font-heading text-[0.9vw] font-normal text-off-white max-md:px-4 max-md:py-1.5 max-md:text-[13px]"
+              className="inline-block rounded-full px-[1vw] py-[0.4vw] font-heading text-[0.9vw] font-normal text-off-white max-lg:px-4 max-lg:py-1.5 max-lg:text-[13px]"
               style={{ backgroundColor: fase.color }}
             >
               {fase.label}
             </span>
-            <h2 className="mt-[0.8vw] font-body text-[3.2vw] font-medium leading-[1.05] tracking-[-0.06vw] text-off-black max-md:mt-4 max-md:text-[32px] max-md:tracking-[-0.5px]">
+            <h2 className="mt-[0.8vw] font-body text-[3.2vw] font-medium leading-[1.05] tracking-[-0.06vw] text-off-black max-lg:mt-4 max-lg:text-[32px] max-lg:tracking-[-0.5px]">
               Beschikbare woningen
             </h2>
           </div>
           {project.intro ? (
-            <p className="max-w-[28vw] font-body text-[1.05vw] font-medium leading-snug text-off-black/60 max-md:max-w-none max-md:text-[15px]">
+            <p className="max-w-[28vw] font-body text-[1.05vw] font-medium leading-snug text-off-black/60 max-lg:max-w-none max-lg:text-[15px]">
               {project.intro}
             </p>
           ) : null}
@@ -115,9 +115,9 @@ export default function WoningZoeker({ project }: WoningZoekerProps) {
       </div>
 
       {/* ─── Render + paneel ─── */}
-      <div className="mt-[1.8vw] grid grid-cols-[1.55fr_1fr] items-start gap-[1.6vw] px-[2.431vw] pb-[4vw] max-md:mt-6 max-md:grid-cols-1 max-md:gap-0 max-md:px-5 max-md:pb-12">
+      <div className="mt-[1.8vw] grid grid-cols-[1.55fr_1fr] items-start gap-[1.6vw] px-[2.431vw] pb-[4vw] max-lg:mt-6 max-lg:grid-cols-1 max-lg:gap-0 max-lg:px-5 max-lg:pb-12">
         {/* Render - blijft in beeld tijdens het scrollen door de lijst. */}
-        <div className="sticky top-[6vw] max-md:static">
+        <div className="sticky top-[6vw] max-lg:static">
           <RenderOverlay
             render={project.render}
             renderAlt={project.renderAlt}
@@ -132,15 +132,15 @@ export default function WoningZoeker({ project }: WoningZoekerProps) {
           />
 
           {/* Legenda */}
-          <div className="mt-[0.9vw] flex flex-wrap items-center gap-x-[1.4vw] gap-y-[0.4vw] max-md:mt-4 max-md:gap-x-5 max-md:gap-y-2">
+          <div className="mt-[0.9vw] flex flex-wrap items-center gap-x-[1.4vw] gap-y-[0.4vw] max-lg:mt-4 max-lg:gap-x-5 max-lg:gap-y-2">
             {STATUS_ORDER.map((status) => (
-              <span key={status} className="flex items-center gap-[0.45vw] max-md:gap-2">
+              <span key={status} className="flex items-center gap-[0.45vw] max-lg:gap-2">
                 <span
                   aria-hidden
-                  className="h-[0.6vw] w-[0.6vw] rounded-full max-md:h-2.5 max-md:w-2.5"
+                  className="h-[0.6vw] w-[0.6vw] rounded-full max-lg:h-2.5 max-lg:w-2.5"
                   style={{ backgroundColor: STATUS_META[status].color }}
                 />
-                <span className="font-body text-[0.85vw] font-normal text-off-black/55 max-md:text-[12px]">
+                <span className="font-body text-[0.85vw] font-normal text-off-black/55 max-lg:text-[12px]">
                   {STATUS_META[status].label} ({aantallen[status]})
                 </span>
               </span>
@@ -149,7 +149,7 @@ export default function WoningZoeker({ project }: WoningZoekerProps) {
         </div>
 
         {/* Paneel - filters + lijst, of het detail van één woning. */}
-        <div ref={panelRef} className="max-md:mt-8 max-md:scroll-mt-4">
+        <div ref={panelRef} className="max-lg:mt-8 max-lg:scroll-mt-4">
           {selected ? (
             <WoningDetail
               key={selected.id}
@@ -169,7 +169,7 @@ export default function WoningZoeker({ project }: WoningZoekerProps) {
                 resultaatAantal={zichtbaar.length}
                 totaalAantal={woningen.length}
               />
-              <div className="mt-[0.5vw] max-md:mt-2">
+              <div className="mt-[0.5vw] max-lg:mt-2">
                 <WoningList
                   woningen={gesorteerd}
                   selectedId={selectedId}

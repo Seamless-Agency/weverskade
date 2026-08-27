@@ -62,7 +62,7 @@ export default function WonenBijLanding({ data }: { data?: WonenBijLandingData }
   return (
     <section className="relative bg-white min-h-screen">
       {/* Hero - full-bleed beeld met donkere overlay */}
-      <div className="relative h-[62.014vw] max-md:h-[120vw]" data-nav-theme="dark">
+      <div className="relative h-[62.014vw] max-lg:h-[120vw]" data-nav-theme="dark">
         <Image
           src={heroImage}
           alt="Wonen bij Weverskade"
@@ -81,13 +81,13 @@ export default function WonenBijLanding({ data }: { data?: WonenBijLandingData }
 
       {/* Statement — de knop staat inline achter de laatste regel; vaste paddings
           (geen hoogte) zodat langere CMS-tekst de sectie laat meegroeien */}
-      <div className="pt-[6.181vw] pb-[16.667vw] px-[2.569vw] max-md:pt-12 max-md:px-5 max-md:pb-12">
-        <p className="font-body font-medium text-[4.028vw] leading-[4.097vw] text-off-black indent-[10.278vw] max-w-[83.264vw] max-md:text-[28px] max-md:leading-[30px] max-md:max-w-none">
+      <div className="pt-[6.181vw] pb-[16.667vw] px-[2.569vw] max-lg:pt-12 max-lg:px-5 max-lg:pb-12">
+        <p className="font-body font-medium text-[4.028vw] leading-[4.097vw] text-off-black indent-[10.278vw] max-w-[83.264vw] max-lg:indent-10 max-lg:text-[28px] max-lg:leading-[33px] max-lg:max-w-none">
           {introStatement}
           <a
             href="#aanbod"
             onClick={scrollNaarAanbod}
-            className="relative -top-[0.104vw] inline-flex items-center justify-center align-middle indent-0 leading-none whitespace-nowrap ml-[2.465vw] w-[12.083vw] h-[2.847vw] bg-green text-off-white no-underline rounded-full font-heading font-normal text-[1.181vw] tracking-[-0.024vw] max-md:top-0 max-md:ml-3 max-md:w-auto max-md:h-auto max-md:px-6 max-md:py-2.5 max-md:text-[15px]"
+            className="relative -top-[0.104vw] inline-flex items-center justify-center align-middle indent-0 leading-none whitespace-nowrap ml-[2.465vw] w-[12.083vw] h-[2.847vw] bg-green text-off-white no-underline rounded-full font-heading font-normal text-[1.181vw] tracking-[-0.024vw] max-lg:top-0 max-lg:ml-3 max-lg:w-auto max-lg:h-auto max-lg:px-6 max-lg:py-2.5 max-lg:text-[15px]"
           >
             {d.introKnop}
           </a>
@@ -98,14 +98,14 @@ export default function WonenBijLanding({ data }: { data?: WonenBijLandingData }
           vaste hoogte: de Figma-witruimtes (252 boven, 285 tussen de blokken,
           248 onder) blijven exact, maar langere CMS-tekst laat de band groeien
           in plaats van over de foto's heen te lopen */}
-      <div className="bg-off-white pt-[17.5vw] pb-[17.222vw] max-md:py-14 max-md:px-5">
-        <div className="px-[2.778vw] max-md:px-0">
+      <div className="bg-off-white pt-[17.5vw] pb-[17.222vw] max-lg:py-14 max-lg:px-5">
+        <div className="px-[2.778vw] max-lg:px-0">
           {/* Blok 1: titel + foto rechts; tekst links onder-verankerd 22 boven de foto-onderkant */}
-          <div className="relative min-h-[43.889vw] max-md:min-h-0">
-            <h2 className="font-heading font-normal text-[4.931vw] leading-[5.625vw] tracking-[-0.099vw] text-off-black whitespace-pre-line max-md:text-[36px] max-md:leading-[40px] max-md:tracking-[-0.72px]">
+          <div className="relative min-h-[43.889vw] max-lg:min-h-0">
+            <h2 className="font-heading font-normal text-[4.931vw] leading-[5.625vw] tracking-[-0.099vw] text-off-black whitespace-pre-line max-lg:text-[36px] max-lg:leading-[40px] max-lg:tracking-[-0.72px]">
               {d.overTitel}
             </h2>
-            <div className="absolute top-0 right-[-0.347vw] w-[54.514vw] h-[43.889vw] overflow-hidden max-md:static max-md:w-full max-md:h-auto max-md:aspect-[785/632] max-md:mt-8">
+            <div className="absolute top-0 right-[-0.347vw] w-[54.514vw] h-[43.889vw] overflow-hidden max-lg:relative max-lg:inset-auto max-lg:w-full max-lg:h-auto max-lg:aspect-[785/632] max-lg:mt-8">
               <Image
                 src={d.overFoto}
                 alt="Interieur van een Weverskade woning"
@@ -114,14 +114,14 @@ export default function WonenBijLanding({ data }: { data?: WonenBijLandingData }
                 className="object-cover"
               />
             </div>
-            <p className="absolute left-0 bottom-[1.528vw] w-[29.792vw] font-body font-medium text-[1.597vw] leading-[2.153vw] tracking-[-0.032vw] text-off-black max-md:static max-md:w-full max-md:mt-8 max-md:text-[17px] max-md:leading-[24px]">
+            <p className="absolute left-0 bottom-[1.528vw] w-[29.792vw] font-body font-medium text-[1.597vw] leading-[2.153vw] tracking-[-0.032vw] text-off-black max-lg:static max-lg:w-full max-lg:mt-8 max-lg:text-[17px] max-lg:leading-[24px]">
               {overTekst}
             </p>
           </div>
 
           {/* Blok 2: foto links; tekst + knop rechts, knop-onderkant = foto-onderkant */}
-          <div className="relative mt-[19.792vw] max-md:mt-8">
-            <div className="relative ml-[0.069vw] w-[54.931vw] aspect-[791/559] overflow-hidden max-md:ml-0 max-md:w-full">
+          <div className="relative mt-[19.792vw] max-lg:mt-8">
+            <div className="relative ml-[0.069vw] w-[54.931vw] aspect-[791/559] overflow-hidden max-lg:ml-0 max-lg:w-full">
               <Image
                 src={d.overFoto2}
                 alt="Woonkamer van een Weverskade woning"
@@ -132,14 +132,14 @@ export default function WonenBijLanding({ data }: { data?: WonenBijLandingData }
             </div>
             {/* Onder-verankerd: de knop-onderkant valt samen met de foto-onderkant
                 (Figma: beide op 3245), langere tekst groeit naar boven */}
-            <div className="absolute left-[64.444vw] bottom-0 w-[27.986vw] max-md:static max-md:w-full max-md:mt-8">
-          <p className="font-body font-medium text-[1.597vw] leading-[2.153vw] tracking-[-0.032vw] text-off-black max-md:text-[17px] max-md:leading-[24px]">
+            <div className="absolute left-[64.444vw] bottom-0 w-[27.986vw] max-lg:static max-lg:w-full max-lg:mt-8">
+          <p className="font-body font-medium text-[1.597vw] leading-[2.153vw] tracking-[-0.032vw] text-off-black max-lg:text-[17px] max-lg:leading-[24px]">
             {overTekstRechts}
           </p>
           <a
             href="#aanbod"
             onClick={scrollNaarAanbod}
-            className="inline-flex items-center justify-center mt-[3.75vw] -ml-[0.139vw] w-[12.083vw] h-[2.847vw] bg-green text-off-white no-underline rounded-full font-heading font-normal text-[1.181vw] tracking-[-0.024vw] max-md:mt-5 max-md:ml-0 max-md:w-auto max-md:h-auto max-md:px-6 max-md:py-2.5 max-md:text-[15px]"
+            className="inline-flex items-center justify-center mt-[3.75vw] -ml-[0.139vw] w-[12.083vw] h-[2.847vw] bg-green text-off-white no-underline rounded-full font-heading font-normal text-[1.181vw] tracking-[-0.024vw] max-lg:mt-5 max-lg:ml-0 max-lg:w-auto max-lg:h-auto max-lg:px-6 max-lg:py-2.5 max-lg:text-[15px]"
           >
               {d.overKnop}
             </a>
@@ -151,19 +151,19 @@ export default function WonenBijLanding({ data }: { data?: WonenBijLandingData }
       {/* Kwaliteit en gebruiksgemak */}
       {/* Figma-band is 521 hoog bij éénregelige placeholders; de maat die telt is
           de witruimte (99 boven, 131 onder) — de band groeit mee met de inhoud */}
-      <div className="bg-green pt-[6.875vw] pb-[9.097vw] max-md:py-14" data-nav-theme="green">
-        <div className="pl-[18.542vw] pr-[2.431vw] max-md:px-5">
-          <h2 className="font-heading font-normal text-[4.653vw] leading-[5.736vw] tracking-[-0.093vw] text-off-white max-md:text-[32px] max-md:leading-none max-md:tracking-[-0.64px]">
+      <div className="bg-green pt-[6.875vw] pb-[9.097vw] max-lg:py-14" data-nav-theme="green">
+        <div className="pl-[18.542vw] pr-[2.431vw] max-lg:px-5">
+          <h2 className="font-heading font-normal text-[4.653vw] leading-[5.736vw] tracking-[-0.093vw] text-off-white max-lg:text-[32px] max-lg:leading-[1.1] max-lg:tracking-[-0.64px]">
             {data?.kwaliteitTitel ?? d.kwaliteitTitel}
           </h2>
           {/* kolommen staan in Figma op 270/623/965 — ongelijke breedtes, geen uniform grid */}
-          <div className="mt-[4.264vw] ml-[0.208vw] grid grid-cols-[24.514vw_23.75vw_20.486vw] gap-y-[3.125vw] max-md:mt-8 max-md:ml-0 max-md:grid-cols-1 max-md:gap-y-6">
+          <div className="mt-[4.264vw] ml-[0.208vw] grid grid-cols-[24.514vw_23.75vw_20.486vw] gap-y-[3.125vw] max-lg:mt-8 max-lg:ml-0 max-lg:grid-cols-1 max-lg:gap-y-6">
             {kwaliteitItems.map((item) => (
-              <div key={item.label + item.waarde} className="max-w-[20.486vw] max-md:max-w-none">
-                <p className="font-body font-normal text-[1.042vw] leading-[1.806vw] text-off-white max-md:text-[13px] max-md:leading-[20px]">
+              <div key={item.label + item.waarde} className="max-w-[20.486vw] max-lg:max-w-none">
+                <p className="font-body font-normal text-[1.042vw] leading-[1.806vw] text-off-white max-lg:text-[13px] max-lg:leading-[20px]">
                   {item.label}
                 </p>
-                <p className="font-heading font-normal text-[1.458vw] leading-[1.806vw] text-off-white max-md:text-[18px] max-md:leading-[24px]">
+                <p className="font-heading font-normal text-[1.458vw] leading-[1.806vw] text-off-white max-lg:text-[18px] max-lg:leading-[24px]">
                   {item.waarde}
                 </p>
               </div>
@@ -174,12 +174,12 @@ export default function WonenBijLanding({ data }: { data?: WonenBijLandingData }
 
       {/* Beschikbare woningen - geaggregeerd aanbod van alle projecten */}
       {aanbod.length > 0 ? (
-        <div id="aanbod" className="pt-[6.875vw] px-[2.431vw] max-md:pt-12 max-md:px-5 scroll-mt-[2vw]">
+        <div id="aanbod" className="pt-[6.875vw] px-[2.431vw] max-lg:pt-12 max-lg:px-5 scroll-mt-[2vw]">
           {/* koppen staan in Figma op x=40, de kaarten op x=35 */}
-          <h2 className="ml-[0.347vw] font-heading font-normal text-[4.931vw] leading-[6.076vw] tracking-[-0.099vw] text-off-black max-md:ml-0 max-md:text-[36px] max-md:leading-none max-md:tracking-[-0.72px]">
+          <h2 className="ml-[0.347vw] font-heading font-normal text-[4.931vw] leading-[6.076vw] tracking-[-0.099vw] text-off-black max-lg:ml-0 max-lg:text-[36px] max-lg:leading-[1.1] max-lg:tracking-[-0.72px]">
             {d.aanbodTitel}
           </h2>
-          <div className="mt-[2.431vw] grid grid-cols-3 gap-x-[1.389vw] gap-y-[1.389vw] max-md:mt-6 max-md:grid-cols-1 max-md:gap-y-5">
+          <div className="mt-[2.431vw] grid grid-cols-3 gap-x-[1.389vw] gap-y-[1.389vw] max-lg:mt-6 max-lg:grid-cols-1 max-lg:gap-y-5">
             {aanbod.map((kaart) => {
               const href = `/wonenbij/${kaart.projectSlug}/${kaart.typeSlug}`;
               return (
@@ -187,7 +187,7 @@ export default function WonenBijLanding({ data }: { data?: WonenBijLandingData }
                   key={kaart.projectSlug + kaart.typeSlug}
                   href={href}
                   onClick={(e) => navigate(e, href)}
-                  className="block bg-off-white pt-[1.389vw] px-[1.25vw] pb-[1.944vw] no-underline group max-md:p-4"
+                  className="block bg-off-white pt-[1.389vw] px-[1.25vw] pb-[1.944vw] no-underline group max-lg:p-4"
                 >
                   <div className="relative w-full aspect-[407/275] overflow-hidden">
                     <Image
@@ -198,49 +198,49 @@ export default function WonenBijLanding({ data }: { data?: WonenBijLandingData }
                       className="object-cover transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-105"
                     />
                   </div>
-                  <div className="mt-[0.625vw] flex items-start justify-between gap-4 max-md:mt-3">
-                    <p className="font-heading font-normal text-[1.667vw] leading-[2.056vw] text-off-black max-md:text-[18px] max-md:leading-[1.05]">
+                  <div className="mt-[0.625vw] flex items-start justify-between gap-4 max-lg:mt-3">
+                    <p className="font-heading font-normal text-[1.667vw] leading-[2.056vw] text-off-black max-lg:text-[18px] max-lg:leading-[1.05]">
                       {kaart.typeNaam}
                     </p>
-                    <p className="shrink-0 mt-[0.417vw] font-body font-medium text-[0.833vw] leading-[1.389vw] text-off-black max-md:mt-0 max-md:text-[12px]">
+                    <p className="shrink-0 mt-[0.417vw] font-body font-medium text-[0.833vw] leading-[1.389vw] text-off-black max-lg:mt-0 max-lg:text-[12px] max-lg:leading-[17px]">
                       {kaart.status === "inschrijven" ? "Inschrijven" : "Te huur"}
                     </p>
                   </div>
-                  <p className="mt-[0.306vw] font-body font-medium text-[0.833vw] leading-[1.389vw] text-off-black max-md:text-[12px]">
+                  <p className="mt-[0.306vw] font-body font-medium text-[0.833vw] leading-[1.389vw] text-off-black max-lg:text-[12px] max-lg:leading-[17px]">
                     {kaart.plaats}
                   </p>
-                  <div className="mt-[1.319vw] flex items-end justify-between max-md:mt-3">
-                    <div className="flex items-start gap-[1.25vw] max-md:gap-2">
-                      <div className="flex flex-col items-center gap-[1.181vw] ml-[0.139vw] mt-[0.417vw] max-md:gap-[14px] max-md:ml-0">
+                  <div className="mt-[1.319vw] flex items-end justify-between max-lg:mt-3">
+                    <div className="flex items-start gap-[1.25vw] max-lg:gap-2">
+                      <div className="flex flex-col items-center gap-[1.181vw] ml-[0.139vw] mt-[0.417vw] max-lg:gap-[14px] max-lg:ml-0">
                         <Image
                           src="/images/wonenbij/icons/key-klein.svg"
                           alt=""
                           width={12}
                           height={12}
-                          className="w-[0.833vw] h-auto max-md:w-[11px]"
+                          className="w-[0.833vw] h-auto max-lg:w-[11px]"
                         />
                         <Image
                           src="/images/wonenbij/icons/bed-klein.svg"
                           alt=""
                           width={14}
                           height={9}
-                          className="w-[0.972vw] h-auto max-md:w-[13px]"
+                          className="w-[0.972vw] h-auto max-lg:w-[13px]"
                         />
                         <Image
                           src="/images/wonenbij/icons/m2-klein.svg"
                           alt=""
                           width={11}
                           height={11}
-                          className="w-[0.764vw] h-auto max-md:w-[10px]"
+                          className="w-[0.764vw] h-auto max-lg:w-[10px]"
                         />
                       </div>
-                      <div className="font-body font-medium text-[0.833vw] leading-[1.806vw] text-off-black max-md:text-[12px] max-md:leading-[19px]">
+                      <div className="font-body font-medium text-[0.833vw] leading-[1.806vw] text-off-black max-lg:text-[12px] max-lg:leading-[19px]">
                         <p>{formatPrijs(kaart.prijsVan)} p/m</p>
                         <p>{kaart.slaapkamers} slaapkamers</p>
                         <p>{kaart.oppervlakte} m²</p>
                       </div>
                     </div>
-                    <span className="inline-flex items-center justify-center w-[8.056vw] h-[1.875vw] mb-[0.417vw] bg-green text-off-white rounded-full font-heading font-normal text-[0.764vw] tracking-[-0.015vw] max-md:w-auto max-md:h-auto max-md:mb-0 max-md:px-3 max-md:py-1.5 max-md:text-[11px]">
+                    <span className="inline-flex items-center justify-center w-[8.056vw] h-[1.875vw] mb-[0.417vw] bg-green text-off-white rounded-full font-heading font-normal text-[0.764vw] tracking-[-0.015vw] max-lg:w-auto max-lg:h-auto max-lg:mb-0 max-lg:px-3 max-lg:py-1.5 max-lg:text-[11px]">
                       Naar deze woning
                     </span>
                   </div>
@@ -253,11 +253,11 @@ export default function WonenBijLanding({ data }: { data?: WonenBijLandingData }
 
       {/* Onze woonprojecten */}
       {projecten.length > 0 ? (
-        <div className="pt-[5.903vw] px-[2.431vw] max-md:pt-12 max-md:px-5">
-          <h2 className="ml-[0.347vw] font-heading font-normal text-[4.931vw] leading-[6.076vw] tracking-[-0.099vw] text-off-black max-md:ml-0 max-md:text-[36px] max-md:leading-none max-md:tracking-[-0.72px]">
+        <div className="pt-[5.903vw] px-[2.431vw] max-lg:pt-12 max-lg:px-5">
+          <h2 className="ml-[0.347vw] font-heading font-normal text-[4.931vw] leading-[6.076vw] tracking-[-0.099vw] text-off-black max-lg:ml-0 max-lg:text-[36px] max-lg:leading-[1.1] max-lg:tracking-[-0.72px]">
             {d.projectenTitel}
           </h2>
-          <div className="mt-[2.917vw] grid grid-cols-3 gap-x-[1.389vw] gap-y-[1.389vw] max-md:mt-6 max-md:grid-cols-1 max-md:gap-y-6">
+          <div className="mt-[2.917vw] grid grid-cols-3 gap-x-[1.389vw] gap-y-[1.389vw] max-lg:mt-6 max-lg:grid-cols-1 max-lg:gap-y-6">
             {projecten.map((project) => {
               const href = project.heeftWonenBijPagina
                 ? `/wonenbij/${project.slug}`
@@ -293,22 +293,22 @@ export default function WonenBijLanding({ data }: { data?: WonenBijLandingData }
                         hoveredCard === project.slug ? "opacity-100" : "opacity-0"
                       }`}
                     >
-                      <span className="mt-[1.424vw] font-body font-medium text-[1.944vw] leading-[2.257vw] text-off-white underline decoration-solid max-md:mt-0 max-md:text-[20px]">
+                      <span className="mt-[1.424vw] font-body font-medium text-[1.944vw] leading-[2.257vw] text-off-white underline decoration-solid max-lg:mt-0 max-lg:text-[20px] max-lg:leading-[24px]">
                         Naar project pagina
                       </span>
                     </div>
                   </div>
-                  <div className="mt-[0.486vw] flex items-start justify-between max-md:mt-2">
+                  <div className="mt-[0.486vw] flex items-start justify-between max-lg:mt-2">
                     <div>
-                      <p className="font-body font-medium text-[1.389vw] leading-[1.611vw] text-off-black max-md:text-[16px] max-md:leading-[1.2]">
+                      <p className="font-body font-medium text-[1.389vw] leading-[1.611vw] text-off-black max-lg:text-[16px] max-lg:leading-[1.2]">
                         {project.naam}
                       </p>
-                      <p className="font-body font-medium text-[1.389vw] leading-[1.611vw] text-off-black max-md:text-[16px] max-md:leading-[1.2]">
+                      <p className="font-body font-medium text-[1.389vw] leading-[1.611vw] text-off-black max-lg:text-[16px] max-lg:leading-[1.2]">
                         {project.plaats}
                       </p>
                     </div>
                     {project.statusLabel ? (
-                      <span className="inline-flex items-center justify-center shrink-0 mt-[0.556vw] mr-[0.139vw] w-[8.056vw] h-[1.875vw] bg-green text-off-white rounded-full font-heading font-normal text-[0.764vw] tracking-[-0.015vw] max-md:mt-0 max-md:mr-0 max-md:w-auto max-md:h-auto max-md:px-3 max-md:py-1.5 max-md:text-[11px]">
+                      <span className="inline-flex items-center justify-center shrink-0 mt-[0.556vw] mr-[0.139vw] w-[8.056vw] h-[1.875vw] bg-green text-off-white rounded-full font-heading font-normal text-[0.764vw] tracking-[-0.015vw] max-lg:mt-0 max-lg:mr-0 max-lg:w-auto max-lg:h-auto max-lg:px-3 max-lg:py-1.5 max-lg:text-[11px]">
                         {project.statusLabel}
                       </span>
                     ) : null}
@@ -345,7 +345,7 @@ function ContactSectie({ tekst }: { tekst: string }) {
 
   const veldClass = useMemo(
     () =>
-      "w-full bg-transparent border-b border-off-black pb-[1.458vw] font-body font-medium text-[1.319vw] leading-[1.528vw] text-off-black placeholder:text-off-black outline-none max-md:text-[15px] max-md:leading-normal max-md:pb-2",
+      "w-full bg-transparent border-b border-off-black pb-[1.458vw] font-body font-medium text-[1.319vw] leading-[1.528vw] text-off-black placeholder:text-off-black/55 outline-none max-lg:text-[16px] max-lg:leading-normal max-lg:pt-2 max-lg:pb-3",
     []
   );
 
@@ -387,22 +387,24 @@ function ContactSectie({ tekst }: { tekst: string }) {
   };
 
   return (
-    <div className="px-[2.431vw] mt-[14.583vw] pb-[15.833vw] max-md:px-5 max-md:mt-16 max-md:pb-16">
-      <div className="flex items-start max-md:flex-col max-md:gap-4">
-        <p className="mt-[0.694vw] font-heading font-normal text-[1.389vw] leading-[1.715vw] text-off-black shrink-0 w-[31.458vw] pl-[8.056vw] max-md:mt-0 max-md:w-auto max-md:text-[17px] max-md:pl-0">
+    <div className="px-[2.431vw] mt-[14.583vw] pb-[15.833vw] max-lg:px-5 max-lg:mt-16 max-lg:pb-16">
+      <div className="flex items-start max-lg:flex-col max-lg:gap-4">
+        <p className="mt-[0.694vw] font-heading font-normal text-[1.389vw] leading-[1.715vw] text-off-black shrink-0 w-[31.458vw] pl-[8.056vw] max-lg:mt-0 max-lg:w-auto max-lg:text-[17px] max-lg:leading-[22px] max-lg:pl-0">
           {landingDefaults.contactLabel}
         </p>
-        <div className="flex-1 max-md:w-full">
-          <h2 className="font-body font-medium text-[3.75vw] leading-[3.681vw] text-off-black max-w-[62.569vw] mb-[4.653vw] max-md:text-[28px] max-md:leading-[32px] max-md:max-w-none max-md:mb-6">
+        <div className="flex-1 max-lg:w-full">
+          <h2 className="font-body font-medium text-[3.75vw] leading-[3.681vw] text-off-black max-w-[62.569vw] mb-[4.653vw] max-lg:text-[28px] max-lg:leading-[32px] max-lg:max-w-none max-lg:mb-6">
             {tekst}
           </h2>
 
-          <form onSubmit={handleSubmit} className="ml-[0.208vw] max-w-[46.944vw] max-md:ml-0 max-md:max-w-none">
-            <div className="grid grid-cols-2 gap-x-[1.389vw] gap-y-[2.639vw] max-md:grid-cols-1 max-md:gap-y-6">
+          <form onSubmit={handleSubmit} className="ml-[0.208vw] max-w-[46.944vw] max-lg:ml-0 max-lg:max-w-none">
+            <div className="grid grid-cols-2 gap-x-[1.389vw] gap-y-[2.639vw] max-lg:grid-cols-1 max-lg:gap-y-6">
               <input
                 type="text"
                 name="name"
                 placeholder="Naam"
+                aria-label="Naam"
+                autoComplete="name"
                 required
                 value={form.name}
                 onChange={(e) => setForm((p) => ({ ...p, name: e.target.value }))}
@@ -412,6 +414,8 @@ function ContactSectie({ tekst }: { tekst: string }) {
                 type="email"
                 name="email"
                 placeholder="Emailadres"
+                aria-label="Emailadres"
+                autoComplete="email"
                 required
                 value={form.email}
                 onChange={(e) => setForm((p) => ({ ...p, email: e.target.value }))}
@@ -421,6 +425,8 @@ function ContactSectie({ tekst }: { tekst: string }) {
                 type="tel"
                 name="phone"
                 placeholder="Telefoonnummer"
+                aria-label="Telefoonnummer"
+                autoComplete="tel"
                 value={form.phone}
                 onChange={(e) => setForm((p) => ({ ...p, phone: e.target.value }))}
                 className={veldClass}
@@ -443,18 +449,18 @@ function ContactSectie({ tekst }: { tekst: string }) {
               value={form.message}
               onChange={(e) => setForm((p) => ({ ...p, message: e.target.value }))}
               rows={4}
-              className={`mt-[2.014vw] h-[8.889vw] resize-none max-md:mt-6 max-md:h-auto ${veldClass}`}
+              className={`mt-[2.014vw] h-[8.889vw] resize-none max-lg:mt-6 max-lg:h-auto ${veldClass}`}
             />
 
             <TurnstileWidget
               ref={turnstileRef}
               action="wonenbij-contact"
               onVerify={setTurnstileToken}
-              className="mt-[2.014vw] max-md:mt-6"
+              className="mt-[2.014vw] max-lg:mt-6"
             />
 
-            <div className="flex items-start justify-between mt-[2.153vw] max-md:flex-col max-md:gap-6 max-md:mt-6">
-              <label className="flex items-start gap-[1.042vw] cursor-pointer max-md:gap-3">
+            <div className="flex items-start justify-between mt-[2.153vw] max-lg:flex-col max-lg:gap-6 max-lg:mt-6">
+              <label className="flex items-start gap-[1.042vw] cursor-pointer max-lg:gap-3">
                 <input
                   type="checkbox"
                   name="agreed"
@@ -463,9 +469,9 @@ function ContactSectie({ tekst }: { tekst: string }) {
                   onChange={(e) =>
                     setForm((p) => ({ ...p, agreed: e.target.checked }))
                   }
-                  className="shrink-0 mt-[0.347vw] w-[0.764vw] h-[0.764vw] border border-off-black appearance-none checked:bg-green checked:border-green cursor-pointer max-md:w-[16px] max-md:h-[16px] max-md:mt-[2px]"
+                  className="shrink-0 mt-[0.347vw] w-[0.764vw] h-[0.764vw] border border-off-black appearance-none checked:bg-green checked:border-green cursor-pointer max-lg:w-[16px] max-lg:h-[16px] max-lg:mt-[2px]"
                 />
-                <span className="font-body font-normal text-[0.764vw] leading-[0.889vw] text-off-black max-w-[27.431vw] max-md:text-[11px] max-md:leading-normal max-md:max-w-none">
+                <span className="font-body font-normal text-[0.764vw] leading-[0.889vw] text-off-black max-w-[27.431vw] max-lg:text-[11px] max-lg:leading-normal max-lg:max-w-none">
                   Ik ga akkoord met de{" "}
                   <a href="/privacybeleid" className="underline decoration-solid">
                     algemene voorwaarden
@@ -480,16 +486,21 @@ function ContactSectie({ tekst }: { tekst: string }) {
                   submitState === "submitting" ||
                   (isTurnstileEnabled && !turnstileToken)
                 }
-                className="inline-flex items-center justify-center shrink-0 -mt-[0.694vw] w-[14.722vw] h-[3.194vw] bg-green text-off-white font-heading font-normal text-[1.181vw] tracking-[-0.024vw] rounded-full cursor-pointer border-none disabled:opacity-40 disabled:cursor-not-allowed max-md:mt-0 max-md:w-auto max-md:h-auto max-md:text-[15px] max-md:px-6 max-md:py-2.5"
+                className="inline-flex items-center justify-center shrink-0 -mt-[0.694vw] w-[14.722vw] h-[3.194vw] bg-green text-off-white font-heading font-normal text-[1.181vw] tracking-[-0.024vw] rounded-full cursor-pointer border-none disabled:opacity-40 disabled:cursor-not-allowed max-lg:mt-0 max-lg:w-auto max-lg:h-auto max-lg:text-[15px] max-lg:px-6 max-lg:py-3"
               >
                 {submitState === "submitting"
                   ? "Versturen..."
                   : "Formulier versturen"}
               </button>
             </div>
+            {isTurnstileEnabled && !turnstileToken ? (
+              <p className="mt-2 font-body font-medium text-[0.833vw] leading-[1.25] text-off-black/50 max-lg:text-[12px]">
+                Beveiligingscheck wordt geladen…
+              </p>
+            ) : null}
             {submitMessage ? (
               <p
-                className={`mt-4 font-body text-[0.972vw] leading-[1.25] max-md:text-[13px] ${
+                className={`mt-4 font-body text-[0.972vw] leading-[1.25] max-lg:text-[13px] ${
                   submitState === "error" ? "text-red-700" : "text-green"
                 }`}
               >
