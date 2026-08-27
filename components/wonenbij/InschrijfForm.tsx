@@ -25,6 +25,8 @@ const GEZIN_OPTIES = [
 ];
 
 interface InschrijfFormProps {
+  /** "project" (wit, ruime onderrand) of "woning" (off-white, terugknop volgt). */
+  variant?: "project" | "woning";
   /** Kleine kop linksboven de sectie. */
   label?: string;
   heading: string;
@@ -44,6 +46,7 @@ interface InschrijfFormProps {
  * plus persoonsgegevens (leeftijd, werkgever, inkomen, gezinssamenstelling).
  */
 export default function InschrijfForm({
+  variant = "project",
   label = "Vrijblijvend inschrijven",
   heading,
   intro,
@@ -133,11 +136,16 @@ export default function InschrijfForm({
     "w-full bg-transparent border-b border-off-black pb-[1.292vw] font-body font-medium text-[1.042vw] leading-[1.208vw] text-off-black placeholder:text-off-black outline-none max-md:text-[15px] max-md:pb-2";
 
   return (
-    // Figma: op wit, label op x=37, kop op x=507, intro op x=505, formulier op
-    // x=496 breed 676; 134 boven het label, 298 tussen knop en footer
+    // Figma projectpagina: op wit, 134 boven het label, 298 onder de knop.
+    // Figma woningpagina: op off-white, 212 boven de kop, 137 onder de knop
+    // (daar volgt nog een terugknop vóór de footer).
     <section
       id="inschrijven"
-      className="bg-white pt-[9.306vw] pb-[20.694vw] max-md:py-14"
+      className={`${
+        variant === "woning"
+          ? "bg-off-white pt-[14.722vw] pb-[9.514vw]"
+          : "bg-white pt-[9.306vw] pb-[20.694vw]"
+      } max-md:py-14`}
       data-nav-theme="light"
     >
       <div className="flex items-start pl-[2.569vw] pr-[2.431vw] max-md:flex-col max-md:px-5 max-md:gap-4">
@@ -159,7 +167,9 @@ export default function InschrijfForm({
                 name="voorkeur"
                 value={form.voorkeur}
                 onChange={(e) => set("voorkeur", e.target.value)}
-                className="w-full h-[1.208vw] appearance-none bg-transparent font-body font-medium text-[1.042vw] leading-[1.208vw] text-off-black outline-none cursor-pointer max-md:h-auto max-md:text-[14px]"
+                className={`w-full h-[1.208vw] appearance-none bg-transparent font-body ${
+                  voorkeurPreselect ? "font-semibold" : "font-medium"
+                } text-[1.042vw] leading-[1.208vw] text-off-black outline-none cursor-pointer max-md:h-auto max-md:text-[14px]`}
               >
                 <option value="">{voorkeurLabel}</option>
                 {voorkeurOpties.map((optie) => (
