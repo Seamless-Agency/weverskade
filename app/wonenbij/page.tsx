@@ -7,7 +7,7 @@ import {
   FOOTER_QUERY,
 } from "@/sanity/lib/queries";
 import { sanityImageUrl } from "@/sanity/lib/helpers";
-import { zonderPlaats } from "@/lib/wonenbijData";
+import { wonenbijNaam } from "@/lib/wonenbijData";
 import {
   demoAanbod,
   demoLandingProjecten,
@@ -37,7 +37,7 @@ export default async function WonenBijHome() {
     projecten = projectsData.map((p: any) => ({
       slug: p.slug ?? "",
       // CMS-namen zijn "Naam - Plaats"; de kaart toont de plaats al apart.
-      naam: zonderPlaats(p.name ?? "", p.location),
+      naam: wonenbijNaam(p.name ?? "", p.location),
       plaats: p.location ?? "",
       image: sanityImageUrl(p.portfolioImage, "/images/wonenbij/vogelvlucht.jpg"),
       // Transitie: showInWonen telt mee zolang wonenBijEnabled nog niet

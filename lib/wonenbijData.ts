@@ -108,12 +108,21 @@ export function zonderPlaats(name: string, location?: string): string {
   return name;
 }
 
+/**
+ * Volledige naamnormalisatie voor de wonen-bij weergave: plaats-suffix en
+ * lidwoord eraf ("De Taanschuurkade -  Maassluis" → "Taanschuurkade"), zoals
+ * het design de projectnaam toont.
+ */
+export function wonenbijNaam(name: string, location?: string): string {
+  return zonderPlaats(name, location).replace(/^(de|het|'t)\s+/i, "");
+}
+
 function fromSanity(raw: any): WonenBijProject | null {
   if (!raw?.name || !raw?.slug) return null;
 
   const demo = getWonenBijProject(raw.slug);
   const fallback = demo ?? demoWonenBijProjecten[0];
-  const naam = zonderPlaats(raw.name, raw.location);
+  const naam = wonenbijNaam(raw.name, raw.location);
 
   const woningTypes = (raw.woningTypes ?? [])
     .map(mapWoningType)
