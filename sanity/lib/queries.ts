@@ -100,7 +100,10 @@ export const WONINGZOEKER_SLUGS_QUERY = `*[_type == "project" && woningzoekerEna
 
 // Projectpagina op de wonen-bij omgeving: alle secties + woningtypes +
 // de render met overgetrokken woningen voor de woningzoeker.
-export const WONENBIJ_PROJECT_BY_SLUG_QUERY = `*[_type == "project" && slug.current == $slug && wonenBijEnabled == true][0]{
+// Transitie: zolang de redactie "Wonen bij projectpagina tonen"
+// (wonenBijEnabled) nog niet invult, telt "Tonen op wonen-bij pagina"
+// (showInWonen) ook — dat is de bestaande set projecten met woningaanbod.
+export const WONENBIJ_PROJECT_BY_SLUG_QUERY = `*[_type == "project" && slug.current == $slug && (wonenBijEnabled == true || showInWonen == true)][0]{
   name,
   "slug": slug.current,
   location,
@@ -153,7 +156,7 @@ export const WONENBIJ_PROJECT_BY_SLUG_QUERY = `*[_type == "project" && slug.curr
   }
 }`
 
-export const WONENBIJ_PROJECT_SLUGS_QUERY = `*[_type == "project" && wonenBijEnabled == true].slug.current`
+export const WONENBIJ_PROJECT_SLUGS_QUERY = `*[_type == "project" && (wonenBijEnabled == true || showInWonen == true)].slug.current`
 
 // One-pager: projectkaarten + het geaggregeerde aanbod (alle woningtypes
 // van alle wonen-bij projecten).
@@ -162,6 +165,7 @@ export const WONENBIJ_LANDING_PROJECTS_QUERY = `*[_type == "project" && showInWo
   "slug": slug.current,
   location,
   wonenBijEnabled,
+  showInWonen,
   portfolioImage,
   woningTypes[]{
     naam,

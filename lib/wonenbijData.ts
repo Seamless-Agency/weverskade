@@ -60,11 +60,26 @@ function mapWoning(raw: any): Woning | null {
   };
 }
 
+/**
+ * CMS-projectnamen volgen "Naam - Plaats" (bijv. "De Dirigent - Naaldwijk"),
+ * maar op de wonen-bij pagina staat de plaats al los in de hero. De
+ * plaats-suffix gaat er dus af zolang die overeenkomt met het locatieveld.
+ */
+function zonderPlaats(name: string, location?: string): string {
+  if (!location) return name;
+  const match = name.match(/^(.*?)\s*[-–]\s*(.+)$/);
+  if (match && match[2].trim().toLowerCase() === location.trim().toLowerCase()) {
+    return match[1].trim();
+  }
+  return name;
+}
+
 function fromSanity(raw: any): WonenBijProject | null {
   if (!raw?.name || !raw?.slug) return null;
 
   const demo = getWonenBijProject(raw.slug);
   const fallback = demo ?? demoWonenBijProjecten[0];
+  const naam = zonderPlaats(raw.name, raw.location);
 
   const woningTypes = (raw.woningTypes ?? [])
     .map(mapWoningType)
@@ -75,7 +90,7 @@ function fromSanity(raw: any): WonenBijProject | null {
 
   return {
     slug: raw.slug,
-    naam: raw.name,
+    naam,
     plaats: raw.location ?? fallback.plaats,
     heroImage: sanityImageUrl(raw.heroImage, fallback.heroImage),
     intro: raw.wonenBijIntro ?? fallback.intro,
@@ -85,7 +100,7 @@ function fromSanity(raw: any): WonenBijProject | null {
       : fallback.hurenFotos,
     begeleiding: demoBegeleiding,
     welkomLabel: "Welkom bij",
-    welkomTitel: raw.name,
+    welkomTitel: naam,
     welkomTekst: raw.welkomTekst ?? fallback.welkomTekst,
     welkomTekstRechts: raw.welkomTekstRechts ?? fallback.welkomTekstRechts,
     welkomFotos: raw.welkomFotos?.length
@@ -120,7 +135,7 @@ function fromSanity(raw: any): WonenBijProject | null {
     faq: raw.faq?.length ? raw.faq : fallback.faq,
     woningTypes: woningTypes.length ? woningTypes : fallback.woningTypes,
     render: raw.render ?? fallback.render,
-    renderAlt: `Render van ${raw.name}`,
+    renderAlt: `Render van ${naam}`,
     renderWidth: raw.renderDimensions?.width ?? fallback.renderWidth,
     renderHeight: raw.renderDimensions?.height ?? fallback.renderHeight,
     woningen: woningen.length ? woningen : fallback.woningen,
