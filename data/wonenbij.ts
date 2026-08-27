@@ -821,6 +821,8 @@ export interface LandingProjectKaart {
   image: string;
   /** true → link naar de wonen-bij projectpagina, anders naar /gebouw/[slug]. */
   heeftWonenBijPagina: boolean;
+  /** Pill rechtsonder de kaart, bijv. "Status: huur". Weglaten = geen pill. */
+  statusLabel?: string;
 }
 
 export interface KwaliteitItem {
@@ -835,6 +837,7 @@ export const landingDefaults = {
   introStatement:
     "Van stedelijke appartementen tot woonconcepten met extra service: kwaliteit, gebruiksgemak en een prettige leefomgeving staan centraal binnen de projecten van Weverskade.",
   introKnop: "Bekijk het aanbod",
+  overKnop: "Actuele aanbod",
   overTitel: "Wonen bij\nWeverskade",
   overFoto: "/images/wonenbij/picture-1.jpg",
   overTekst:
@@ -865,6 +868,7 @@ export const demoLandingProjecten: LandingProjectKaart[] = [
     plaats: "Maassluis",
     image: "/images/wonenbij/vogelvlucht.jpg",
     heeftWonenBijPagina: true,
+    statusLabel: "Status: huur",
   },
   {
     slug: "de-drie-lelies",
@@ -872,6 +876,7 @@ export const demoLandingProjecten: LandingProjectKaart[] = [
     plaats: "Maassluis",
     image: "/images/wonen-bij-card-3-57e8ff.png",
     heeftWonenBijPagina: false,
+    statusLabel: "Status: huur",
   },
   {
     slug: "weverstede",
@@ -879,6 +884,7 @@ export const demoLandingProjecten: LandingProjectKaart[] = [
     plaats: "Nieuwegein",
     image: "/images/wonen-bij-card-1-2ad8f2.png",
     heeftWonenBijPagina: false,
+    statusLabel: "Status: huur",
   },
 ];
 
