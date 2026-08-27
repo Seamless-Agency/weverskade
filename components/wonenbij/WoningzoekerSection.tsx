@@ -206,29 +206,70 @@ export default function WoningzoekerSection({
       (actiefAanzicht.woningen.length || actiefAanzicht.zones?.length)
   );
 
+  const filtersActief =
+    filters.statussen.length !== STATUS_ORDER.length ||
+    filters.minSlaapkamers !== 0 ||
+    filters.maxHuur < huurBereik.max;
+
   return (
     // Figma: titel op x=31 (55 onder de fotosectie), resultaatregel op x=36,
     // sorteervelden rechts tot x=1399, lijst 35..666, render sluit op 666 aan.
     <section id="aanbod" className="bg-white pt-[3.819vw] pb-[8.681vw] max-lg:py-14" data-nav-theme="light">
       <div>
-        <h2 className="pl-[2.153vw] font-heading font-normal text-[4.653vw] leading-[5.736vw] tracking-[-0.093vw] text-off-black max-lg:pl-5 max-lg:text-[36px] max-lg:leading-[1.1] max-lg:tracking-[-0.72px]">
-          Woningzoeker
-        </h2>
+        {/* Titelregel: de filters benutten de witruimte rechts van de kop,
+            onder-uitgelijnd op de titel */}
+        <div className="flex items-end justify-between pl-[2.153vw] pr-[2.569vw] max-lg:block max-lg:px-5">
+          <h2 className="font-heading font-normal text-[4.653vw] leading-[5.736vw] tracking-[-0.093vw] text-off-black max-lg:text-[36px] max-lg:leading-[1.1] max-lg:tracking-[-0.72px]">
+            Woningzoeker
+          </h2>
+          {woningen.length ? (
+            <div className="hidden pb-[0.417vw] lg:block">
+              <WoningFilters
+                inline
+                filters={filters}
+                onChange={setFilters}
+                aantallen={aantallen}
+                huurBereik={huurBereik}
+                slaapkamerOpties={slaapkamerOpties}
+                resultaatAantal={gefilterd.length}
+                totaalAantal={woningen.length}
+              />
+            </div>
+          ) : null}
+        </div>
 
-        {/* Resultaatregel + sorteervelden */}
+        {/* Resultaatregel + sorteervelden (Figma) — de teller toont het
+            filterresultaat, met de wissen-link ernaast zodra er iets actief is */}
         <div className="mt-[2.014vw] flex items-center justify-between pl-[2.5vw] pr-[2.847vw] max-lg:mt-8 max-lg:flex-col max-lg:items-start max-lg:gap-4 max-lg:px-5">
           <p className="font-heading font-normal text-[1.667vw] leading-[2.056vw] text-off-black max-lg:text-[18px] max-lg:leading-[1.1]">
-            {woningen.length ? gefilterd.length : woningTypes.length} woningen
-            gevonden
+            {woningen.length
+              ? gefilterd.length < woningen.length
+                ? `${gefilterd.length} van ${woningen.length} woningen gevonden`
+                : `${woningen.length} woningen gevonden`
+              : `${woningTypes.length} woningen gevonden`}
+            {woningen.length && filtersActief ? (
+              <button
+                onClick={() =>
+                  setFilters({
+                    statussen: [...STATUS_ORDER],
+                    minSlaapkamers: 0,
+                    maxHuur: huurBereik.max,
+                  })
+                }
+                className="ml-[1.111vw] align-baseline font-body font-medium text-[0.903vw] leading-none text-off-black/50 underline underline-offset-[0.278vw] cursor-pointer border-none bg-transparent p-0 transition-colors duration-200 hover:text-off-black max-lg:ml-3 max-lg:text-[13px]"
+              >
+                Filters wissen
+              </button>
+            ) : null}
           </p>
           <div className="flex flex-wrap gap-[1.181vw] max-lg:grid max-lg:w-full max-lg:grid-cols-2 max-lg:gap-2">
-            {SORT_LABELS.map(({ key, label, breedte }) => {
+            {SORT_LABELS.map(({ key, label, breedte }, i) => {
               const actief = sortKey === key;
               return (
                 <button
                   key={key}
                   onClick={() => toggleSort(key)}
-                  className={`flex items-center justify-between ${breedte} h-[1.875vw] pl-[0.694vw] pr-[1.528vw] font-body font-medium text-[1.111vw] tracking-[-0.022vw] cursor-pointer border-none transition-colors duration-200 max-lg:w-full max-lg:h-11 max-lg:gap-2 max-lg:px-3 max-lg:text-[14px] ${
+                  className={`flex items-center justify-between ${breedte} h-[1.875vw] pl-[0.694vw] pr-[1.528vw] ${i === 1 ? "ml-[-0.069vw] max-lg:ml-0" : ""} font-body font-medium text-[1.111vw] tracking-[-0.022vw] cursor-pointer border-none transition-colors duration-200 max-lg:w-full max-lg:h-11 max-lg:gap-2 max-lg:px-3 max-lg:text-[14px] ${
                     actief
                       ? "bg-green text-off-white"
                       : "bg-off-white text-off-black"
@@ -255,23 +296,6 @@ export default function WoningzoekerSection({
           </div>
         </div>
 
-        {/* Filters (desktop): één nette regel over de volle breedte, zodat het
-            renderpaneel eronder exact op de bovenste lijstlijn kan beginnen */}
-        {woningen.length ? (
-          <div className="mt-[1.667vw] ml-[2.431vw] mr-[2.569vw] hidden lg:block">
-            <WoningFilters
-              inline
-              filters={filters}
-              onChange={setFilters}
-              aantallen={aantallen}
-              huurBereik={huurBereik}
-              slaapkamerOpties={slaapkamerOpties}
-              resultaatAantal={gefilterd.length}
-              totaalAantal={woningen.length}
-            />
-          </div>
-        ) : null}
-
         {/* Lijst + render */}
         <div
           className={`mt-[1.528vw] ml-[2.431vw] mr-[2.569vw] grid max-lg:mt-6 max-lg:mx-5 max-lg:grid-cols-1 max-lg:gap-y-8 ${
@@ -282,6 +306,7 @@ export default function WoningzoekerSection({
             {woningen.length ? (
               <div className="mb-5 lg:hidden">
                 <WoningFilters
+                  kaal
                   filters={filters}
                   onChange={setFilters}
                   aantallen={aantallen}

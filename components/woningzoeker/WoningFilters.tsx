@@ -28,6 +28,12 @@ interface WoningFiltersProps {
    * de lijstlijn eronder sluit het blok af. Standaard: gestapeld.
    */
   inline?: boolean;
+  /**
+   * Gestapelde variant zonder sluitlijn en zonder resultaatregel — voor de
+   * wonen-bij woningzoeker op mobiel, waar de hoofdteller en de lijstlijn
+   * die rollen al vervullen.
+   */
+  kaal?: boolean;
 }
 
 export default function WoningFilters({
@@ -39,6 +45,7 @@ export default function WoningFilters({
   resultaatAantal,
   totaalAantal,
   inline = false,
+  kaal = false,
 }: WoningFiltersProps) {
   const toggleStatus = (status: WoningStatus) => {
     const actief = filters.statussen.includes(status);
@@ -90,7 +97,7 @@ export default function WoningFilters({
 
   const slaapkamersVeld = (
     <label className="flex h-full flex-col justify-between gap-[0.35vw] max-lg:h-auto max-lg:gap-1.5">
-      <span className="font-body text-[0.8vw] font-medium uppercase tracking-[0.06em] text-off-black/45 max-lg:text-[11px]">
+      <span className="font-body text-[0.8vw] font-medium uppercase leading-[1.111vw] tracking-[0.06em] text-off-black/45 max-lg:text-[11px] max-lg:leading-normal">
         Slaapkamers
       </span>
       <select
@@ -112,9 +119,9 @@ export default function WoningFilters({
 
   const huurVeld = (
     <label className="flex h-full flex-col justify-between gap-[0.35vw] max-lg:h-auto max-lg:gap-1.5">
-      <span className="flex items-baseline justify-between gap-4 font-body text-[0.8vw] font-medium uppercase tracking-[0.06em] text-off-black/45 max-lg:text-[11px]">
+      <span className="flex items-start justify-between gap-4 font-body text-[0.8vw] font-medium uppercase leading-[1.111vw] tracking-[0.06em] text-off-black/45 max-lg:text-[11px] max-lg:leading-normal">
         Max. huur
-        <span className="font-body text-[0.9vw] normal-case tracking-normal text-off-black max-lg:text-[13px]">
+        <span className="font-body text-[0.9vw] normal-case leading-[1.111vw] tracking-normal text-off-black/60 max-lg:text-[13px] max-lg:leading-normal">
           {filters.maxHuur >= huurBereik.max
             ? "Geen maximum"
             : `${formatHuur(filters.maxHuur)} p/m`}
@@ -129,7 +136,7 @@ export default function WoningFilters({
         onChange={(e) =>
           onChange({ ...filters, maxHuur: Number(e.target.value) })
         }
-        className="woningzoeker-range w-full cursor-pointer"
+        className="woningzoeker-range woningzoeker-range--lijn w-full cursor-pointer"
       />
     </label>
   );
@@ -157,35 +164,30 @@ export default function WoningFilters({
   );
 
   if (inline) {
-    // Eén rustige regel boven de lijst: drie gelijkwaardige kolommen met
-    // micro-label op één boven­lijn en de controls op één onderlijn; het
-    // resultaat staat stil rechtsonder op de paneelrand.
+    // Drie gelijkwaardige kolommen naast de sectietitel: micro-labels op één
+    // bovenlijn, alle onderlijnen (pill-bodem, veldlijn, slider-track) op één
+    // onderlijn via een vaste kolomhoogte. Het resultaat leeft in de
+    // hoofdteller van de sectie, niet hier.
     return (
-      <div className="flex items-end gap-x-[2.5vw]">
-        <div className="flex h-[3.819vw] flex-col justify-between">
-          <span className="font-body text-[0.8vw] font-medium uppercase tracking-[0.06em] text-off-black/45">
+      <div className="flex items-end gap-x-[2.222vw]">
+        <div className="flex h-[4.028vw] flex-col justify-between">
+          <span className="font-body text-[0.8vw] font-medium uppercase leading-[1.111vw] tracking-[0.06em] text-off-black/45">
             Status
           </span>
           {statusGroep}
         </div>
-        <div className="flex h-[3.819vw] w-[12.5vw] flex-col justify-between">
+        <div className="flex h-[4.028vw] w-[12.5vw] flex-col justify-between">
           {slaapkamersVeld}
         </div>
-        <div className="flex h-[3.819vw] w-[17.361vw] flex-col justify-between">
+        <div className="flex h-[4.028vw] w-[17.361vw] flex-col justify-between">
           {huurVeld}
-        </div>
-        <div className="ml-auto flex items-baseline gap-[1.111vw] pb-[0.14vw]">
-          {wissenKnop}
-          <p className="font-body text-[0.95vw] font-medium text-off-black/60">
-            {resultaatAantal} van {totaalAantal} woningen
-          </p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="border-b border-off-black/12 pb-[1.4vw] max-lg:pb-5">
+    <div className={kaal ? "" : "border-b border-off-black/12 pb-[1.4vw] max-lg:pb-5"}>
       {statusGroep}
 
       <div className="mt-[1.1vw] flex items-end gap-[1.6vw] max-lg:mt-5 max-lg:flex-col max-lg:items-stretch max-lg:gap-4">
@@ -193,10 +195,12 @@ export default function WoningFilters({
         <div className="flex-1">{huurVeld}</div>
       </div>
 
-      <div className="mt-[1.1vw] flex items-baseline justify-between max-lg:mt-5">
-        {resultaatTekst}
-        {wissenKnop}
-      </div>
+      {kaal ? null : (
+        <div className="mt-[1.1vw] flex items-baseline justify-between max-lg:mt-5">
+          {resultaatTekst}
+          {wissenKnop}
+        </div>
+      )}
     </div>
   );
 }

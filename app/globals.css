@@ -122,6 +122,16 @@ html {
   cursor: pointer;
 }
 
+/* Variant voor de inline filterregel (desktop): de track valt exact samen
+   met de onderlijn van de naastgelegen invoervelden (bolletje op de lijn).
+   Op touch-formaten behoudt de slider zijn ruime tikhoogte. */
+@media (min-width: 1024px) {
+  .woningzoeker-range--lijn {
+    height: 14px;
+    margin-bottom: -7px;
+  }
+}
+
 .woningzoeker-range:focus-visible::-webkit-slider-thumb {
   outline: 2px solid var(--color-off-black);
   outline-offset: 2px;

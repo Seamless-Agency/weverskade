@@ -78,7 +78,7 @@ export const FASE_META: Record<ProjectFase, { label: string; color: string }> = 
 };
 
 export function formatHuur(bedrag: number): string {
-  return `€ ${bedrag.toLocaleString("nl-NL")}`;
+  return `€${bedrag.toLocaleString("nl-NL")}`;
 }
 
 /* ─── Demodata ──────────────────────────────────────────────────────────
