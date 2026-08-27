@@ -14,6 +14,7 @@ import {
   demoBegeleiding,
   demoWonenBijProjecten,
   getWonenBijProject,
+  type Aanzicht,
   type WonenBijProject,
   type WoningType,
 } from "@/data/wonenbij";
@@ -61,6 +62,38 @@ function mapWoning(raw: any): Woning | null {
 }
 
 /**
+ * Eén CMS-aanzicht (luchtfoto/gevel) met eigen render, woningen en klikzones.
+ * Vereist key, label en een render mét afmetingen; anders slaan we hem over.
+ */
+function mapAanzicht(raw: any, naam: string): Aanzicht | null {
+  if (!raw?.key || !raw?.label || !raw?.render) return null;
+  if (!raw.renderDimensions?.width || !raw.renderDimensions?.height) return null;
+  const woningen = (raw.woningen ?? [])
+    .map(mapWoning)
+    .filter(Boolean) as Woning[];
+  const zones = (raw.zones ?? [])
+    .filter(
+      (zone: any) =>
+        zone?.doelKey && Array.isArray(zone.polygon) && zone.polygon.length >= 3
+    )
+    .map((zone: any) => ({
+      doelKey: zone.doelKey,
+      label: zone.label ?? "",
+      polygon: zone.polygon,
+    }));
+  return {
+    key: raw.key,
+    label: raw.label,
+    render: raw.render,
+    renderAlt: `${raw.label} van ${naam}`,
+    renderWidth: raw.renderDimensions.width,
+    renderHeight: raw.renderDimensions.height,
+    woningen,
+    zones: zones.length ? zones : undefined,
+  };
+}
+
+/**
  * CMS-projectnamen volgen "Naam - Plaats" (bijv. "De Dirigent - Naaldwijk"),
  * maar op de wonen-bij pagina staat de plaats al los in de hero. De
  * plaats-suffix gaat er dus af zolang die overeenkomt met het locatieveld.
@@ -87,6 +120,21 @@ function fromSanity(raw: any): WonenBijProject | null {
   const woningen = (raw.woningen ?? [])
     .map(mapWoning)
     .filter(Boolean) as Woning[];
+  const cmsAanzichten = (raw.aanzichten ?? [])
+    .map((a: any) => mapAanzicht(a, naam))
+    .filter(Boolean) as Aanzicht[];
+
+  // De platte woningenlijst voedt de filters en de typekoppeling. Zonder
+  // losse lijst nemen we alle woningen van de aanzichten, ontdubbeld op
+  // bouwnummer (dezelfde woning kan op voor- én achtergevel staan).
+  const aanzichtWoningen: Woning[] = [];
+  for (const view of cmsAanzichten) {
+    for (const woning of view.woningen) {
+      if (!aanzichtWoningen.some((w) => w.nummer === woning.nummer)) {
+        aanzichtWoningen.push(woning);
+      }
+    }
+  }
 
   return {
     slug: raw.slug,
@@ -138,10 +186,19 @@ function fromSanity(raw: any): WonenBijProject | null {
     renderAlt: `Render van ${naam}`,
     renderWidth: raw.renderDimensions?.width ?? fallback.renderWidth,
     renderHeight: raw.renderDimensions?.height ?? fallback.renderHeight,
-    woningen: woningen.length ? woningen : fallback.woningen,
-    // Zodra de redactie zelf woningen overtrekt in Sanity wint die (losse)
-    // render; anders tonen we de demo-gevelaanzichten.
-    aanzichten: woningen.length ? undefined : fallback.aanzichten,
+    woningen: cmsAanzichten.length
+      ? woningen.length
+        ? woningen
+        : aanzichtWoningen
+      : woningen.length
+        ? woningen
+        : fallback.woningen,
+    // Voorrang: CMS-aanzichten > losse CMS-render met woningen > demo.
+    aanzichten: cmsAanzichten.length
+      ? cmsAanzichten
+      : woningen.length
+        ? undefined
+        : fallback.aanzichten,
   };
 }
 

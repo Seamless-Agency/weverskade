@@ -251,6 +251,15 @@ export const project = defineType({
       group: 'woningzoeker',
       of: [{ type: 'woning' }],
     }),
+    defineField({
+      name: 'aanzichten',
+      title: 'Aanzichten',
+      description:
+        'Meerdere aanzichten (bijv. luchtfoto + voorgevel + achtergevel), elk met een eigen render en eigen overgetrokken woningen. Als hier aanzichten staan, winnen die van de losse render hierboven.',
+      type: 'array',
+      group: 'woningzoeker',
+      of: [{ type: 'aanzicht' }],
+    }),
 
     // ─── Wonen bij pagina (wonenbij.weverskade.com) ───
     defineField({

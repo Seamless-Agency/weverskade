@@ -18,6 +18,7 @@ const STATUS_KLEUR: Record<string, string> = {
   beschikbaar: '#848F71',
   'in-optie': '#9A755D',
   bezet: '#717F8B',
+  zone: '#F7F5F0',
 }
 
 interface PuntWaarde {
@@ -74,34 +75,66 @@ export default function PolygonTracer(props: ArrayOfObjectsInputProps) {
     [value]
   )
 
-  // De render staat op het project zelf, de polygoon diep in het woningen-array.
-  const render = useFormValue(['woningzoekerRender']) as
+  // De polygoon kan op twee plekken leven: direct onder het project
+  // (woningen[] op de losse render) of genest in een aanzicht
+  // (aanzichten[]. woningen[] / zones[]). De render en de context-vlakken
+  // komen dan van dat aanzicht in plaats van het project.
+  const projectRender = useFormValue(['woningzoekerRender']) as
     | { asset?: { _ref?: string } }
     | undefined
-  const alleWoningen = useFormValue(['woningen']) as
+  const projectWoningen = useFormValue(['woningen']) as
     | Array<{ _key: string; nummer?: string; status?: string; polygon?: PuntWaarde[] }>
     | undefined
+  const alleAanzichten = useFormValue(['aanzichten']) as
+    | Array<{
+        _key: string
+        render?: { asset?: { _ref?: string } }
+        woningen?: Array<{ _key: string; nummer?: string; status?: string; polygon?: PuntWaarde[] }>
+        zones?: Array<{ _key: string; label?: string; polygon?: PuntWaarde[] }>
+      }>
+    | undefined
 
-  // Eigen _key uit het pad halen, zodat we de andere woningen kunnen tonen
-  // zonder de huidige dubbel te tekenen.
+  const aanzichtKey = useMemo(() => {
+    if (path[0] !== 'aanzichten') return null
+    const segment = path[1]
+    return typeof segment === 'object' && segment !== null && '_key' in segment
+      ? (segment as { _key: string })._key
+      : null
+  }, [path])
+
+  const aanzicht = aanzichtKey
+    ? alleAanzichten?.find((a) => a._key === aanzichtKey)
+    : undefined
+
+  const render = aanzicht ? aanzicht.render : projectRender
+
+  // Eigen _key = de diepste _key in het pad (bij een aanzicht is de eerste
+  // _key die van het aanzicht zelf, niet van deze woning/zone).
   const eigenKey = useMemo(() => {
-    const segment = path.find(
-      (p): p is { _key: string } =>
-        typeof p === 'object' && p !== null && '_key' in p
-    )
+    const segment = [...path]
+      .reverse()
+      .find(
+        (p): p is { _key: string } =>
+          typeof p === 'object' && p !== null && '_key' in p
+      )
     return segment?._key
   }, [path])
 
-  const buren = useMemo(
-    () =>
-      (alleWoningen ?? []).filter(
-        (w) =>
-          w._key !== eigenKey &&
-          Array.isArray(w.polygon) &&
-          w.polygon.filter((p) => typeof p?.x === 'number').length >= 3
+  const contextWoningen = aanzicht ? aanzicht.woningen : projectWoningen
+  const contextZones = aanzicht?.zones
+
+  const buren = useMemo(() => {
+    const heeftVlak = (p?: PuntWaarde[]) =>
+      Array.isArray(p) && p.filter((pt) => typeof pt?.x === 'number').length >= 3
+    return [
+      ...(contextWoningen ?? []).filter(
+        (w) => w._key !== eigenKey && heeftVlak(w.polygon)
       ),
-    [alleWoningen, eigenKey]
-  )
+      ...(contextZones ?? [])
+        .filter((z) => z._key !== eigenKey && heeftVlak(z.polygon))
+        .map((z) => ({ _key: z._key, status: 'zone', polygon: z.polygon })),
+    ]
+  }, [contextWoningen, contextZones, eigenKey])
 
   const containerRef = useRef<HTMLDivElement>(null)
   const [sleeptIndex, setSleeptIndex] = useState<number | null>(null)
@@ -162,9 +195,10 @@ export default function PolygonTracer(props: ArrayOfObjectsInputProps) {
   if (!renderUrl) {
     return (
       <div style={{ ...NOTITIE_STIJL, background: 'rgba(154,117,93,0.12)' }}>
-        Upload eerst een render bij{' '}
+        Upload eerst een render — bij een aanzicht het veld{' '}
+        <strong>Render / foto</strong> van dat aanzicht, anders{' '}
         <strong>Woningzoeker → Render van het gebouw</strong>. Daarna kun je hier
-        de omtrek van deze woning overtrekken.
+        de omtrek overtrekken.
       </div>
     )
   }

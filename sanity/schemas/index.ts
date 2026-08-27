@@ -4,6 +4,8 @@ import { sectionCta } from './objects/sectionCta'
 import { stat } from './objects/stat'
 import { polygonPoint } from './objects/polygonPoint'
 import { woning } from './objects/woning'
+import { overzichtZone } from './objects/overzichtZone'
+import { aanzicht } from './objects/aanzicht'
 import { woningType } from './objects/woningType'
 
 // Documents
@@ -32,6 +34,8 @@ export const schemaTypes = [
   stat,
   polygonPoint,
   woning,
+  overzichtZone,
+  aanzicht,
   woningType,
   // Documents
   project,

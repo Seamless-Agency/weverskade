@@ -153,6 +153,27 @@ export const WONENBIJ_PROJECT_BY_SLUG_QUERY = `*[_type == "project" && slug.curr
     buitenruimte,
     "plattegrond": plattegrond.asset->url,
     polygon[]{ x, y }
+  },
+  aanzichten[]{
+    key,
+    label,
+    "render": render.asset->url,
+    "renderDimensions": render.asset->metadata.dimensions,
+    woningen[]{
+      _key,
+      nummer,
+      woningType,
+      status,
+      verdieping,
+      oppervlakte,
+      slaapkamers,
+      huurprijs,
+      orientatie,
+      buitenruimte,
+      "plattegrond": plattegrond.asset->url,
+      polygon[]{ x, y }
+    },
+    zones[]{ label, doelKey, polygon[]{ x, y } }
   }
 }`
 
