@@ -84,6 +84,7 @@ function mapAanzicht(raw: any, naam: string): Aanzicht | null {
   return {
     key: raw.key,
     label: raw.label,
+    weergave: raw.weergave === "passend" ? "passend" : "vullend",
     render: raw.render,
     renderAlt: `${raw.label} van ${naam}`,
     renderWidth: raw.renderDimensions.width,

@@ -36,6 +36,21 @@ export const aanzicht = defineType({
       validation: (rule) => rule.required(),
     }),
     defineField({
+      name: 'weergave',
+      title: 'Weergave in het paneel',
+      description:
+        "Foto's kunnen het paneel vullen (randen vallen weg); technische geveltekeningen passen beter volledig in beeld op een witte achtergrond.",
+      type: 'string',
+      initialValue: 'vullend',
+      options: {
+        list: [
+          { title: 'Vullend (foto)', value: 'vullend' },
+          { title: 'Passend (tekening)', value: 'passend' },
+        ],
+        layout: 'radio',
+      },
+    }),
+    defineField({
       name: 'woningen',
       title: 'Woningen op dit aanzicht',
       description:

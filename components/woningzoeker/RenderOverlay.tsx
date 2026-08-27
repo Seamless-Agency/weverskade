@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { STATUS_META, formatHuur } from "@/data/woningzoeker";
 import type { PolygonPoint, Woning } from "@/data/woningzoeker";
 import type { OverzichtZone } from "@/data/wonenbij";
@@ -25,6 +25,18 @@ interface RenderOverlayProps {
    */
   zones?: OverzichtZone[];
   onZoneOpen?: (doelKey: string) => void;
+  /**
+   * Paneel-modus (wonen-bij woningzoeker): het beeld vult de beschikbare
+   * ruimte volledig (cover, gecentreerd bijgesneden) in plaats van zijn eigen
+   * beeldverhouding af te dwingen. Op desktop vult de overlay de ouder
+   * (absolute inset-0); onder lg houdt hij de natuurlijke verhouding aan.
+   */
+  vullend?: boolean;
+  /**
+   * Binnen de paneel-modus: beeld volledig passend tonen (contain, op witte
+   * achtergrond) i.p.v. bijgesneden — voor technische geveltekeningen.
+   */
+  passend?: boolean;
 }
 
 function toPoints(polygon: PolygonPoint[]): string {
@@ -53,10 +65,57 @@ export default function RenderOverlay({
   onHover,
   zones,
   onZoneOpen,
+  vullend = false,
+  passend = false,
 }: RenderOverlayProps) {
   const [hoveredZoneKey, setHoveredZoneKey] = useState<string | null>(null);
   const active = woningen.find((w) => w.id === (hoveredId ?? selectedId)) ?? null;
   const activeAnchor = active ? centroid(active.polygon) : null;
+
+  // Paneel-modus: meet het paneel en bereken de cover-box waarin beeld,
+  // overlay en labels samen leven — zo blijven de polygonen exact geregistreerd
+  // terwijl de randen van het beeld wegvallen.
+  const panelRef = useRef<HTMLDivElement>(null);
+  const [paneel, setPaneel] = useState<{ w: number; h: number } | null>(null);
+  useEffect(() => {
+    if (!vullend) return;
+    const el = panelRef.current;
+    if (!el) return;
+    const meet = () => setPaneel({ w: el.clientWidth, h: el.clientHeight });
+    meet();
+    const observer = new ResizeObserver(meet);
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [vullend]);
+
+  let coverStyle: CSSProperties = { position: "absolute", inset: 0 };
+  if (vullend && paneel) {
+    // Cover (foto's) snijdt de randen weg; contain (tekeningen) toont alles.
+    const schaal = passend
+      ? Math.min(paneel.w / renderWidth, paneel.h / renderHeight)
+      : Math.max(paneel.w / renderWidth, paneel.h / renderHeight);
+    const w = renderWidth * schaal;
+    const h = renderHeight * schaal;
+    coverStyle = {
+      position: "absolute",
+      width: w,
+      height: h,
+      left: (paneel.w - w) / 2,
+      top: (paneel.h - h) / 2,
+    };
+  }
+
+  if (vullend) {
+    return (
+      <div
+        ref={panelRef}
+        className={`relative w-full overflow-hidden lg:absolute lg:inset-0 max-lg:[aspect-ratio:var(--wz-ar)] ${passend ? "bg-white" : "bg-off-black/5"}`}
+        style={{ "--wz-ar": `${renderWidth} / ${renderHeight}` } as CSSProperties}
+      >
+        <div style={coverStyle}>{inhoud()}</div>
+      </div>
+    );
+  }
 
   return (
     <div
@@ -69,6 +128,13 @@ export default function RenderOverlay({
         maxWidth: `calc(76vh * ${renderWidth} / ${renderHeight})`,
       }}
     >
+      {inhoud()}
+    </div>
+  );
+
+  function inhoud() {
+    return (
+      <>
       <Image
         src={render}
         alt={renderAlt}
@@ -227,6 +293,7 @@ export default function RenderOverlay({
           </div>
         </div>
       ) : null}
-    </div>
-  );
+      </>
+    );
+  }
 }

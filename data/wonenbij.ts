@@ -94,6 +94,12 @@ export interface Aanzicht {
   renderAlt: string;
   renderWidth: number;
   renderHeight: number;
+  /**
+   * Hoe het beeld het woningzoeker-paneel vult: "vullend" (cover, voor
+   * foto's) of "passend" (contain op witte achtergrond, voor technische
+   * geveltekeningen). Standaard vullend.
+   */
+  weergave?: "vullend" | "passend";
   woningen: Woning[];
   /**
    * Klikbare zones die een ander aanzicht openen. Een aanzicht met zones is
@@ -638,6 +644,7 @@ export const demoAanzichten: Aanzicht[] = [
   },
   {
     key: "voorgevel",
+    weergave: "passend",
     label: "Voorgevel",
     render: "/images/woningzoeker/taanschuur-voorgevel.jpg",
     renderAlt: "Voorgevel Zuidwest van Taanschuurkade met beschikbare woningen",
@@ -647,6 +654,7 @@ export const demoAanzichten: Aanzicht[] = [
   },
   {
     key: "achtergevel",
+    weergave: "passend",
     label: "Achtergevel",
     render: "/images/woningzoeker/taanschuur-achtergevel.jpg",
     renderAlt: "Achtergevel Noordoost van Taanschuurkade met beschikbare woningen",

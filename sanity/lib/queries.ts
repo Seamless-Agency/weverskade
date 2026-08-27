@@ -157,6 +157,7 @@ export const WONENBIJ_PROJECT_BY_SLUG_QUERY = `*[_type == "project" && slug.curr
   aanzichten[]{
     key,
     label,
+    weergave,
     "render": render.asset->url,
     "renderDimensions": render.asset->metadata.dimensions,
     woningen[]{

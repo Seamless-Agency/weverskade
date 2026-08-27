@@ -333,9 +333,15 @@ export default function WoningzoekerSection({
           </div>
 
           {heeftRender && actiefAanzicht ? (
-            <div className="max-lg:order-first">
+            // Figma: de render is een paneel dat exact even hoog is als de
+            // lijst en er naadloos tegenaan ligt; het beeld vult het paneel
+            // (cover). De aanzicht-knoppen liggen als overlay op de foto zodat
+            // de gelijke hoogte nooit breekt; op mobiel staan ze eronder.
+            <div className="relative max-lg:order-first">
               <RenderOverlay
                 key={actiefAanzicht.key}
+                vullend
+                passend={actiefAanzicht.weergave === "passend"}
                 render={actiefAanzicht.render}
                 renderAlt={actiefAanzicht.renderAlt}
                 renderWidth={actiefAanzicht.renderWidth}
@@ -350,7 +356,7 @@ export default function WoningzoekerSection({
                 onZoneOpen={openAanzicht}
               />
               {views.length > 1 ? (
-                <div className="mt-[0.972vw] flex gap-[0.556vw] max-lg:mt-3 max-lg:gap-2">
+                <div className="absolute bottom-[1.111vw] left-[1.111vw] z-10 hidden gap-[0.556vw] lg:flex">
                   {views.map((view, i) => (
                     <button
                       key={view.key}
@@ -359,10 +365,10 @@ export default function WoningzoekerSection({
                         setHoveredWoningId(null);
                       }}
                       aria-pressed={i === aanzichtIndex}
-                      className={`rounded-full px-[1.111vw] py-[0.417vw] font-body font-medium text-[1.042vw] tracking-[-0.021vw] cursor-pointer border-none transition-colors duration-200 max-lg:px-4 max-lg:py-3 max-lg:text-[14px] ${
+                      className={`rounded-full border px-[1.111vw] py-[0.417vw] font-body font-medium text-[1.042vw] tracking-[-0.021vw] cursor-pointer transition-colors duration-200 ${
                         i === aanzichtIndex
-                          ? "bg-off-black text-off-white"
-                          : "bg-off-white text-off-black hover:bg-off-black/10"
+                          ? "border-transparent bg-off-black text-off-white"
+                          : "border-off-black/15 bg-off-white/90 text-off-black hover:bg-off-white"
                       }`}
                     >
                       {view.label}
@@ -370,13 +376,36 @@ export default function WoningzoekerSection({
                   ))}
                 </div>
               ) : null}
-              <p className="mt-[0.972vw] font-body font-medium text-[0.833vw] leading-[1.25] text-off-black/60 max-lg:mt-2 max-lg:text-[12px]">
-                {actiefAanzicht.zones?.length && actiefAanzicht.woningen.length
-                  ? "Klik op een ingetekende woning voor meer informatie, of op het gebouw voor de gevelweergave."
-                  : actiefAanzicht.zones?.length
-                    ? "Klik op het gebouw om de beschikbare woningen per gevel te bekijken."
-                    : "Klik op een woning in het gebouw voor meer informatie en om in te schrijven."}
-              </p>
+              <div className="lg:hidden">
+                {views.length > 1 ? (
+                  <div className="mt-3 flex gap-2">
+                    {views.map((view, i) => (
+                      <button
+                        key={view.key}
+                        onClick={() => {
+                          setAanzichtIndex(i);
+                          setHoveredWoningId(null);
+                        }}
+                        aria-pressed={i === aanzichtIndex}
+                        className={`rounded-full px-4 py-3 font-body font-medium text-[14px] cursor-pointer border-none transition-colors duration-200 ${
+                          i === aanzichtIndex
+                            ? "bg-off-black text-off-white"
+                            : "bg-off-white text-off-black hover:bg-off-black/10"
+                        }`}
+                      >
+                        {view.label}
+                      </button>
+                    ))}
+                  </div>
+                ) : null}
+                <p className="mt-2 font-body font-medium text-[12px] leading-[1.25] text-off-black/60">
+                  {actiefAanzicht.zones?.length && actiefAanzicht.woningen.length
+                    ? "Klik op een ingetekende woning voor meer informatie, of op het gebouw voor de gevelweergave."
+                    : actiefAanzicht.zones?.length
+                      ? "Klik op het gebouw om de beschikbare woningen per gevel te bekijken."
+                      : "Klik op een woning in het gebouw voor meer informatie en om in te schrijven."}
+                </p>
+              </div>
             </div>
           ) : null}
         </div>
