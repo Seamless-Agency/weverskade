@@ -167,7 +167,7 @@ export default function InschrijfForm({
                 name="voorkeur"
                 value={form.voorkeur}
                 onChange={(e) => set("voorkeur", e.target.value)}
-                className={`w-full h-[1.208vw] appearance-none bg-transparent font-body ${
+                className={`block w-full h-[1.208vw] appearance-none bg-transparent font-body ${
                   voorkeurPreselect ? "font-semibold" : "font-medium"
                 } text-[1.042vw] leading-[1.208vw] text-off-black outline-none cursor-pointer max-md:h-auto max-md:text-[14px]`}
               >
@@ -333,7 +333,7 @@ function SelectVeld({
         name={name}
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full appearance-none bg-transparent border-b border-off-black pb-[0.694vw] font-body font-medium text-[1.042vw] text-off-black outline-none cursor-pointer max-md:text-[15px] max-md:pb-2"
+        className="block w-full appearance-none bg-transparent border-b border-off-black pb-[1.292vw] font-body font-medium text-[1.042vw] leading-[1.208vw] text-off-black outline-none cursor-pointer max-md:text-[15px] max-md:pb-2"
       >
         <option value="">{placeholder}</option>
         {opties.map((optie) => (
