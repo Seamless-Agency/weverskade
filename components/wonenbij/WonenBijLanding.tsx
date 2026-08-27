@@ -61,8 +61,9 @@ export default function WonenBijLanding({ data }: { data?: WonenBijLandingData }
 
   return (
     <section className="relative bg-white min-h-screen">
-      {/* Hero - full-bleed beeld met donkere overlay */}
-      <div className="relative h-[62.014vw] max-lg:h-[120vw]" data-nav-theme="dark">
+      {/* Hero — net als de projectpagina altijd exact één viewport hoog
+          (bewuste afwijking van het 893px-Figma-frame) */}
+      <div className="relative h-svh" data-nav-theme="dark">
         <Image
           src={heroImage}
           alt="Wonen bij Weverskade"
