@@ -79,9 +79,9 @@ export default function WonenBijLanding({ data }: { data?: WonenBijLandingData }
         />
       </div>
 
-      {/* Statement — de knop staat inline achter de laatste regel, vaste sectiehoogte
-          zodat de off-white band exact op 1517px (105.347vw) begint */}
-      <div className="h-[43.333vw] pt-[6.181vw] px-[2.569vw] max-md:h-auto max-md:pt-12 max-md:px-5 max-md:pb-12">
+      {/* Statement — de knop staat inline achter de laatste regel; vaste paddings
+          (geen hoogte) zodat langere CMS-tekst de sectie laat meegroeien */}
+      <div className="pt-[6.181vw] pb-[16.667vw] px-[2.569vw] max-md:pt-12 max-md:px-5 max-md:pb-12">
         <p className="font-body font-medium text-[4.028vw] leading-[4.097vw] text-off-black indent-[10.278vw] max-w-[83.264vw] max-md:text-[28px] max-md:leading-[30px] max-md:max-w-none">
           {introStatement}
           <a
@@ -139,7 +139,9 @@ export default function WonenBijLanding({ data }: { data?: WonenBijLandingData }
       </div>
 
       {/* Kwaliteit en gebruiksgemak */}
-      <div className="bg-green h-[36.181vw] pt-[6.875vw] max-md:h-auto max-md:py-14" data-nav-theme="green">
+      {/* Figma-band is 521 hoog bij éénregelige placeholders; de maat die telt is
+          de witruimte (99 boven, 131 onder) — de band groeit mee met de inhoud */}
+      <div className="bg-green pt-[6.875vw] pb-[9.097vw] max-md:py-14" data-nav-theme="green">
         <div className="pl-[18.542vw] pr-[2.431vw] max-md:px-5">
           <h2 className="font-heading font-normal text-[4.653vw] leading-[5.736vw] tracking-[-0.093vw] text-off-white max-md:text-[32px] max-md:leading-none max-md:tracking-[-0.64px]">
             {data?.kwaliteitTitel ?? d.kwaliteitTitel}
