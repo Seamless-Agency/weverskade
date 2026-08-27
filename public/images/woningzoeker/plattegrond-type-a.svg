@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 360" role="img" aria-label="Schematische plattegrond Type A — hoekwoning">
+  <rect width="480" height="360" fill="#F7F5F0"/>
+  <g fill="none" stroke="#1D1F1A" stroke-width="3" stroke-linejoin="round">
+    <rect x="40" y="40" width="400" height="280"/>
+    <path d="M40 190 H250"/>
+    <path d="M250 40 V320"/>
+    <path d="M250 220 H440"/>
+  </g>
+  <g fill="none" stroke="#1D1F1A" stroke-width="1.5" opacity="0.45">
+    <path d="M112 190 v-26 M188 190 v-26"/>
+    <path d="M250 130 h26 M250 268 h26"/>
+  </g>
+  <g fill="#1D1F1A" font-family="Helvetica, Arial, sans-serif" font-size="14" letter-spacing="0.3">
+    <text x="60" y="80">Woonkamer</text>
+    <text x="60" y="98" opacity="0.55" font-size="12">28 m²</text>
+    <text x="60" y="230">Slaapkamer 1</text>
+    <text x="60" y="248" opacity="0.55" font-size="12">14 m²</text>
+    <text x="270" y="80">Keuken</text>
+    <text x="270" y="98" opacity="0.55" font-size="12">11 m²</text>
+    <text x="270" y="170">Slaapkamer 2</text>
+    <text x="270" y="188" opacity="0.55" font-size="12">10 m²</text>
+    <text x="270" y="260">Badkamer</text>
+    <text x="270" y="278" opacity="0.55" font-size="12">6 m²</text>
+  </g>
+  <g stroke="#848F71" stroke-width="3" fill="none">
+    <path d="M40 250 v50"/>
+  </g>
+  <text x="46" y="336" fill="#848F71" font-family="Helvetica, Arial, sans-serif" font-size="12">Buitenruimte</text>
+  <text x="440" y="336" fill="#1D1F1A" opacity="0.4" text-anchor="end" font-family="Helvetica, Arial, sans-serif" font-size="11">Type A · indicatief</text>
+</svg>

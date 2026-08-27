@@ -30,7 +30,9 @@ function detectTheme(): NavTheme {
 export default function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
-  const isStudio = pathname?.startsWith("/studio");
+  // De wonen-bij omgeving (wonenbij.weverskade.com) heeft zijn eigen header.
+  const isStudio =
+    pathname?.startsWith("/studio") || pathname?.startsWith("/wonenbij");
   const [menuOpen, setMenuOpen] = useState(false);
   const closeMenu = useCallback(() => setMenuOpen(false), []);
   const navigate = usePageNavigation();
@@ -164,6 +166,7 @@ export default function Navbar() {
   return (
     <>
     <nav
+      data-main-nav
       className="fixed top-0 left-0 right-0 z-50"
       style={{
         color: activeText,

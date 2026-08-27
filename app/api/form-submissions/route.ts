@@ -5,7 +5,12 @@ import { getClientIp, verifyTurnstile } from "@/lib/turnstile";
 
 export const runtime = "nodejs";
 
-type FormType = "contact" | "wonen_bij" | "gebouw_wonen";
+type FormType =
+  | "contact"
+  | "wonen_bij"
+  | "gebouw_wonen"
+  | "woningzoeker"
+  | "wonenbij_inschrijving";
 
 type IncomingSubmission = {
   formType?: FormType;
@@ -14,6 +19,10 @@ type IncomingSubmission = {
   email?: string;
   phone?: string;
   interestedProject?: string;
+  age?: string;
+  occupation?: string;
+  householdIncome?: string;
+  householdComposition?: string;
   message?: string;
   agreed?: boolean;
   projectName?: string;
@@ -22,7 +31,22 @@ type IncomingSubmission = {
   turnstileToken?: string;
 };
 
-const FORM_TYPES = new Set<FormType>(["contact", "wonen_bij", "gebouw_wonen"]);
+const FORM_TYPES = new Set<FormType>([
+  "contact",
+  "wonen_bij",
+  "gebouw_wonen",
+  "woningzoeker",
+  "wonenbij_inschrijving",
+]);
+
+// Formulieren die om een woning gaan: verplicht akkoord én een automatische
+// bevestigingsmail naar de inzender.
+const WONEN_FORM_TYPES = new Set<FormType>([
+  "wonen_bij",
+  "gebouw_wonen",
+  "woningzoeker",
+  "wonenbij_inschrijving",
+]);
 const EMAIL_TO = process.env.FORM_EMAIL_TO ?? "info@weverskade.com";
 const EMAIL_FROM =
   process.env.FORM_EMAIL_FROM ?? "Weverskade <info@weverskade.com>";
@@ -68,6 +92,10 @@ function buildEmail(submission: Required<Pick<IncomingSubmission, "formType" | "
     Emailadres: submission.email,
     Telefoonnummer: submission.phone,
     "Interesse in project": submission.interestedProject,
+    Leeftijd: submission.age,
+    "Werkgever / beroep": submission.occupation,
+    "Bruto huishoudinkomen": submission.householdIncome,
+    Gezinssamenstelling: submission.householdComposition,
     Project: submission.projectName,
     "Project slug": submission.projectSlug,
     Bericht: submission.message,
@@ -221,6 +249,10 @@ export async function POST(request: Request) {
     const email = clean(body.email);
     const phone = clean(body.phone);
     const interestedProject = clean(body.interestedProject);
+    const age = clean(body.age);
+    const occupation = clean(body.occupation);
+    const householdIncome = clean(body.householdIncome);
+    const householdComposition = clean(body.householdComposition);
     const message = clean(body.message);
     const projectName = clean(body.projectName);
     const projectSlug = clean(body.projectSlug);
@@ -238,7 +270,7 @@ export async function POST(request: Request) {
       );
     }
 
-    if ((formType === "wonen_bij" || formType === "gebouw_wonen") && !agreed) {
+    if (WONEN_FORM_TYPES.has(formType) && !agreed) {
       return NextResponse.json(
         { error: "Ga akkoord met de voorwaarden om het formulier te versturen." },
         { status: 400 }
@@ -277,6 +309,10 @@ export async function POST(request: Request) {
       email,
       phone,
       interestedProject,
+      age,
+      occupation,
+      householdIncome,
+      householdComposition,
       message,
       agreed,
       projectName,
@@ -308,11 +344,11 @@ export async function POST(request: Request) {
     // Stuur de inzender een automatische bevestiging. Projectpagina's
     // (gebouw_wonen) gebruiken de tekst van het project zelf; de algemene
     // "Wonen bij"-pagina gebruikt haar eigen tekst en dient als fallback.
-    if (formType === "wonen_bij" || formType === "gebouw_wonen") {
+    if (WONEN_FORM_TYPES.has(formType)) {
       try {
         let autoReplySettings: AutoReplySettings | null = null;
 
-        if (formType === "gebouw_wonen" && projectSlug) {
+        if (formType !== "wonen_bij" && projectSlug) {
           autoReplySettings = await client.fetch<AutoReplySettings | null>(
             `*[_type == "project" && slug.current == $slug][0]{ autoReplyEnabled, autoReplySubject, autoReplyBody }`,
             { slug: projectSlug }

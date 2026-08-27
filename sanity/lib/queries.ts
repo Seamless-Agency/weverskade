@@ -65,6 +65,115 @@ export const WONEN_PROJECTS_QUERY = `*[_type == "project" && showInWonen == true
 
 export const PROJECT_BY_SLUG_QUERY = `*[_type == "project" && slug.current == $slug][0]`
 
+// Woningzoeker — haalt naast de woningen ook de natuurlijke afmetingen van de
+// render op, zodat de viewer exact dezelfde beeldverhouding aanhoudt als het
+// beeld waarop is overgetrokken.
+export const WONINGZOEKER_BY_SLUG_QUERY = `*[_type == "project" && slug.current == $slug && woningzoekerEnabled == true][0]{
+  name,
+  "slug": slug.current,
+  tagline,
+  projectFase,
+  woningzoekerIntro,
+  "render": woningzoekerRender.asset->url,
+  "renderDimensions": woningzoekerRender.asset->metadata.dimensions,
+  woningen[]{
+    _key,
+    nummer,
+    woningType,
+    status,
+    verdieping,
+    oppervlakte,
+    slaapkamers,
+    huurprijs,
+    orientatie,
+    buitenruimte,
+    "plattegrond": plattegrond.asset->url,
+    polygon[]{ x, y }
+  }
+}`
+
+export const WONINGZOEKER_SLUGS_QUERY = `*[_type == "project" && woningzoekerEnabled == true].slug.current`
+
+// ============================================
+// WONEN BIJ (wonenbij.weverskade.com)
+// ============================================
+
+// Projectpagina op de wonen-bij omgeving: alle secties + woningtypes +
+// de render met overgetrokken woningen voor de woningzoeker.
+export const WONENBIJ_PROJECT_BY_SLUG_QUERY = `*[_type == "project" && slug.current == $slug && wonenBijEnabled == true][0]{
+  name,
+  "slug": slug.current,
+  location,
+  heroImage,
+  wonenBijIntro,
+  feiten[]{ icoon, label, waarde },
+  hurenFotos,
+  welkomTekst,
+  welkomTekstRechts,
+  welkomFotos,
+  carouselFotos,
+  locatieTitel,
+  locatieIntro,
+  locatieItems[]{ titel, tekst },
+  mapLat,
+  mapLng,
+  planning[]{ periode, titel, omschrijving, verwachtingen, actief },
+  downloads[]{ titel, "url": bestand.asset->url },
+  faq[]{ vraag, antwoord },
+  woningTypes[]{
+    naam,
+    "slug": slug.current,
+    status,
+    prijsVan,
+    prijsTot,
+    oppervlakte,
+    slaapkamers,
+    energielabel,
+    buitenruimte,
+    "fotos": fotos[].asset->url,
+    "plattegronden": plattegronden[].asset->url,
+    plattegrondLabel,
+    omschrijving[]{ kop, tekst }
+  },
+  "render": woningzoekerRender.asset->url,
+  "renderDimensions": woningzoekerRender.asset->metadata.dimensions,
+  woningen[]{
+    _key,
+    nummer,
+    woningType,
+    status,
+    verdieping,
+    oppervlakte,
+    slaapkamers,
+    huurprijs,
+    orientatie,
+    buitenruimte,
+    "plattegrond": plattegrond.asset->url,
+    polygon[]{ x, y }
+  }
+}`
+
+export const WONENBIJ_PROJECT_SLUGS_QUERY = `*[_type == "project" && wonenBijEnabled == true].slug.current`
+
+// One-pager: projectkaarten + het geaggregeerde aanbod (alle woningtypes
+// van alle wonen-bij projecten).
+export const WONENBIJ_LANDING_PROJECTS_QUERY = `*[_type == "project" && showInWonen == true] | order(orderRank asc) {
+  name,
+  "slug": slug.current,
+  location,
+  wonenBijEnabled,
+  portfolioImage,
+  woningTypes[]{
+    naam,
+    "slug": slug.current,
+    status,
+    prijsVan,
+    oppervlakte,
+    slaapkamers,
+    "foto": fotos[0].asset->url
+  }
+}`
+
 export const ALL_PROJECT_SLUGS_QUERY = `*[_type == "project" && hasDetailPage == true].slug.current`
 
 export const ALL_NIEUWS_QUERY = `*[_type == "nieuwsArtikel"] | order(date desc) {

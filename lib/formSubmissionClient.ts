@@ -1,10 +1,19 @@
 export type FormSubmissionPayload = {
-  formType: "contact" | "wonen_bij" | "gebouw_wonen";
+  formType:
+    | "contact"
+    | "wonen_bij"
+    | "gebouw_wonen"
+    | "woningzoeker"
+    | "wonenbij_inschrijving";
   sourceLabel: string;
   name: string;
   email: string;
   phone?: string;
   interestedProject?: string;
+  age?: string;
+  occupation?: string;
+  householdIncome?: string;
+  householdComposition?: string;
   message?: string;
   agreed?: boolean;
   projectName?: string;

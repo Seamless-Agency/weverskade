@@ -80,3 +80,54 @@ html {
     height: var(--underline-h-mobile, 1px);
   }
 }
+
+/* ─── Woningzoeker: huurprijs-slider ───
+   Native range input in de Weverskade-stijl (dunne lijn + ronde greep). */
+.woningzoeker-range {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 1.5rem;
+  background: transparent;
+}
+
+.woningzoeker-range::-webkit-slider-runnable-track {
+  height: 1px;
+  background: color-mix(in srgb, var(--color-off-black) 30%, transparent);
+}
+
+.woningzoeker-range::-moz-range-track {
+  height: 1px;
+  background: color-mix(in srgb, var(--color-off-black) 30%, transparent);
+}
+
+.woningzoeker-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  margin-top: -6.5px;
+  border: none;
+  border-radius: 50%;
+  background: var(--color-green);
+  cursor: pointer;
+}
+
+.woningzoeker-range::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border: none;
+  border-radius: 50%;
+  background: var(--color-green);
+  cursor: pointer;
+}
+
+.woningzoeker-range:focus-visible::-webkit-slider-thumb {
+  outline: 2px solid var(--color-off-black);
+  outline-offset: 2px;
+}
+
+.woningzoeker-range:focus-visible::-moz-range-thumb {
+  outline: 2px solid var(--color-off-black);
+  outline-offset: 2px;
+}

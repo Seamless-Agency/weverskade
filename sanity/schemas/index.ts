@@ -2,6 +2,9 @@
 import { portableText } from './objects/portableText'
 import { sectionCta } from './objects/sectionCta'
 import { stat } from './objects/stat'
+import { polygonPoint } from './objects/polygonPoint'
+import { woning } from './objects/woning'
+import { woningType } from './objects/woningType'
 
 // Documents
 import { project } from './documents/project'
@@ -27,6 +30,9 @@ export const schemaTypes = [
   portableText,
   sectionCta,
   stat,
+  polygonPoint,
+  woning,
+  woningType,
   // Documents
   project,
   nieuwsArtikel,
