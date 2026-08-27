@@ -90,9 +90,14 @@ export default function RenderOverlay({
 
   let coverStyle: CSSProperties = { position: "absolute", inset: 0 };
   if (vullend && paneel) {
-    // Cover (foto's) snijdt de randen weg; contain (tekeningen) toont alles.
+    // Cover (foto's) snijdt de randen weg; contain (tekeningen) toont alles,
+    // met een marge rondom zodat de tekening als object op het paneel ligt.
+    const inzet = passend ? 24 : 0;
     const schaal = passend
-      ? Math.min(paneel.w / renderWidth, paneel.h / renderHeight)
+      ? Math.min(
+          (paneel.w - inzet * 2) / renderWidth,
+          (paneel.h - inzet * 2) / renderHeight
+        )
       : Math.max(paneel.w / renderWidth, paneel.h / renderHeight);
     const w = renderWidth * schaal;
     const h = renderHeight * schaal;
@@ -109,7 +114,7 @@ export default function RenderOverlay({
     return (
       <div
         ref={panelRef}
-        className={`relative w-full overflow-hidden lg:absolute lg:inset-0 max-lg:[aspect-ratio:var(--wz-ar)] ${passend ? "bg-white" : "bg-off-black/5"}`}
+        className={`relative w-full overflow-hidden lg:absolute lg:inset-0 max-lg:[aspect-ratio:var(--wz-ar)] ${passend ? "bg-off-white" : "bg-off-black/5"}`}
         style={{ "--wz-ar": `${renderWidth} / ${renderHeight}` } as CSSProperties}
       >
         <div style={coverStyle}>{inhoud()}</div>
