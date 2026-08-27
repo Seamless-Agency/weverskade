@@ -255,6 +255,23 @@ export default function WoningzoekerSection({
           </div>
         </div>
 
+        {/* Filters (desktop): één nette regel over de volle breedte, zodat het
+            renderpaneel eronder exact op de bovenste lijstlijn kan beginnen */}
+        {woningen.length ? (
+          <div className="mt-[1.528vw] ml-[2.431vw] mr-[2.569vw] hidden lg:block">
+            <WoningFilters
+              inline
+              filters={filters}
+              onChange={setFilters}
+              aantallen={aantallen}
+              huurBereik={huurBereik}
+              slaapkamerOpties={slaapkamerOpties}
+              resultaatAantal={gefilterd.length}
+              totaalAantal={woningen.length}
+            />
+          </div>
+        ) : null}
+
         {/* Lijst + render */}
         <div
           className={`mt-[1.528vw] ml-[2.431vw] mr-[2.569vw] grid max-lg:mt-6 max-lg:mx-5 max-lg:grid-cols-1 max-lg:gap-y-8 ${
@@ -263,7 +280,7 @@ export default function WoningzoekerSection({
         >
           <div>
             {woningen.length ? (
-              <div className="mb-[1.4vw] max-lg:mb-5">
+              <div className="mb-5 lg:hidden">
                 <WoningFilters
                   filters={filters}
                   onChange={setFilters}
