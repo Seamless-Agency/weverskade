@@ -94,37 +94,45 @@ export default function WonenBijLanding({ data }: { data?: WonenBijLandingData }
         </p>
       </div>
 
-      {/* Over Wonen bij Weverskade — het design is hand-geplaatst (geen grid),
-          dus elk element staat op zijn exacte Figma-positie binnen een band met
-          vaste hoogte; op mobiel valt alles terug naar de normale flow */}
-      <div className="relative bg-off-white h-[137.222vw] max-md:h-auto max-md:py-14 max-md:px-5">
-        <h2 className="absolute left-[2.778vw] top-[17.5vw] font-heading font-normal text-[4.931vw] leading-[5.625vw] tracking-[-0.099vw] text-off-black whitespace-pre-line max-md:static max-md:text-[36px] max-md:leading-[40px] max-md:tracking-[-0.72px]">
-          {d.overTitel}
-        </h2>
-        <div className="absolute left-[43.056vw] top-[17.5vw] w-[54.514vw] h-[43.889vw] overflow-hidden max-md:static max-md:w-full max-md:h-auto max-md:aspect-[785/632] max-md:mt-8">
-          <Image
-            src={d.overFoto}
-            alt="Interieur van een Weverskade woning"
-            fill
-            sizes="(max-width: 768px) 100vw, 55vw"
-            className="object-cover"
-          />
-        </div>
-        <p className="absolute left-[2.778vw] top-[46.944vw] w-[29.792vw] font-body font-medium text-[1.597vw] leading-[2.153vw] tracking-[-0.032vw] text-off-black max-md:static max-md:w-full max-md:mt-8 max-md:text-[17px] max-md:leading-[24px]">
-          {overTekst}
-        </p>
-        <div className="absolute left-[2.847vw] top-[81.181vw] w-[54.931vw] h-[38.819vw] overflow-hidden max-md:static max-md:w-full max-md:h-auto max-md:aspect-[791/559] max-md:mt-8">
-          <Image
-            src={d.overFoto2}
-            alt="Woonkamer van een Weverskade woning"
-            fill
-            sizes="(max-width: 768px) 100vw, 55vw"
-            className="object-cover"
-          />
-        </div>
-        {/* Onder-verankerd: de knop-onderkant valt samen met de foto-onderkant
-            (Figma: beide op 3245), langere tekst groeit naar boven */}
-        <div className="absolute left-[67.222vw] bottom-[17.222vw] w-[27.986vw] max-md:static max-md:w-full max-md:mt-8">
+      {/* Over Wonen bij Weverskade — flow met vaste ankers i.p.v. een band met
+          vaste hoogte: de Figma-witruimtes (252 boven, 285 tussen de blokken,
+          248 onder) blijven exact, maar langere CMS-tekst laat de band groeien
+          in plaats van over de foto's heen te lopen */}
+      <div className="bg-off-white pt-[17.5vw] pb-[17.222vw] max-md:py-14 max-md:px-5">
+        <div className="px-[2.778vw] max-md:px-0">
+          {/* Blok 1: titel + foto rechts; tekst links onder-verankerd 22 boven de foto-onderkant */}
+          <div className="relative min-h-[43.889vw] max-md:min-h-0">
+            <h2 className="font-heading font-normal text-[4.931vw] leading-[5.625vw] tracking-[-0.099vw] text-off-black whitespace-pre-line max-md:text-[36px] max-md:leading-[40px] max-md:tracking-[-0.72px]">
+              {d.overTitel}
+            </h2>
+            <div className="absolute top-0 right-[-0.347vw] w-[54.514vw] h-[43.889vw] overflow-hidden max-md:static max-md:w-full max-md:h-auto max-md:aspect-[785/632] max-md:mt-8">
+              <Image
+                src={d.overFoto}
+                alt="Interieur van een Weverskade woning"
+                fill
+                sizes="(max-width: 768px) 100vw, 55vw"
+                className="object-cover"
+              />
+            </div>
+            <p className="absolute left-0 bottom-[1.528vw] w-[29.792vw] font-body font-medium text-[1.597vw] leading-[2.153vw] tracking-[-0.032vw] text-off-black max-md:static max-md:w-full max-md:mt-8 max-md:text-[17px] max-md:leading-[24px]">
+              {overTekst}
+            </p>
+          </div>
+
+          {/* Blok 2: foto links; tekst + knop rechts, knop-onderkant = foto-onderkant */}
+          <div className="relative mt-[19.792vw] max-md:mt-8">
+            <div className="relative ml-[0.069vw] w-[54.931vw] aspect-[791/559] overflow-hidden max-md:ml-0 max-md:w-full">
+              <Image
+                src={d.overFoto2}
+                alt="Woonkamer van een Weverskade woning"
+                fill
+                sizes="(max-width: 768px) 100vw, 55vw"
+                className="object-cover"
+              />
+            </div>
+            {/* Onder-verankerd: de knop-onderkant valt samen met de foto-onderkant
+                (Figma: beide op 3245), langere tekst groeit naar boven */}
+            <div className="absolute left-[64.444vw] bottom-0 w-[27.986vw] max-md:static max-md:w-full max-md:mt-8">
           <p className="font-body font-medium text-[1.597vw] leading-[2.153vw] tracking-[-0.032vw] text-off-black max-md:text-[17px] max-md:leading-[24px]">
             {overTekstRechts}
           </p>
@@ -133,8 +141,10 @@ export default function WonenBijLanding({ data }: { data?: WonenBijLandingData }
             onClick={scrollNaarAanbod}
             className="inline-flex items-center justify-center mt-[3.75vw] -ml-[0.139vw] w-[12.083vw] h-[2.847vw] bg-green text-off-white no-underline rounded-full font-heading font-normal text-[1.181vw] tracking-[-0.024vw] max-md:mt-5 max-md:ml-0 max-md:w-auto max-md:h-auto max-md:px-6 max-md:py-2.5 max-md:text-[15px]"
           >
-            {d.overKnop}
-          </a>
+              {d.overKnop}
+            </a>
+            </div>
+          </div>
         </div>
       </div>
 

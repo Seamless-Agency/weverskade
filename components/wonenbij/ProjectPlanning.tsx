@@ -36,11 +36,13 @@ export default function ProjectPlanning({ fases }: { fases: PlanningFase[] }) {
                 : ""
             }`}
           >
-            {/* Verticale scheidingslijn: 27 links van de kolom, 5 boven de stip, 267 hoog */}
+            {/* Verticale scheidingslijn: 27 links van de kolom, 5 boven de stip,
+                onderkant 62 boven de kolom-onderkant (Figma: 267 hoog bij
+                Figma-content) — groeit zo mee met langere CMS-tekst */}
             {i > 0 ? (
               <span
                 aria-hidden
-                className="absolute left-[-1.875vw] top-[-0.347vw] w-px h-[18.542vw] bg-white max-md:hidden"
+                className="absolute left-[-1.875vw] top-[-0.347vw] bottom-[4.306vw] w-px bg-white max-md:hidden"
               />
             ) : null}
             <div className="flex items-start gap-[1.181vw] max-md:gap-3">
