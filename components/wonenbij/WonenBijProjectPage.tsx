@@ -49,8 +49,9 @@ export default function WonenBijProjectPage({
 
   return (
     <section className="bg-white min-h-screen">
-      {/* Hero */}
-      <div className="relative h-[62.708vw] max-md:h-[130vw]" data-nav-theme="dark">
+      {/* Hero — bewuste afwijking van Figma (903px-frame): altijd exact één
+          viewport hoog zodat titel en navigatie op elk scherm in beeld zijn */}
+      <div className="relative h-svh" data-nav-theme="dark">
         <Image
           src={project.heroImage}
           alt={project.naam}
