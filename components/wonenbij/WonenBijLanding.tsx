@@ -102,7 +102,7 @@ export default function WonenBijLanding({ data }: { data?: WonenBijLandingData }
         <div className="px-[2.778vw] max-lg:px-0">
           {/* Blok 1: titel + foto rechts; tekst links onder-verankerd 22 boven de foto-onderkant */}
           <div className="relative min-h-[43.889vw] max-lg:min-h-0">
-            <h2 className="font-heading font-normal text-[4.931vw] leading-[5.625vw] tracking-[-0.099vw] text-off-black whitespace-pre-line max-lg:text-[36px] max-lg:leading-[40px] max-lg:tracking-[-0.72px]">
+            <h2 className="max-w-[38.194vw] font-heading font-normal text-[4.931vw] leading-[5.625vw] tracking-[-0.099vw] text-off-black whitespace-pre-line max-lg:max-w-none max-lg:text-[36px] max-lg:leading-[40px] max-lg:tracking-[-0.72px]">
               {d.overTitel}
             </h2>
             <div className="absolute top-0 right-[-0.347vw] w-[54.514vw] h-[43.889vw] overflow-hidden max-lg:relative max-lg:inset-auto max-lg:w-full max-lg:h-auto max-lg:aspect-[785/632] max-lg:mt-8">

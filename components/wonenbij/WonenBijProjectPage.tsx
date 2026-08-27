@@ -202,7 +202,7 @@ export default function WonenBijProjectPage({
             <p className="font-body font-medium text-[1.389vw] leading-[1.611vw] text-off-black max-lg:text-[16px] max-lg:leading-[21px]">
               {project.welkomLabel}
             </p>
-            <h2 className="mt-[0.903vw] font-heading font-normal text-[4.931vw] leading-[6.076vw] tracking-[-0.099vw] text-off-black max-lg:mt-3 max-lg:text-[36px] max-lg:leading-[1.1] max-lg:tracking-[-0.72px]">
+            <h2 className="mt-[0.903vw] max-w-[37.5vw] font-heading font-normal text-[4.931vw] leading-[6.076vw] tracking-[-0.099vw] text-off-black max-lg:mt-3 max-lg:max-w-none max-lg:text-[36px] max-lg:leading-[1.1] max-lg:tracking-[-0.72px]">
               {project.welkomTitel}
             </h2>
 
