@@ -89,7 +89,7 @@ export default function WoningFilters({
   );
 
   const slaapkamersVeld = (
-    <label className="flex flex-col gap-[0.35vw] max-lg:gap-1.5">
+    <label className="flex h-full flex-col justify-between gap-[0.35vw] max-lg:h-auto max-lg:gap-1.5">
       <span className="font-body text-[0.8vw] font-medium uppercase tracking-[0.06em] text-off-black/45 max-lg:text-[11px]">
         Slaapkamers
       </span>
@@ -111,7 +111,7 @@ export default function WoningFilters({
   );
 
   const huurVeld = (
-    <label className="flex flex-col gap-[0.35vw] max-lg:gap-1.5">
+    <label className="flex h-full flex-col justify-between gap-[0.35vw] max-lg:h-auto max-lg:gap-1.5">
       <span className="flex items-baseline justify-between gap-4 font-body text-[0.8vw] font-medium uppercase tracking-[0.06em] text-off-black/45 max-lg:text-[11px]">
         Max. huur
         <span className="font-body text-[0.9vw] normal-case tracking-normal text-off-black max-lg:text-[13px]">
@@ -157,15 +157,28 @@ export default function WoningFilters({
   );
 
   if (inline) {
-    // Eén nette regel boven de lijst: onderkanten uitgelijnd, resultaat rechts.
+    // Eén rustige regel boven de lijst: drie gelijkwaardige kolommen met
+    // micro-label op één boven­lijn en de controls op één onderlijn; het
+    // resultaat staat stil rechtsonder op de paneelrand.
     return (
-      <div className="flex flex-wrap items-end gap-x-[2.222vw] gap-y-3">
-        {statusGroep}
-        <div className="w-[12.5vw]">{slaapkamersVeld}</div>
-        <div className="w-[17.361vw]">{huurVeld}</div>
+      <div className="flex items-end gap-x-[2.5vw]">
+        <div className="flex h-[3.819vw] flex-col justify-between">
+          <span className="font-body text-[0.8vw] font-medium uppercase tracking-[0.06em] text-off-black/45">
+            Status
+          </span>
+          {statusGroep}
+        </div>
+        <div className="flex h-[3.819vw] w-[12.5vw] flex-col justify-between">
+          {slaapkamersVeld}
+        </div>
+        <div className="flex h-[3.819vw] w-[17.361vw] flex-col justify-between">
+          {huurVeld}
+        </div>
         <div className="ml-auto flex items-baseline gap-[1.111vw] pb-[0.14vw]">
           {wissenKnop}
-          {resultaatTekst}
+          <p className="font-body text-[0.95vw] font-medium text-off-black/60">
+            {resultaatAantal} van {totaalAantal} woningen
+          </p>
         </div>
       </div>
     );

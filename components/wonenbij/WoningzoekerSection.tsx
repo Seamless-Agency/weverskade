@@ -258,7 +258,7 @@ export default function WoningzoekerSection({
         {/* Filters (desktop): één nette regel over de volle breedte, zodat het
             renderpaneel eronder exact op de bovenste lijstlijn kan beginnen */}
         {woningen.length ? (
-          <div className="mt-[1.528vw] ml-[2.431vw] mr-[2.569vw] hidden lg:block">
+          <div className="mt-[1.667vw] ml-[2.431vw] mr-[2.569vw] hidden lg:block">
             <WoningFilters
               inline
               filters={filters}
