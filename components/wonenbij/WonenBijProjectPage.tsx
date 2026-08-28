@@ -83,8 +83,12 @@ export default function WonenBijProjectPage({
             className="object-cover"
           />
         </div>
-        {/* Figma: top-scrim zwart 80% → 20% op 73% van de hoogte, dan vlak */}
-        <div className="absolute inset-x-0 top-0 h-[11.319vw] bg-[linear-gradient(to_bottom,rgba(0,0,0,0.8)_0%,rgba(0,0,0,0.2)_73%,rgba(0,0,0,0.2)_100%)] max-lg:h-[80px]" />
+        {/* Top-scrim voor leesbaarheid van de navigatie. Bewuste afwijking van
+            Figma (dat stopte op 20% zwart, waardoor de onderkant als een balk
+            aftekende): de stops volgen een ease-out naar volledig transparant,
+            zodat de scrim in de foto oplost. De donkerte achter de navrij
+            (0-55% van de hoogte) blijft gelijk aan de Figma-waarden. */}
+        <div className="absolute inset-x-0 top-0 h-[11.319vw] bg-[linear-gradient(to_bottom,rgba(0,0,0,0.8)_0%,rgba(0,0,0,0.66)_20%,rgba(0,0,0,0.5)_40%,rgba(0,0,0,0.34)_58%,rgba(0,0,0,0.18)_74%,rgba(0,0,0,0.07)_88%,rgba(0,0,0,0)_100%)] max-lg:h-[80px]" />
         <div className="absolute inset-x-0 bottom-0 h-[16.111vw] bg-gradient-to-b from-transparent to-black/70 max-lg:h-[120px]" />
         <WonenBijHeader
           variant="licht"
