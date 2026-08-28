@@ -15,7 +15,11 @@ import {
  * Veelgestelde vragen - accordion met chevron per rij, eerste rij open.
  * Figma: off-white band, titel op x=260 (191 onder de bandtop), label "FAQ" op
  * x=34 (18 onder de titeltop), accordion op x=268 breed 906. Dichte rij:
- * lijn → vraag 22, vraag → lijn 79. Open: vraag → antwoord 40, antwoord → lijn 44.
+ * lijn → vraag 22, vraag → lijn 44. Open: vraag → antwoord 40, antwoord → lijn 44.
+ * (De eerdere 79 was een meetfout: in het frame staan de vragen op twee regels,
+ * waardoor er een hele regelhoogte werd meegemeten. Een dichte rij is in het
+ * ontwerp 3,69x de regelhoogte hoog; met 44 klopt dat, en sluit de rij onder de
+ * vraag even ver af als onder het antwoord.)
  */
 export default function FaqSection({ items }: { items: FaqItem[] }) {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
@@ -62,7 +66,7 @@ export default function FaqSection({ items }: { items: FaqItem[] }) {
                     onClick={() => setOpenIndex(open ? null : i)}
                     aria-expanded={open}
                     className={`w-full flex items-start justify-between gap-[2vw] pt-[1.528vw] cursor-pointer bg-transparent border-none p-0 text-left max-lg:py-4 max-lg:gap-4 ${
-                      open ? "pb-0" : "pb-[5.486vw]"
+                      open ? "pb-0" : "pb-[3.056vw]"
                     }`}
                   >
                     <span className="font-body font-medium text-[2.292vw] leading-[2.66vw] text-off-black max-lg:text-[19px] max-lg:leading-[1.15]">
