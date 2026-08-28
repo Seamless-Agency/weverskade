@@ -9,6 +9,12 @@ import InschrijfForm from "@/components/wonenbij/InschrijfForm";
 import { PijlIcon } from "@/components/wonenbij/icons";
 import { usePageNavigation } from "@/hooks/usePageNavigation";
 import { formatPrijs, type WonenBijProject, type WoningType } from "@/data/wonenbij";
+import {
+  Reveal,
+  RevealMedia,
+  RevealWords,
+  useHeroIntro,
+} from "@/components/wonenbij/motion";
 
 interface WoningTypePageProps {
   project: WonenBijProject;
@@ -30,6 +36,7 @@ export default function WoningTypePage({
   voorgeselecteerdeWoning,
 }: WoningTypePageProps) {
   const navigate = usePageNavigation();
+  const intro = useHeroIntro();
   const [fotoIndex, setFotoIndex] = useState(0);
   const [plattegrondIndex, setPlattegrondIndex] = useState(0);
   const [omschrijvingOpen, setOmschrijvingOpen] = useState(false);
@@ -119,24 +126,29 @@ export default function WoningTypePage({
               className="relative w-full aspect-[676/482] overflow-hidden max-lg:order-1 max-lg:touch-pan-y"
               {...(type.fotos.length > 1 ? fotoSwipe : {})}
             >
-              {type.fotos.map((foto, i) => (
-                <Image
-                  key={foto + i}
-                  src={foto}
-                  alt={`${type.naam} - foto ${i + 1}`}
-                  fill
-                  priority={i === 0}
-                  sizes="(max-width: 768px) 100vw, 47vw"
-                  className={`object-cover transition-opacity duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] ${
-                    i === fotoIndex ? "opacity-100" : "opacity-0"
-                  }`}
-                />
-              ))}
+              {/* Clip-reveal alleen om de foto's; de pijlen blijven erbuiten
+                  zodat ze niet meeschalen tijdens de entrance. */}
+              <RevealMedia when={intro} className="absolute inset-0">
+                {type.fotos.map((foto, i) => (
+                  <Image
+                    key={foto + i}
+                    src={foto}
+                    alt={`${type.naam} - foto ${i + 1}`}
+                    fill
+                    priority={i === 0}
+                    sizes="(max-width: 768px) 100vw, 47vw"
+                    className={`object-cover transition-opacity duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+                      i === fotoIndex ? "opacity-100" : "opacity-0"
+                    }`}
+                  />
+                ))}
+              </RevealMedia>
               {type.fotos.length > 1 ? (
                 <CarouselPijlen
                   aantal={type.fotos.length}
                   actief={fotoIndex}
                   onStap={stapFoto}
+                  when={intro}
                 />
               ) : null}
             </div>
@@ -144,7 +156,7 @@ export default function WoningTypePage({
             {/* Plattegrond — Figma: witte kaart, titel op (38,47), tekening
                 469 breed gecentreerd, pijlen op de kaartranden */}
             {type.plattegronden.length > 0 ? (
-              <div className="relative mt-[2.708vw] bg-white pt-[3.264vw] pb-[4.722vw] max-lg:order-3 max-lg:mt-0 max-lg:p-5">
+              <Reveal className="relative mt-[2.708vw] bg-white pt-[3.264vw] pb-[4.722vw] max-lg:order-3 max-lg:mt-0 max-lg:p-5">
                 <p className="pl-[2.639vw] font-heading font-normal text-[1.389vw] leading-[1.715vw] text-off-black max-lg:pl-0 max-lg:text-[16px] max-lg:leading-[1.1]">
                   {type.plattegrondLabel ?? "Plattegrond"}
                   {type.plattegronden.length > 1 ? (
@@ -185,21 +197,32 @@ export default function WoningTypePage({
                     onStap={stapPlattegrond}
                   />
                 ) : null}
-              </div>
+              </Reveal>
             ) : null}
           </div>
 
           <div className="max-lg:order-2">
-            <p className="font-heading font-normal text-[1.389vw] leading-[1.715vw] text-off-black max-lg:text-[16px] max-lg:leading-[1.1]">
+            <Reveal
+              as="p"
+              when={intro}
+              delay={0.15}
+              y={16}
+              className="font-heading font-normal text-[1.389vw] leading-[1.715vw] text-off-black max-lg:text-[16px] max-lg:leading-[1.1]"
+            >
               {project.naam}
-            </p>
+            </Reveal>
             <h1 className="mt-[0.646vw] font-body font-medium text-[2.639vw] leading-[2.708vw] text-off-black max-lg:mt-2 max-lg:text-[26px] max-lg:leading-[30px]">
-              {type.naam}
+              <RevealWords text={type.naam} when={intro} delay={0.2} />
             </h1>
 
             {/* Specificaties met iconen — kolommen op 196px-pitch, tekst 32
                 rechts van de kolomrand, rijritme 40px (rij is 22 door het icoon) */}
-            <div className="mt-[3.125vw] grid grid-cols-[13.611vw_1fr] gap-y-[1.25vw] max-lg:mt-6 max-lg:grid-cols-2 max-lg:gap-x-4 max-lg:gap-y-4 max-lg:items-start">
+            <Reveal
+              when={intro}
+              delay={0.35}
+              y={20}
+              className="mt-[3.125vw] grid grid-cols-[13.611vw_1fr] gap-y-[1.25vw] max-lg:mt-6 max-lg:grid-cols-2 max-lg:gap-x-4 max-lg:gap-y-4 max-lg:items-start"
+            >
               <Spec icoon="m2-klein.svg" tekst={`${type.oppervlakte} m² oppervlakte`} />
               <Spec icoon="key-klein.svg" tekst={prijsLabel} />
               <Spec icoon="bed-klein.svg" tekst={`${type.slaapkamers} slaapkamers`} />
@@ -210,10 +233,15 @@ export default function WoningTypePage({
                 <Spec icoon="buitenruimte-klein.svg" tekst={type.buitenruimte} />
               ) : null}
               <Spec icoon="inschrijven.svg" tekst="Inschrijven mogelijk" />
-            </div>
+            </Reveal>
 
             {/* Omschrijving */}
-            <div className="mt-[2.986vw] max-w-[29.792vw] max-lg:mt-6 max-lg:max-w-none">
+            <Reveal
+              when={intro}
+              delay={0.45}
+              y={20}
+              className="mt-[2.986vw] max-w-[29.792vw] max-lg:mt-6 max-lg:max-w-none"
+            >
               {zichtbareBlokken.map((blok) => (
                 <div key={blok.kop} className="mb-[1.667vw] max-lg:mb-4">
                   <p className="font-body font-semibold text-[1.111vw] leading-[1.667vw] tracking-[-0.022vw] text-off-black max-lg:text-[15px] max-lg:leading-[22px]">
@@ -229,19 +257,24 @@ export default function WoningTypePage({
                   onClick={() => setOmschrijvingOpen((v) => !v)}
                   className="font-body font-medium text-[0.972vw] leading-[1.125vw] text-off-black cursor-pointer bg-transparent border-none p-0 max-lg:text-[13px] max-lg:leading-normal max-lg:px-3 max-lg:py-2.5 max-lg:-mx-3 max-lg:-my-2.5"
                 >
-                  <span className="inline-block border-b border-off-black pb-[0.417vw] max-lg:pb-1">
+                  <span className="link-underline [--underline-h:1px] inline-block border-b border-transparent pb-[0.417vw] max-lg:pb-1">
                     {omschrijvingOpen ? "Lees minder" : "Lees meer"}
                   </span>
                 </button>
               ) : null}
-            </div>
+            </Reveal>
 
             {/* Acties — Figma: knoppen 36 hoog, 69 onder de lees-meer-lijn */}
-            <div className="mt-[4.792vw] flex gap-[1.181vw] max-lg:mt-6 max-lg:flex-wrap max-lg:gap-3">
+            <Reveal
+              when={intro}
+              delay={0.55}
+              y={20}
+              className="mt-[4.792vw] flex gap-[1.181vw] max-lg:mt-6 max-lg:flex-wrap max-lg:gap-3"
+            >
               <a
                 href="#inschrijven"
                 onClick={scrollNaarInschrijven}
-                className="flex items-center h-[2.5vw] bg-green text-off-white no-underline rounded-full px-[1.319vw] font-heading font-normal text-[0.972vw] leading-[1.201vw] tracking-[-0.019vw] max-lg:h-[44px] max-lg:px-5 max-lg:text-[14px] max-lg:leading-normal"
+                className="pill-hover flex items-center h-[2.5vw] bg-green text-off-white no-underline rounded-full px-[1.319vw] font-heading font-normal text-[0.972vw] leading-[1.201vw] tracking-[-0.019vw] max-lg:h-[44px] max-lg:px-5 max-lg:text-[14px] max-lg:leading-normal"
               >
                 Schrijf je nu in
               </a>
@@ -251,13 +284,13 @@ export default function WoningTypePage({
                   onClick={(e) =>
                     navigate(e, `/wonenbij/${project.slug}/${volgendeTypeSlug}`)
                   }
-                  className="flex items-center h-[2.5vw] gap-[0.625vw] bg-off-black text-off-white no-underline rounded-full pl-[1.181vw] pr-[1.458vw] font-heading font-normal text-[0.972vw] leading-[1.201vw] tracking-[-0.019vw] max-lg:h-[44px] max-lg:px-5 max-lg:text-[14px] max-lg:leading-normal"
+                  className="pill-hover group flex items-center h-[2.5vw] gap-[0.625vw] bg-off-black text-off-white no-underline rounded-full pl-[1.181vw] pr-[1.458vw] font-heading font-normal text-[0.972vw] leading-[1.201vw] tracking-[-0.019vw] max-lg:h-[44px] max-lg:px-5 max-lg:text-[14px] max-lg:leading-normal"
                 >
                   Volgende type
-                  <PijlIcon className="w-[1.528vw] h-auto max-lg:w-[14px]" />
+                  <PijlIcon className="w-[1.528vw] h-auto transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-x-[0.3vw] max-lg:w-[14px]" />
                 </a>
               ) : null}
-            </div>
+            </Reveal>
           </div>
         </div>
       </div>
@@ -279,16 +312,17 @@ export default function WoningTypePage({
 
       {/* Figma: groene terugknop 242×46 op x=36, 147 boven de footer */}
       <div className="bg-off-white pl-[2.5vw] pb-[10.208vw] max-lg:px-5 max-lg:pb-12">
-        <a
+        <Reveal
+          as="a"
           href={projectHref}
-          onClick={(e) => navigate(e, projectHref)}
-          className="inline-flex items-center h-[3.194vw] gap-[0.833vw] bg-green text-off-white no-underline rounded-full pl-[1.875vw] pr-[1.528vw] max-lg:h-auto max-lg:px-5 max-lg:py-2.5"
+          onClick={(e: React.MouseEvent<HTMLAnchorElement>) => navigate(e, projectHref)}
+          className="pill-hover group inline-flex items-center h-[3.194vw] gap-[0.833vw] bg-green text-off-white no-underline rounded-full pl-[1.875vw] pr-[1.528vw] max-lg:h-auto max-lg:px-5 max-lg:py-2.5"
         >
-          <PijlIcon className="w-[1.528vw] h-auto rotate-180 max-lg:w-[16px]" />
+          <PijlIcon className="w-[1.528vw] h-auto rotate-180 transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:-translate-x-[0.3vw] max-lg:w-[16px]" />
           <span className="font-heading font-normal text-[1.181vw] leading-[1.458vw] tracking-[-0.024vw] max-lg:text-[14px] max-lg:leading-normal">
             Terug naar het project
           </span>
-        </a>
+        </Reveal>
       </div>
 
       {/* Plattegrond-lightbox: fullscreen overlay. Op mobiel wordt de
@@ -300,9 +334,9 @@ export default function WoningTypePage({
           role="dialog"
           aria-modal="true"
           aria-label="Plattegrond vergroot"
-          className="fixed inset-0 z-50 bg-off-white overflow-auto overscroll-contain"
+          className="fixed inset-0 z-50 bg-off-white overflow-auto overscroll-contain menu-overlay-in"
         >
-          <div className="relative w-full h-full max-lg:w-[180vw] max-lg:h-[130vh]">
+          <div className="relative w-full h-full max-lg:w-[180vw] max-lg:h-[130vh] menu-item-in">
             <Image
               src={type.plattegronden[plattegrondIndex]}
               alt={`${type.naam} - plattegrond vergroot`}
@@ -314,7 +348,7 @@ export default function WoningTypePage({
           <button
             onClick={() => setLightboxOpen(false)}
             aria-label="Sluiten"
-            className="fixed top-5 right-5 flex items-center justify-center size-[2.778vw] rounded-full bg-off-white border border-off-black/15 cursor-pointer transition-opacity duration-200 hover:opacity-80 max-lg:size-[44px] max-lg:top-4 max-lg:right-4"
+            className="pill-hover fixed top-5 right-5 flex items-center justify-center size-[2.778vw] rounded-full bg-off-white border border-off-black/15 cursor-pointer max-lg:size-[44px] max-lg:top-4 max-lg:right-4"
           >
             <span className="font-body font-medium text-[1.111vw] leading-none text-off-black max-lg:text-[18px]">
               ✕
@@ -370,31 +404,42 @@ function CarouselPijlen({
   actief,
   onStap,
   dotVariant = "licht",
+  when,
 }: {
   aantal: number;
   actief: number;
   onStap: (richting: number) => void;
   /** "licht" = off-white dots (op foto), "donker" = off-black (op witte kaart). */
   dotVariant?: "licht" | "donker";
+  /** Expliciete reveal-trigger (bv. de hero-intro); anders eigen observer. */
+  when?: boolean;
 }) {
   if (aantal < 2) return null;
   const dotKleur = dotVariant === "licht" ? "bg-off-white" : "bg-off-black";
   return (
     <>
-      <button
+      <Reveal
+        as="button"
+        when={when}
+        y={0}
+        delay={0.9}
         onClick={() => onStap(-1)}
         aria-label="Vorige"
-        className="absolute left-[1.319vw] top-1/2 -translate-y-1/2 flex items-center justify-center size-[2.778vw] rounded-full bg-off-white cursor-pointer border-none transition-opacity duration-200 hover:opacity-80 max-lg:size-[44px] max-lg:left-3"
+        className="pill-hover absolute left-[1.319vw] top-1/2 -translate-y-1/2 flex items-center justify-center size-[2.778vw] rounded-full bg-off-white cursor-pointer border-none max-lg:size-[44px] max-lg:left-3"
       >
         <PijlIcon className="w-[1.389vw] h-auto rotate-180 text-off-black max-lg:w-[16px]" />
-      </button>
-      <button
+      </Reveal>
+      <Reveal
+        as="button"
+        when={when}
+        y={0}
+        delay={0.9}
         onClick={() => onStap(1)}
         aria-label="Volgende"
-        className="absolute right-[1.528vw] top-1/2 -translate-y-1/2 flex items-center justify-center size-[2.778vw] rounded-full bg-off-white cursor-pointer border-none transition-opacity duration-200 hover:opacity-80 max-lg:size-[44px] max-lg:right-3"
+        className="pill-hover absolute right-[1.528vw] top-1/2 -translate-y-1/2 flex items-center justify-center size-[2.778vw] rounded-full bg-off-white cursor-pointer border-none max-lg:size-[44px] max-lg:right-3"
       >
         <PijlIcon className="w-[1.389vw] h-auto text-off-black max-lg:w-[16px]" />
-      </button>
+      </Reveal>
       {/* Positie-dots, alleen mobiel (desktop blijft exact Figma). */}
       <div
         aria-hidden="true"

@@ -7,6 +7,7 @@ import TurnstileWidget, {
 } from "@/components/TurnstileWidget";
 import { submitFormSubmission } from "@/lib/formSubmissionClient";
 import { ChevronIcon } from "@/components/wonenbij/icons";
+import { Reveal, RevealWords } from "@/components/wonenbij/motion";
 
 const INKOMEN_OPTIES = [
   "Tot €40.000",
@@ -149,17 +150,25 @@ export default function InschrijfForm({
       data-nav-theme="light"
     >
       <div className="flex items-start pl-[2.569vw] pr-[2.431vw] max-lg:flex-col max-lg:px-5 max-lg:gap-4">
-        <p className="shrink-0 w-[31.875vw] font-heading font-normal text-[1.389vw] leading-[1.715vw] text-off-black max-lg:w-auto max-lg:text-[17px] max-lg:leading-[22px]">
+        <Reveal
+          as="p"
+          className="shrink-0 w-[31.875vw] font-heading font-normal text-[1.389vw] leading-[1.715vw] text-off-black max-lg:w-auto max-lg:text-[17px] max-lg:leading-[22px]"
+        >
           {label}
-        </p>
+        </Reveal>
         <div className="flex-1 max-lg:w-full">
           <h2 className="ml-[0.764vw] font-body font-medium text-[3.75vw] leading-[3.681vw] text-off-black max-w-[51.528vw] max-lg:ml-0 max-lg:text-[28px] max-lg:leading-[32px] max-lg:max-w-none">
-            {heading}
+            <RevealWords text={heading} />
           </h2>
-          <p className="mt-[2.361vw] ml-[0.625vw] max-w-[47.153vw] font-body font-medium text-[1.597vw] leading-[2.153vw] tracking-[-0.016vw] text-off-black max-lg:mt-4 max-lg:ml-0 max-lg:max-w-none max-lg:text-[16px] max-lg:leading-[23px]">
+          <Reveal
+            as="p"
+            delay={0.15}
+            className="mt-[2.361vw] ml-[0.625vw] max-w-[47.153vw] font-body font-medium text-[1.597vw] leading-[2.153vw] tracking-[-0.016vw] text-off-black max-lg:mt-4 max-lg:ml-0 max-lg:max-w-none max-lg:text-[16px] max-lg:leading-[23px]"
+          >
             {intro}
-          </p>
+          </Reveal>
 
+          <Reveal delay={0.25}>
           <form onSubmit={handleSubmit} className="mt-[5.139vw] max-w-[46.944vw] max-lg:mt-8 max-lg:max-w-none">
             {/* Voorkeursveld tussen twee lijnen, zoals in het design */}
             <div className="relative border-y border-off-black pt-[1.736vw] pb-[1.847vw] max-lg:py-3">
@@ -303,7 +312,7 @@ export default function InschrijfForm({
                   submitState === "submitting" ||
                   (isTurnstileEnabled && !turnstileToken)
                 }
-                className="inline-flex items-center justify-center w-[14.722vw] h-[3.194vw] bg-green text-off-white font-heading font-normal text-[1.181vw] leading-[1.458vw] tracking-[-0.024vw] rounded-full cursor-pointer border-none disabled:opacity-40 disabled:cursor-not-allowed max-lg:w-auto max-lg:h-auto max-lg:text-[15px] max-lg:px-6 max-lg:py-3 max-lg:leading-normal"
+                className="pill-hover inline-flex items-center justify-center w-[14.722vw] h-[3.194vw] bg-green text-off-white font-heading font-normal text-[1.181vw] leading-[1.458vw] tracking-[-0.024vw] rounded-full cursor-pointer border-none disabled:opacity-40 disabled:cursor-not-allowed max-lg:w-auto max-lg:h-auto max-lg:text-[15px] max-lg:px-6 max-lg:py-3 max-lg:leading-normal"
               >
                 {submitState === "submitting"
                   ? "Versturen..."
@@ -325,6 +334,7 @@ export default function InschrijfForm({
               </p>
             ) : null}
           </form>
+          </Reveal>
         </div>
       </div>
     </section>

@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, type CSSProperties } from "react";
 import { usePageNavigation } from "@/hooks/usePageNavigation";
 import { PijlIcon } from "@/components/wonenbij/icons";
+import { EASE, useHeroIntro, useReducedMotion } from "@/components/wonenbij/motion";
 
 interface AnchorLink {
   label: string;
@@ -35,6 +36,19 @@ export default function WonenBijHeader({
   const navigate = usePageNavigation();
   const [menuOpen, setMenuOpen] = useState(false);
   const textColor = variant === "licht" ? "text-off-white" : "text-off-black";
+
+  // Entrance: wordmark, links en pill zakken gestaffeld in beeld zodra de
+  // hero-intro start (na de page transition, of kort na een directe load).
+  const intro = useHeroIntro();
+  const reduced = useReducedMotion();
+  const introStyle = (delay: number): CSSProperties => ({
+    opacity: intro ? 1 : 0,
+    transform: intro ? "translateY(0)" : "translateY(-12px)",
+    transition:
+      intro && !reduced
+        ? `opacity 0.8s ${EASE} ${delay}s, transform 0.8s ${EASE} ${delay}s`
+        : "none",
+  });
 
   // Open menu: pagina-scroll bevriezen en met Escape kunnen sluiten.
   useEffect(() => {
@@ -75,6 +89,7 @@ export default function WonenBijHeader({
       <a
         href="/wonenbij"
         onClick={(e) => navigate(e, "/wonenbij")}
+        style={introStyle(0.05)}
         className={`${metNav ? "mt-[2.431vw]" : metTerug ? "mt-[2.847vw]" : "mt-[4.097vw]"} font-body font-medium text-[2.5vw] leading-[2.9vw] tracking-[-0.05vw] whitespace-nowrap no-underline ${textColor} max-lg:mt-0 max-lg:text-[15px] max-lg:leading-none`}
       >
         Wonen bij Weverskade
@@ -85,12 +100,13 @@ export default function WonenBijHeader({
       >
         {metNav ? (
           <nav className="flex items-center gap-[3.472vw] max-lg:hidden">
-            {anchors!.map((anchor) => (
+            {anchors!.map((anchor, i) => (
               <a
                 key={anchor.label}
                 href={anchor.href}
                 onClick={(e) => handleAnchor(e, anchor.href)}
-                className={`font-body font-medium text-[1.111vw] leading-[1.292vw] no-underline ${textColor} hover:opacity-70 transition-opacity duration-200`}
+                style={introStyle(0.15 + i * 0.05)}
+                className={`font-body font-medium text-[1.111vw] leading-[1.292vw] link-underline-hover ${textColor}`}
               >
                 {anchor.label}
               </a>
@@ -102,7 +118,8 @@ export default function WonenBijHeader({
           <a
             href={ctaHref}
             onClick={(e) => handleAnchor(e, ctaHref)}
-            className={`flex items-center bg-green text-off-white no-underline rounded-full ${
+            style={introStyle(metNav ? 0.15 + anchors!.length * 0.05 : 0.2)}
+            className={`pill-hover flex items-center bg-green text-off-white no-underline rounded-full ${
               metTerug
                 ? "h-[3.194vw] gap-[1.319vw] pl-[1.111vw] pr-[1.736vw]"
                 : `h-[2.847vw] gap-[0.694vw] ${metNav ? "pl-[2.014vw] pr-[1.806vw]" : "px-[1.597vw]"}`
@@ -136,6 +153,7 @@ export default function WonenBijHeader({
             onClick={() => setMenuOpen(true)}
             aria-label="Menu openen"
             aria-expanded={menuOpen}
+            style={introStyle(0.25)}
             className={`hidden max-lg:flex items-center justify-center size-11 rounded-full border-none cursor-pointer ${
               variant === "licht"
                 ? "bg-off-white/20 text-off-white"
@@ -155,7 +173,7 @@ export default function WonenBijHeader({
 
       {/* Fullscreen ankermenu (tablet/mobiel) */}
       {metNav && menuOpen ? (
-        <div className="fixed inset-0 z-50 bg-off-black text-off-white overflow-y-auto lg:hidden">
+        <div className="fixed inset-0 z-50 bg-off-black text-off-white overflow-y-auto lg:hidden menu-overlay-in">
           <div className="flex items-center justify-between px-5 pt-5">
             <span className="font-body font-medium text-[17px] leading-none">
               Wonen bij Weverskade
@@ -176,12 +194,13 @@ export default function WonenBijHeader({
             </button>
           </div>
           <nav className="flex flex-col gap-1 px-5 pt-12 pb-8">
-            {anchors!.map((anchor) => (
+            {anchors!.map((anchor, i) => (
               <a
                 key={anchor.label}
                 href={anchor.href}
                 onClick={(e) => handleAnchor(e, anchor.href)}
-                className="py-3 font-heading font-normal text-[28px] leading-[34px] tracking-[-0.56px] text-off-white no-underline border-b border-off-white/15"
+                style={{ "--menu-delay": `${0.1 + i * 0.05}s` } as CSSProperties}
+                className="py-3 font-heading font-normal text-[28px] leading-[34px] tracking-[-0.56px] text-off-white no-underline border-b border-off-white/15 menu-item-in"
               >
                 {anchor.label}
               </a>
@@ -190,7 +209,12 @@ export default function WonenBijHeader({
               <a
                 href={ctaHref}
                 onClick={(e) => handleAnchor(e, ctaHref)}
-                className="mt-8 inline-flex items-center justify-center self-start h-11 px-6 bg-green text-off-white rounded-full font-body font-medium text-[15px] no-underline"
+                style={
+                  {
+                    "--menu-delay": `${0.1 + anchors!.length * 0.05 + 0.1}s`,
+                  } as CSSProperties
+                }
+                className="mt-8 inline-flex items-center justify-center self-start h-11 px-6 bg-green text-off-white rounded-full font-body font-medium text-[15px] no-underline menu-item-in"
               >
                 {ctaLabel}
               </a>

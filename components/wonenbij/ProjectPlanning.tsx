@@ -2,6 +2,12 @@
 
 import Image from "next/image";
 import type { PlanningFase } from "@/data/wonenbij";
+import {
+  Reveal,
+  RevealGroup,
+  RevealLine,
+  RevealWords,
+} from "@/components/wonenbij/motion";
 
 /**
  * Blauwe band met de vier projectfases, gescheiden door verticale lijnen.
@@ -22,11 +28,11 @@ export default function ProjectPlanning({ fases }: { fases: PlanningFase[] }) {
     >
       <div className="pl-[18.542vw] pr-[2.431vw] max-lg:px-5">
         <h2 className="font-heading font-normal text-[4.653vw] leading-[5.736vw] tracking-[-0.093vw] text-off-white max-lg:text-[36px] max-lg:leading-[1.1] max-lg:tracking-[-0.72px]">
-          Projectplanning
+          <RevealWords text="Projectplanning" />
         </h2>
       </div>
 
-      <div className="mt-[5.139vw] pl-[18.958vw] grid grid-cols-[16.111vw_16.111vw_16.111vw_16.111vw] max-lg:mt-10 max-lg:px-5 max-lg:grid-cols-1 max-lg:gap-10">
+      <RevealGroup className="mt-[5.139vw] pl-[18.958vw] grid grid-cols-[16.111vw_16.111vw_16.111vw_16.111vw] max-lg:mt-10 max-lg:px-5 max-lg:grid-cols-1 max-lg:gap-10">
         {fases.map((fase, i) => (
           <div
             key={fase.titel + fase.periode}
@@ -38,14 +44,16 @@ export default function ProjectPlanning({ fases }: { fases: PlanningFase[] }) {
           >
             {/* Verticale scheidingslijn: 27 links van de kolom, 5 boven de stip,
                 onderkant 62 boven de kolom-onderkant (Figma: 267 hoog bij
-                Figma-content) — groeit zo mee met langere CMS-tekst */}
+                Figma-content) — groeit zo mee met langere CMS-tekst.
+                De lijn tekent zichzelf van boven naar beneden, na de fases. */}
             {i > 0 ? (
-              <span
-                aria-hidden
+              <RevealLine
+                axis="y"
+                delay={0.5 + i * 0.12}
                 className="absolute left-[-1.875vw] top-[-0.347vw] bottom-[4.306vw] w-px bg-white max-lg:hidden"
               />
             ) : null}
-            <div className="flex items-start gap-[1.181vw] max-lg:gap-3">
+            <Reveal delay={0.1 + i * 0.12} className="flex items-start gap-[1.181vw] max-lg:gap-3">
               <span className="relative shrink-0 mt-[0.139vw] size-[1.806vw] max-lg:size-[24px]">
                 {actieveIndex >= 0 && i < actieveIndex ? (
                   // Afgeronde fase: wit rondje met vinkje in de bandkleur
@@ -84,9 +92,12 @@ export default function ProjectPlanning({ fases }: { fases: PlanningFase[] }) {
                   {fase.titel}
                 </p>
               </div>
-            </div>
+            </Reveal>
 
-            <div className="mt-[1.667vw] ml-[0.278vw] mr-[2.708vw] font-body font-medium text-[0.833vw] leading-[1.181vw] tracking-[-0.017vw] text-off-white max-lg:mt-4 max-lg:mx-0 max-lg:text-[13px] max-lg:leading-[19px]">
+            <Reveal
+              delay={0.2 + i * 0.12}
+              className="mt-[1.667vw] ml-[0.278vw] mr-[2.708vw] font-body font-medium text-[0.833vw] leading-[1.181vw] tracking-[-0.017vw] text-off-white max-lg:mt-4 max-lg:mx-0 max-lg:text-[13px] max-lg:leading-[19px]"
+            >
               <p>{fase.omschrijving}</p>
               {fase.verwachtingen.length ? (
                 <>
@@ -102,10 +113,10 @@ export default function ProjectPlanning({ fases }: { fases: PlanningFase[] }) {
                   </ul>
                 </>
               ) : null}
-            </div>
+            </Reveal>
           </div>
         ))}
-      </div>
+      </RevealGroup>
     </section>
   );
 }

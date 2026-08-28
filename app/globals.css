@@ -33,6 +33,55 @@ html {
   --color-brown: #9A755D;
 }
 
+/* ─── Wonen-bij motion ───
+   Hover-easing volgt de referentie (Seamless): cubic-bezier(.65,0,.35,1). */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes riseIn {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+}
+
+/* Fullscreen ankermenu (tablet/mobiel): overlay fade + gestaffelde links. */
+@media (prefers-reduced-motion: no-preference) {
+  .menu-overlay-in {
+    animation: fadeIn 0.4s ease both;
+  }
+
+  .menu-item-in {
+    animation: riseIn 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation-delay: var(--menu-delay, 0s);
+  }
+}
+
+/* Pill-knoppen: lichte verdonkering + zachte scale op hover.
+   `scale` is een eigen CSS-property (geen transform), dus dit botst
+   nooit met translate-/rotate-utilities op hetzelfde element. */
+.pill-hover {
+  transition: filter 0.3s cubic-bezier(0.65, 0, 0.35, 1),
+    scale 0.35s cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+.pill-hover:hover {
+  filter: brightness(0.94);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .pill-hover:hover {
+    scale: 1.03;
+  }
+
+  .pill-hover:active {
+    scale: 0.97;
+  }
+}
+
 /* Animated underline — matches page transition easing */
 .link-underline {
   position: relative;
@@ -79,6 +128,43 @@ html {
   .link-underline::before {
     height: var(--underline-h-mobile, 1px);
   }
+}
+
+/* Variant voor links binnen een grotere hover-target (bv. een nieuwsrij):
+   de underline-redraw reageert op hover van de .group-parent. */
+.group:hover .group-underline::after {
+  transform: scaleX(0);
+}
+
+.group:hover .group-underline::before {
+  transform: scaleX(1);
+  transition-delay: 0.35s;
+}
+
+/* Hover-only variant: geen lijn in rust (pixel perfect t.o.v. Figma),
+   tekent van links op hover en verlaat naar rechts (Waterloo-patroon:
+   transform-origin wisselt zodat de lijn altijd dezelfde kant op beweegt). */
+.link-underline-hover {
+  position: relative;
+  text-decoration: none;
+}
+
+.link-underline-hover::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -0.25em;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform 0.45s cubic-bezier(0.625, 0.05, 0, 1);
+}
+
+.link-underline-hover:hover::after {
+  transform: scaleX(1);
+  transform-origin: left;
 }
 
 /* ─── Woningzoeker: huurprijs-slider ───

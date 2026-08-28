@@ -3,6 +3,13 @@
 import { useState } from "react";
 import type { FaqItem } from "@/data/wonenbij";
 import { ChevronIcon } from "@/components/wonenbij/icons";
+import {
+  EASE,
+  Reveal,
+  RevealGroup,
+  RevealLine,
+  RevealWords,
+} from "@/components/wonenbij/motion";
 
 /**
  * Veelgestelde vragen - accordion met chevron per rij, eerste rij open.
@@ -18,25 +25,40 @@ export default function FaqSection({ items }: { items: FaqItem[] }) {
   return (
     <section id="faq" className="bg-off-white pt-[13.264vw] pb-[12.153vw] max-lg:py-14" data-nav-theme="light">
       <div className="relative px-[2.361vw] max-lg:px-5">
-        <p className="absolute left-[2.361vw] top-[1.25vw] font-body font-medium text-[1.389vw] leading-[1.611vw] text-off-black max-lg:static max-lg:text-[17px] max-lg:leading-[22px]">
+        <Reveal
+          as="p"
+          className="absolute left-[2.361vw] top-[1.25vw] font-body font-medium text-[1.389vw] leading-[1.611vw] text-off-black max-lg:static max-lg:text-[17px] max-lg:leading-[22px]"
+        >
           FAQ
-        </p>
+        </Reveal>
         <div className="pl-[15.694vw] max-lg:pl-0 max-lg:mt-3">
           <h2 className="font-heading font-normal text-[5.556vw] leading-[6.847vw] tracking-[-0.111vw] text-off-black max-lg:text-[34px] max-lg:leading-[1.1] max-lg:tracking-[-0.68px]">
-            Veelgestelde vragen
+            <RevealWords text="Veelgestelde vragen" />
           </h2>
 
           <div className="mt-[4.028vw] ml-[0.556vw] w-[62.917vw] max-lg:ml-0 max-lg:mt-8 max-lg:w-full">
+            {/* De borders blijven (transparant) voor exact dezelfde layout;
+                de zichtbare lijnen tekenen zichzelf via RevealLine. */}
             {items.map((item, i) => {
               const open = openIndex === i;
               return (
-                <div
+                <RevealGroup
                   key={item.vraag}
-                  className={`border-t border-off-black/40 ${
+                  className={`relative border-t border-transparent ${
                     i === items.length - 1 ? "border-b" : ""
                   }`}
                 >
-                  <button
+                  <RevealLine className="absolute inset-x-0 top-[-1px] h-px bg-off-black/40" />
+                  {i === items.length - 1 ? (
+                    <RevealLine
+                      delay={0.15}
+                      className="absolute inset-x-0 bottom-[-1px] h-px bg-off-black/40"
+                    />
+                  ) : null}
+                  <Reveal
+                    as="button"
+                    delay={0.1}
+                    y={16}
                     onClick={() => setOpenIndex(open ? null : i)}
                     aria-expanded={open}
                     className={`w-full flex items-start justify-between gap-[2vw] pt-[1.528vw] cursor-pointer bg-transparent border-none p-0 text-left max-lg:py-4 max-lg:gap-4 ${
@@ -51,7 +73,7 @@ export default function FaqSection({ items }: { items: FaqItem[] }) {
                         open ? "rotate-180" : ""
                       }`}
                     />
-                  </button>
+                  </Reveal>
                   <div
                     className="grid"
                     style={{
@@ -61,12 +83,19 @@ export default function FaqSection({ items }: { items: FaqItem[] }) {
                     }}
                   >
                     <div className="overflow-hidden">
-                      <p className="mt-[2.757vw] pb-[3.056vw] max-w-[59.375vw] font-body font-medium text-[1.319vw] leading-[2.153vw] tracking-[-0.026vw] text-off-black max-lg:mt-0 max-lg:pb-5 max-lg:max-w-none max-lg:text-[15px] max-lg:leading-[23px]">
+                      <p
+                        className="mt-[2.757vw] pb-[3.056vw] max-w-[59.375vw] font-body font-medium text-[1.319vw] leading-[2.153vw] tracking-[-0.026vw] text-off-black max-lg:mt-0 max-lg:pb-5 max-lg:max-w-none max-lg:text-[15px] max-lg:leading-[23px]"
+                        style={{
+                          opacity: open ? 1 : 0,
+                          transform: open ? "translateY(0)" : "translateY(8px)",
+                          transition: `opacity 0.5s ${EASE} ${open ? "0.1s" : "0s"}, transform 0.5s ${EASE} ${open ? "0.1s" : "0s"}`,
+                        }}
+                      >
                         {item.antwoord}
                       </p>
                     </div>
                   </div>
-                </div>
+                </RevealGroup>
               );
             })}
           </div>

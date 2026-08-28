@@ -10,6 +10,16 @@ import { usePageNavigation } from "@/hooks/usePageNavigation";
 import { submitFormSubmission } from "@/lib/formSubmissionClient";
 import WonenBijHeader from "@/components/wonenbij/WonenBijHeader";
 import {
+  EASE,
+  Parallax,
+  Reveal,
+  RevealGroup,
+  RevealMedia,
+  RevealWords,
+  useHeroIntro,
+  useReducedMotion,
+} from "@/components/wonenbij/motion";
+import {
   STATUS_TYPE_META,
   formatPrijs,
   landingDefaults,
@@ -37,6 +47,8 @@ export interface WonenBijLandingData {
  */
 export default function WonenBijLanding({ data }: { data?: WonenBijLandingData }) {
   const navigate = usePageNavigation();
+  const intro = useHeroIntro();
+  const reduced = useReducedMotion();
   const d = landingDefaults;
 
   const heroImage = data?.heroImage ?? d.heroImage;
@@ -63,15 +75,24 @@ export default function WonenBijLanding({ data }: { data?: WonenBijLandingData }
     <section className="relative bg-white min-h-screen">
       {/* Hero — net als de projectpagina altijd exact één viewport hoog
           (bewuste afwijking van het 893px-Figma-frame) */}
-      <div className="relative h-svh" data-nav-theme="dark">
-        <Image
-          src={heroImage}
-          alt="Wonen bij Weverskade"
-          fill
-          priority
-          sizes="100vw"
-          className="object-cover"
-        />
+      <div className="relative h-svh overflow-hidden" data-nav-theme="dark">
+        {/* Zoom-out entrance, zelfde geste als de hero van de hoofdsite */}
+        <div
+          className="absolute inset-0 will-change-transform"
+          style={{
+            transform: intro ? "scale(1)" : "scale(1.18)",
+            transition: intro && !reduced ? `transform 2.4s ${EASE}` : "none",
+          }}
+        >
+          <Image
+            src={heroImage}
+            alt="Wonen bij Weverskade"
+            fill
+            priority
+            sizes="100vw"
+            className="object-cover"
+          />
+        </div>
         <div className="absolute inset-0 bg-off-black/30" />
         <WonenBijHeader
           variant="licht"
@@ -82,18 +103,21 @@ export default function WonenBijLanding({ data }: { data?: WonenBijLandingData }
 
       {/* Statement — de knop staat inline achter de laatste regel; vaste paddings
           (geen hoogte) zodat langere CMS-tekst de sectie laat meegroeien */}
-      <div className="pt-[6.181vw] pb-[16.667vw] px-[2.569vw] max-lg:pt-12 max-lg:px-5 max-lg:pb-12">
+      <RevealGroup className="pt-[6.181vw] pb-[16.667vw] px-[2.569vw] max-lg:pt-12 max-lg:px-5 max-lg:pb-12">
         <p className="font-body font-medium text-[4.028vw] leading-[4.097vw] text-off-black indent-[10.278vw] max-w-[83.264vw] max-lg:indent-10 max-lg:text-[28px] max-lg:leading-[33px] max-lg:max-w-none">
-          {introStatement}
-          <a
+          <RevealWords text={introStatement} stagger={0.04} duration={1} />
+          <Reveal
+            as="a"
             href="#aanbod"
             onClick={scrollNaarAanbod}
-            className="relative -top-[0.104vw] inline-flex items-center justify-center align-middle indent-0 leading-none whitespace-nowrap ml-[2.465vw] w-[12.083vw] h-[2.847vw] bg-green text-off-white no-underline rounded-full font-heading font-normal text-[1.181vw] tracking-[-0.024vw] max-lg:top-0 max-lg:ml-3 max-lg:w-auto max-lg:h-auto max-lg:px-6 max-lg:py-2.5 max-lg:text-[15px]"
+            delay={0.75}
+            y={14}
+            className="pill-hover relative -top-[0.104vw] inline-flex items-center justify-center align-middle indent-0 leading-none whitespace-nowrap ml-[2.465vw] w-[12.083vw] h-[2.847vw] bg-green text-off-white no-underline rounded-full font-heading font-normal text-[1.181vw] tracking-[-0.024vw] max-lg:top-0 max-lg:ml-3 max-lg:w-auto max-lg:h-auto max-lg:px-6 max-lg:py-2.5 max-lg:text-[15px]"
           >
             {d.introKnop}
-          </a>
+          </Reveal>
         </p>
-      </div>
+      </RevealGroup>
 
       {/* Over Wonen bij Weverskade — flow met vaste ankers i.p.v. een band met
           vaste hoogte: de Figma-witruimtes (252 boven, 285 tussen de blokken,
@@ -104,47 +128,58 @@ export default function WonenBijLanding({ data }: { data?: WonenBijLandingData }
           {/* Blok 1: titel + foto rechts; tekst links onder-verankerd 22 boven de foto-onderkant */}
           <div className="relative min-h-[43.889vw] max-lg:min-h-0">
             <h2 className="max-w-[38.194vw] font-heading font-normal text-[4.931vw] leading-[5.625vw] tracking-[-0.099vw] text-off-black whitespace-pre-line max-lg:max-w-none max-lg:text-[36px] max-lg:leading-[40px] max-lg:tracking-[-0.72px]">
-              {d.overTitel}
+              <RevealWords text={d.overTitel} />
             </h2>
-            <div className="absolute top-0 right-[-0.347vw] w-[54.514vw] h-[43.889vw] overflow-hidden max-lg:relative max-lg:inset-auto max-lg:w-full max-lg:h-auto max-lg:aspect-[785/632] max-lg:mt-8">
-              <Image
-                src={d.overFoto}
-                alt="Interieur van een Weverskade woning"
-                fill
-                sizes="(max-width: 768px) 100vw, 55vw"
-                className="object-cover"
-              />
-            </div>
-            <p className="absolute left-0 bottom-[1.528vw] w-[29.792vw] font-body font-medium text-[1.597vw] leading-[2.153vw] tracking-[-0.032vw] text-off-black max-lg:static max-lg:w-full max-lg:mt-8 max-lg:text-[17px] max-lg:leading-[24px]">
+            <RevealMedia className="absolute top-0 right-[-0.347vw] w-[54.514vw] h-[43.889vw] overflow-hidden max-lg:relative max-lg:inset-auto max-lg:w-full max-lg:h-auto max-lg:aspect-[785/632] max-lg:mt-8">
+              <Parallax>
+                <Image
+                  src={d.overFoto}
+                  alt="Interieur van een Weverskade woning"
+                  fill
+                  sizes="(max-width: 768px) 100vw, 55vw"
+                  className="object-cover"
+                />
+              </Parallax>
+            </RevealMedia>
+            <Reveal
+              as="p"
+              delay={0.15}
+              className="absolute left-0 bottom-[1.528vw] w-[29.792vw] font-body font-medium text-[1.597vw] leading-[2.153vw] tracking-[-0.032vw] text-off-black max-lg:static max-lg:w-full max-lg:mt-8 max-lg:text-[17px] max-lg:leading-[24px]"
+            >
               {overTekst}
-            </p>
+            </Reveal>
           </div>
 
           {/* Blok 2: foto links; tekst + knop rechts, knop-onderkant = foto-onderkant */}
           <div className="relative mt-[19.792vw] max-lg:mt-8">
-            <div className="relative ml-[0.069vw] w-[54.931vw] aspect-[791/559] overflow-hidden max-lg:ml-0 max-lg:w-full">
-              <Image
-                src={d.overFoto2}
-                alt="Woonkamer van een Weverskade woning"
-                fill
-                sizes="(max-width: 768px) 100vw, 55vw"
-                className="object-cover"
-              />
-            </div>
+            <RevealMedia className="relative ml-[0.069vw] w-[54.931vw] aspect-[791/559] overflow-hidden max-lg:ml-0 max-lg:w-full">
+              <Parallax>
+                <Image
+                  src={d.overFoto2}
+                  alt="Woonkamer van een Weverskade woning"
+                  fill
+                  sizes="(max-width: 768px) 100vw, 55vw"
+                  className="object-cover"
+                />
+              </Parallax>
+            </RevealMedia>
             {/* Onder-verankerd: de knop-onderkant valt samen met de foto-onderkant
                 (Figma: beide op 3245), langere tekst groeit naar boven */}
-            <div className="absolute left-[64.444vw] bottom-0 w-[27.986vw] max-lg:static max-lg:w-full max-lg:mt-8">
+            <Reveal
+              delay={0.15}
+              className="absolute left-[64.444vw] bottom-0 w-[27.986vw] max-lg:static max-lg:w-full max-lg:mt-8"
+            >
           <p className="font-body font-medium text-[1.597vw] leading-[2.153vw] tracking-[-0.032vw] text-off-black max-lg:text-[17px] max-lg:leading-[24px]">
             {overTekstRechts}
           </p>
           <a
             href="#aanbod"
             onClick={scrollNaarAanbod}
-            className="inline-flex items-center justify-center mt-[3.75vw] -ml-[0.139vw] w-[12.083vw] h-[2.847vw] bg-green text-off-white no-underline rounded-full font-heading font-normal text-[1.181vw] tracking-[-0.024vw] max-lg:mt-5 max-lg:ml-0 max-lg:w-auto max-lg:h-auto max-lg:px-6 max-lg:py-2.5 max-lg:text-[15px]"
+            className="pill-hover inline-flex items-center justify-center mt-[3.75vw] -ml-[0.139vw] w-[12.083vw] h-[2.847vw] bg-green text-off-white no-underline rounded-full font-heading font-normal text-[1.181vw] tracking-[-0.024vw] max-lg:mt-5 max-lg:ml-0 max-lg:w-auto max-lg:h-auto max-lg:px-6 max-lg:py-2.5 max-lg:text-[15px]"
           >
               {d.overKnop}
             </a>
-            </div>
+            </Reveal>
           </div>
         </div>
       </div>
@@ -155,21 +190,25 @@ export default function WonenBijLanding({ data }: { data?: WonenBijLandingData }
       <div className="bg-green pt-[6.875vw] pb-[9.097vw] max-lg:py-14" data-nav-theme="green">
         <div className="pl-[18.542vw] pr-[2.431vw] max-lg:px-5">
           <h2 className="font-heading font-normal text-[4.653vw] leading-[5.736vw] tracking-[-0.093vw] text-off-white max-lg:text-[32px] max-lg:leading-[1.1] max-lg:tracking-[-0.64px]">
-            {data?.kwaliteitTitel ?? d.kwaliteitTitel}
+            <RevealWords text={data?.kwaliteitTitel ?? d.kwaliteitTitel} />
           </h2>
           {/* kolommen staan in Figma op 270/623/965 — ongelijke breedtes, geen uniform grid */}
-          <div className="mt-[4.264vw] ml-[0.208vw] grid grid-cols-[24.514vw_23.75vw_20.486vw] gap-y-[3.125vw] max-lg:mt-8 max-lg:ml-0 max-lg:grid-cols-1 max-lg:gap-y-6">
-            {kwaliteitItems.map((item) => (
-              <div key={item.label + item.waarde} className="max-w-[20.486vw] max-lg:max-w-none">
+          <RevealGroup className="mt-[4.264vw] ml-[0.208vw] grid grid-cols-[24.514vw_23.75vw_20.486vw] gap-y-[3.125vw] max-lg:mt-8 max-lg:ml-0 max-lg:grid-cols-1 max-lg:gap-y-6">
+            {kwaliteitItems.map((item, i) => (
+              <Reveal
+                key={item.label + item.waarde}
+                delay={0.1 + i * 0.075}
+                className="max-w-[20.486vw] max-lg:max-w-none"
+              >
                 <p className="font-body font-normal text-[1.042vw] leading-[1.806vw] text-off-white max-lg:text-[13px] max-lg:leading-[20px]">
                   {item.label}
                 </p>
                 <p className="font-heading font-normal text-[1.458vw] leading-[1.806vw] text-off-white max-lg:text-[18px] max-lg:leading-[24px]">
                   {item.waarde}
                 </p>
-              </div>
+              </Reveal>
             ))}
-          </div>
+          </RevealGroup>
         </div>
       </div>
 
@@ -178,16 +217,18 @@ export default function WonenBijLanding({ data }: { data?: WonenBijLandingData }
         <div id="aanbod" className="pt-[6.875vw] px-[2.431vw] max-lg:pt-12 max-lg:px-5 scroll-mt-[2vw]">
           {/* koppen staan in Figma op x=40, de kaarten op x=35 */}
           <h2 className="ml-[0.347vw] font-heading font-normal text-[4.931vw] leading-[6.076vw] tracking-[-0.099vw] text-off-black max-lg:ml-0 max-lg:text-[36px] max-lg:leading-[1.1] max-lg:tracking-[-0.72px]">
-            {d.aanbodTitel}
+            <RevealWords text={d.aanbodTitel} />
           </h2>
           <div className="mt-[2.431vw] grid grid-cols-3 gap-x-[1.389vw] gap-y-[1.389vw] max-lg:mt-6 max-lg:grid-cols-1 max-lg:gap-y-5">
-            {aanbod.map((kaart) => {
+            {aanbod.map((kaart, i) => {
               const href = `/wonenbij/${kaart.projectSlug}/${kaart.typeSlug}`;
               return (
-                <a
+                <Reveal
+                  as="a"
                   key={kaart.projectSlug + kaart.typeSlug}
                   href={href}
-                  onClick={(e) => navigate(e, href)}
+                  delay={(i % 3) * 0.09}
+                  onClick={(e: React.MouseEvent<HTMLAnchorElement>) => navigate(e, href)}
                   className="block bg-off-white pt-[1.389vw] px-[1.25vw] pb-[1.944vw] no-underline group max-lg:p-4"
                 >
                   <div className="relative w-full aspect-[407/275] overflow-hidden">
@@ -245,7 +286,7 @@ export default function WonenBijLanding({ data }: { data?: WonenBijLandingData }
                       Naar deze woning
                     </span>
                   </div>
-                </a>
+                </Reveal>
               );
             })}
           </div>
@@ -256,18 +297,20 @@ export default function WonenBijLanding({ data }: { data?: WonenBijLandingData }
       {projecten.length > 0 ? (
         <div className="pt-[5.903vw] px-[2.431vw] max-lg:pt-12 max-lg:px-5">
           <h2 className="ml-[0.347vw] font-heading font-normal text-[4.931vw] leading-[6.076vw] tracking-[-0.099vw] text-off-black max-lg:ml-0 max-lg:text-[36px] max-lg:leading-[1.1] max-lg:tracking-[-0.72px]">
-            {d.projectenTitel}
+            <RevealWords text={d.projectenTitel} />
           </h2>
           <div className="mt-[2.917vw] grid grid-cols-3 gap-x-[1.389vw] gap-y-[1.389vw] max-lg:mt-6 max-lg:grid-cols-1 max-lg:gap-y-6">
-            {projecten.map((project) => {
+            {projecten.map((project, i) => {
               const href = project.heeftWonenBijPagina
                 ? `/wonenbij/${project.slug}`
                 : `/gebouw/${project.slug}`;
               return (
-                <a
+                <Reveal
+                  as="a"
                   key={project.slug + project.naam}
                   href={href}
-                  onClick={(e) => navigate(e, href)}
+                  delay={(i % 3) * 0.09}
+                  onClick={(e: React.MouseEvent<HTMLAnchorElement>) => navigate(e, href)}
                   className="block no-underline"
                   onMouseEnter={() => setHoveredCard(project.slug)}
                   onMouseLeave={() => setHoveredCard(null)}
@@ -314,7 +357,7 @@ export default function WonenBijLanding({ data }: { data?: WonenBijLandingData }
                       </span>
                     ) : null}
                   </div>
-                </a>
+                </Reveal>
               );
             })}
           </div>
@@ -390,14 +433,18 @@ function ContactSectie({ tekst }: { tekst: string }) {
   return (
     <div className="px-[2.431vw] mt-[14.583vw] pb-[15.833vw] max-lg:px-5 max-lg:mt-16 max-lg:pb-16">
       <div className="flex items-start max-lg:flex-col max-lg:gap-4">
-        <p className="mt-[0.694vw] font-heading font-normal text-[1.389vw] leading-[1.715vw] text-off-black shrink-0 w-[31.458vw] pl-[8.056vw] max-lg:mt-0 max-lg:w-auto max-lg:text-[17px] max-lg:leading-[22px] max-lg:pl-0">
+        <Reveal
+          as="p"
+          className="mt-[0.694vw] font-heading font-normal text-[1.389vw] leading-[1.715vw] text-off-black shrink-0 w-[31.458vw] pl-[8.056vw] max-lg:mt-0 max-lg:w-auto max-lg:text-[17px] max-lg:leading-[22px] max-lg:pl-0"
+        >
           {landingDefaults.contactLabel}
-        </p>
+        </Reveal>
         <div className="flex-1 max-lg:w-full">
           <h2 className="font-body font-medium text-[3.75vw] leading-[3.681vw] text-off-black max-w-[62.569vw] mb-[4.653vw] max-lg:text-[28px] max-lg:leading-[32px] max-lg:max-w-none max-lg:mb-6">
-            {tekst}
+            <RevealWords text={tekst} stagger={0.04} />
           </h2>
 
+          <Reveal delay={0.2}>
           <form onSubmit={handleSubmit} className="ml-[0.208vw] max-w-[46.944vw] max-lg:ml-0 max-lg:max-w-none">
             <div className="grid grid-cols-2 gap-x-[1.389vw] gap-y-[2.639vw] max-lg:grid-cols-1 max-lg:gap-y-6">
               <input
@@ -487,7 +534,7 @@ function ContactSectie({ tekst }: { tekst: string }) {
                   submitState === "submitting" ||
                   (isTurnstileEnabled && !turnstileToken)
                 }
-                className="inline-flex items-center justify-center shrink-0 -mt-[0.694vw] w-[14.722vw] h-[3.194vw] bg-green text-off-white font-heading font-normal text-[1.181vw] tracking-[-0.024vw] rounded-full cursor-pointer border-none disabled:opacity-40 disabled:cursor-not-allowed max-lg:mt-0 max-lg:w-auto max-lg:h-auto max-lg:text-[15px] max-lg:px-6 max-lg:py-3"
+                className="pill-hover inline-flex items-center justify-center shrink-0 -mt-[0.694vw] w-[14.722vw] h-[3.194vw] bg-green text-off-white font-heading font-normal text-[1.181vw] tracking-[-0.024vw] rounded-full cursor-pointer border-none disabled:opacity-40 disabled:cursor-not-allowed max-lg:mt-0 max-lg:w-auto max-lg:h-auto max-lg:text-[15px] max-lg:px-6 max-lg:py-3"
               >
                 {submitState === "submitting"
                   ? "Versturen..."
@@ -509,6 +556,7 @@ function ContactSectie({ tekst }: { tekst: string }) {
               </p>
             ) : null}
           </form>
+          </Reveal>
         </div>
       </div>
     </div>

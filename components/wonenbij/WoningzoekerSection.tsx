@@ -15,6 +15,7 @@ import {
   type WoningType,
 } from "@/data/wonenbij";
 import { usePageNavigation } from "@/hooks/usePageNavigation";
+import { Reveal, RevealWords } from "@/components/wonenbij/motion";
 
 type SortKey = "prijs" | "oppervlakte" | "beschikbaarheid" | "slaapkamers";
 
@@ -220,10 +221,10 @@ export default function WoningzoekerSection({
             onder-uitgelijnd op de titel */}
         <div className="flex items-end justify-between pl-[2.153vw] pr-[2.569vw] max-lg:block max-lg:px-5">
           <h2 className="font-heading font-normal text-[4.653vw] leading-[5.736vw] tracking-[-0.093vw] text-off-black max-lg:text-[36px] max-lg:leading-[1.1] max-lg:tracking-[-0.72px]">
-            Woningzoeker
+            <RevealWords text="Woningzoeker" />
           </h2>
           {woningen.length ? (
-            <div className="hidden pb-[0.417vw] lg:block">
+            <Reveal delay={0.2} y={16} className="hidden pb-[0.417vw] lg:block">
               <WoningFilters
                 inline
                 filters={filters}
@@ -234,13 +235,16 @@ export default function WoningzoekerSection({
                 resultaatAantal={gefilterd.length}
                 totaalAantal={woningen.length}
               />
-            </div>
+            </Reveal>
           ) : null}
         </div>
 
         {/* Resultaatregel + sorteervelden (Figma) — de teller toont het
             filterresultaat, met de wissen-link ernaast zodra er iets actief is */}
-        <div className="mt-[2.014vw] flex items-center justify-between pl-[2.5vw] pr-[2.847vw] max-lg:mt-8 max-lg:flex-col max-lg:items-start max-lg:gap-4 max-lg:px-5">
+        <Reveal
+          delay={0.1}
+          className="mt-[2.014vw] flex items-center justify-between pl-[2.5vw] pr-[2.847vw] max-lg:mt-8 max-lg:flex-col max-lg:items-start max-lg:gap-4 max-lg:px-5"
+        >
           <p className="font-heading font-normal text-[1.667vw] leading-[2.056vw] text-off-black max-lg:text-[18px] max-lg:leading-[1.1]">
             {woningen.length
               ? gefilterd.length < woningen.length
@@ -294,10 +298,12 @@ export default function WoningzoekerSection({
               );
             })}
           </div>
-        </div>
+        </Reveal>
 
         {/* Lijst + render */}
-        <div
+        <Reveal
+          delay={0.2}
+          duration={1}
           className={`mt-[1.528vw] ml-[2.431vw] mr-[2.569vw] grid max-lg:mt-6 max-lg:mx-5 max-lg:grid-cols-1 max-lg:gap-y-8 ${
             heeftRender ? "grid-cols-[43.819vw_1fr]" : "grid-cols-1"
           }`}
@@ -450,7 +456,7 @@ export default function WoningzoekerSection({
               </div>
             </div>
           ) : null}
-        </div>
+        </Reveal>
       </div>
     </section>
   );
