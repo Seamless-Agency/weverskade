@@ -164,88 +164,229 @@ export function formatPrijs(bedrag: number): string {
   return `€${bedrag.toLocaleString("nl-NL")}`;
 }
 
-/* ─── Demo: woningtypes Taanschuurkade ──────────────────────────────── */
+/* ─── Woningtypes Taanschuurkade (echte data) ───────────────────────
+ * Bronnen: oppervlaktestaat splitsing "de Taanschuur" (Excel, 14-4-2025)
+ * voor huisnummers/types/m²/verdiepingen, en de kick-off-presentatie
+ * (feb 2026) voor typeteksten, specificaties en huurprijsindicaties.
+ *
+ * TODO (wacht op Vivianne / Weverskade):
+ * - Huurprijzen zijn de indicatieve ranges per type uit de kick-off;
+ *   definitieve prijzen per woning zijn nog niet aangeleverd.
+ * - Interieurbeelden zijn impressies van de modelwoning (Vega Projects),
+ *   niet per type gelabeld; mapping per type is nog niet bevestigd.
+ * - Servicekosten, buitenruimte-m² en oriëntatie per woning ontbreken.
+ * - Plattegrond studio T5.00R (type 1B) ontbreekt; alleen T5.00L (1A)
+ *   is aangeleverd. De twee studio's staan hier als één type "Studio".
+ * ------------------------------------------------------------------- */
 
-const OMSCHRIJVING_STANDAARD: OmschrijvingBlok[] = [
-  {
-    kop: "Over dit appartement",
-    tekst:
-      "Dit appartement is ontworpen met oog voor comfort, ruimte en dagelijks gemak. De slimme indeling, royale raampartijen en hoogwaardige afwerking zorgen voor een lichte en aangename leefomgeving. Met een moderne keuken, comfortabele slaapkamers en een fijne buitenruimte biedt deze woning alles wat u nodig heeft om zorgeloos te wonen in Taanschuurkade.",
-  },
-  {
-    kop: "Duurzaam wonen",
-    tekst:
-      "Dankzij energiezuinige installaties en een energielabel A+++ woon je comfortabel met een lager energieverbruik. Een toekomstbestendige woning waarin duurzaamheid en wooncomfort vanzelfsprekend samengaan.",
-  },
-  {
-    kop: "Hoogwaardige afwerking",
-    tekst:
-      "Het appartement wordt zorgvuldig en stijlvol afgewerkt. De moderne keuken, comfortabele badkamer en kwalitatieve materialen vormen samen een rustige basis die je helemaal naar eigen smaak kunt inrichten.",
-  },
-  {
-    kop: "Keuken",
-    tekst:
-      "De moderne keuken is praktisch ingedeeld en voorzien van eigentijdse inbouwapparatuur. Een comfortabele plek om dagelijks te koken en gezellig samen te komen.",
-  },
-];
+const FOTOMAP = "/images/wonenbij/taanschuurkade";
 
-const demoWoningTypes: WoningType[] = [
+/** Afwerking/installaties gelden voor alle woningen (kick-off slides 4-8). */
+const BLOK_AFWERKING: OmschrijvingBlok = {
+  kop: "Hoogwaardige afwerking",
+  tekst:
+    "De woning wordt volledig afgewerkt opgeleverd, met een hoogwaardige vloer- en wandafwerking en een stijlvolle badkamer met grote tegels tot plafondhoogte, modern sanitair en een strak glazen douchescherm. Zo kun je er direct comfortabel wonen.",
+};
+
+const BLOK_DUURZAAM: OmschrijvingBlok = {
+  kop: "Duurzaam wonen",
+  tekst:
+    "Met energielabel A+++ woon je comfortabel met een laag energieverbruik. Een individuele warmtepomp verzorgt de vloerverwarming, passieve vloerkoeling en het warme water, en gebalanceerde ventilatie met warmteterugwinning zorgt het hele jaar voor een aangenaam binnenklimaat.",
+};
+
+const BLOK_KEUKEN: OmschrijvingBlok = {
+  kop: "Keuken",
+  tekst:
+    "De moderne keuken is voorzien van een inductiekookplaat, RVS afzuigkap, spoelbak met thermostatische mengkraan, Siemens vaatwasser en een koel-vriescombinatie. Bovenkasten bieden extra opbergruimte.",
+};
+
+const taanschuurkadeWoningTypes: WoningType[] = [
   {
-    slug: "type-a-hoekappartement",
-    naam: "Type A - hoekappartement",
+    slug: "studio",
+    naam: "Studio",
     status: "inschrijven",
-    prijsVan: 1495,
-    prijsTot: 1555,
-    oppervlakte: 82,
+    prijsVan: 1100,
+    prijsTot: 1200,
+    oppervlakte: 38,
+    slaapkamers: 1,
+    energielabel: "A+++",
+    fotos: [
+      `${FOTOMAP}/interieur-woonkamer.jpg`,
+      `${FOTOMAP}/interieur-keuken-2.jpg`,
+      `${FOTOMAP}/interieur-slaapkamer.jpg`,
+      `${FOTOMAP}/interieur-badkamer.jpg`,
+    ],
+    plattegronden: [`${FOTOMAP}/plattegrond-t5-00l.jpg`],
+    plattegrondLabel: "Plattegrond studio",
+    omschrijving: [
+      {
+        kop: "Over deze studio",
+        tekst:
+          "Compact, compleet en verrassend ruim. Deze studio van circa 38 m² op de begane grond heeft een aparte slaapkamer en is ontworpen voor bewoners die comfortabel willen wonen zonder concessies te doen aan kwaliteit.",
+      },
+      BLOK_AFWERKING,
+      BLOK_DUURZAAM,
+      BLOK_KEUKEN,
+    ],
+  },
+  {
+    slug: "type-2-3-kamerappartement",
+    naam: "Type 2 - 3-kamerappartement",
+    status: "inschrijven",
+    prijsVan: 1300,
+    prijsTot: 1400,
+    oppervlakte: 65,
     slaapkamers: 2,
     energielabel: "A+++",
-    buitenruimte: "12 m² terras",
-    fotos: ["/images/wonenbij/woning-foto.png", "/images/wonenbij/picture-1.jpg"],
-    plattegronden: ["/images/woningzoeker/plattegrond-type-a.svg"],
-    plattegrondLabel: "Plattegrond eerste verdieping",
-    omschrijving: OMSCHRIJVING_STANDAARD,
-  },
-  {
-    slug: "type-b-doorzonappartement",
-    naam: "Type B - doorzonappartement",
-    status: "inschrijven",
-    prijsVan: 1665,
-    prijsTot: 1850,
-    oppervlakte: 96,
-    slaapkamers: 3,
-    energielabel: "A+++",
-    buitenruimte: "8 m² balkon",
-    fotos: ["/images/wonenbij/picture-1.jpg", "/images/wonenbij/woning-foto.png"],
-    plattegronden: [
-      "/images/wonenbij/plattegrond-type-b.jpg",
-      "/images/woningzoeker/plattegrond-type-b.svg",
+    buitenruimte: "Balkon",
+    fotos: [
+      `${FOTOMAP}/interieur-eethoek.jpg`,
+      `${FOTOMAP}/interieur-woonkamer-2.jpg`,
+      `${FOTOMAP}/interieur-slaapkamer-2.jpg`,
+      `${FOTOMAP}/interieur-badkamer.jpg`,
     ],
-    plattegrondLabel: "Plattegrond eerste verdieping",
-    omschrijving: OMSCHRIJVING_STANDAARD,
+    plattegronden: [
+      `${FOTOMAP}/plattegrond-t5-01l.jpg`,
+      `${FOTOMAP}/plattegrond-t5-01r.jpg`,
+    ],
+    plattegrondLabel: "Plattegrond - linker- en rechtervariant",
+    omschrijving: [
+      {
+        kop: "Over dit appartement",
+        tekst:
+          "Dit 3-kamerappartement van circa 65 m² combineert een lichte woonkamer met open keuken met twee volwaardige slaapkamers. Het eigen balkon maakt het wooncomfort compleet - een fijne plek voor stellen, kleine gezinnen en thuiswerkers.",
+      },
+      BLOK_AFWERKING,
+      BLOK_DUURZAAM,
+      BLOK_KEUKEN,
+    ],
   },
   {
-    slug: "type-c-penthouse",
-    naam: "Type C - penthouse",
+    slug: "type-3-3-kamerappartement",
+    naam: "Type 3 - 3-kamerappartement",
     status: "inschrijven",
-    prijsVan: 2245,
-    prijsTot: 2350,
-    oppervlakte: 124,
-    slaapkamers: 3,
+    prijsVan: 1300,
+    prijsTot: 1400,
+    oppervlakte: 70,
+    slaapkamers: 2,
     energielabel: "A+++",
-    buitenruimte: "12 m² balkon",
-    fotos: ["/images/wonenbij/carousel-2.png", "/images/wonenbij/woning-foto.png"],
-    plattegronden: ["/images/woningzoeker/plattegrond-type-c.svg"],
-    plattegrondLabel: "Plattegrond bovenste verdieping",
-    omschrijving: OMSCHRIJVING_STANDAARD,
+    buitenruimte: "Balkon",
+    fotos: [
+      `${FOTOMAP}/interieur-woonkamer-2.jpg`,
+      `${FOTOMAP}/interieur-keuken.jpg`,
+      `${FOTOMAP}/interieur-slaapkamer.jpg`,
+      `${FOTOMAP}/interieur-badkamer.jpg`,
+    ],
+    plattegronden: [`${FOTOMAP}/plattegrond-t4-01l.jpg`],
+    plattegrondLabel: "Plattegrond",
+    omschrijving: [
+      {
+        kop: "Over dit appartement",
+        tekst:
+          "Met circa 70 m² is dit het ruimste woningtype van Taanschuurkade. De royale woonkamer, twee volwaardige slaapkamers en het eigen balkon bieden optimaal wooncomfort voor gezinnen en doorstromers.",
+      },
+      BLOK_AFWERKING,
+      BLOK_DUURZAAM,
+      BLOK_KEUKEN,
+    ],
+  },
+  {
+    slug: "type-4-3-kamerappartement",
+    naam: "Type 4 - 3-kamerappartement",
+    status: "inschrijven",
+    prijsVan: 1300,
+    prijsTot: 1400,
+    oppervlakte: 69,
+    slaapkamers: 2,
+    energielabel: "A+++",
+    buitenruimte: "Balkon",
+    fotos: [
+      `${FOTOMAP}/interieur-keuken.jpg`,
+      `${FOTOMAP}/interieur-woonkamer-3.jpg`,
+      `${FOTOMAP}/interieur-slaapkamer-2.jpg`,
+      `${FOTOMAP}/interieur-hal.jpg`,
+    ],
+    plattegronden: [`${FOTOMAP}/plattegrond-t4-01r.jpg`],
+    plattegrondLabel: "Plattegrond",
+    omschrijving: [
+      {
+        kop: "Over dit appartement",
+        tekst:
+          "Ruimte, comfort en luxe komen samen in dit 3-kamerappartement van circa 69 m². Twee volwaardige slaapkamers en een royale leefruimte met eigen balkon maken de woning uitermate geschikt voor stellen, kleine gezinnen en thuiswerkers.",
+      },
+      BLOK_AFWERKING,
+      BLOK_DUURZAAM,
+      BLOK_KEUKEN,
+    ],
+  },
+  {
+    slug: "type-5-3-kamerappartement",
+    naam: "Type 5 - 3-kamerappartement",
+    status: "inschrijven",
+    prijsVan: 1300,
+    prijsTot: 1400,
+    oppervlakte: 68,
+    slaapkamers: 2,
+    energielabel: "A+++",
+    buitenruimte: "Balkon",
+    fotos: [
+      `${FOTOMAP}/interieur-woonkamer-3.jpg`,
+      `${FOTOMAP}/interieur-eethoek.jpg`,
+      `${FOTOMAP}/interieur-slaapkamer.jpg`,
+      `${FOTOMAP}/interieur-badkamer.jpg`,
+    ],
+    plattegronden: [`${FOTOMAP}/plattegrond-t3-01l.jpg`],
+    plattegrondLabel: "Plattegrond",
+    omschrijving: [
+      {
+        kop: "Over dit appartement",
+        tekst:
+          "Praktisch ingedeeld en verrassend ruim: dit 3-kamerappartement van circa 68 m² heeft twee slaapkamers en een lichte woonkamer die aansluit op het eigen balkon. Een woning die direct klaar is voor gebruik.",
+      },
+      BLOK_AFWERKING,
+      BLOK_DUURZAAM,
+      BLOK_KEUKEN,
+    ],
+  },
+  {
+    slug: "type-6-2-kamerappartement",
+    naam: "Type 6 - 2-kamerappartement",
+    status: "inschrijven",
+    prijsVan: 1250,
+    prijsTot: 1350,
+    oppervlakte: 57,
+    slaapkamers: 1,
+    energielabel: "A+++",
+    buitenruimte: "Balkon",
+    fotos: [
+      `${FOTOMAP}/interieur-keuken-2.jpg`,
+      `${FOTOMAP}/interieur-woonkamer.jpg`,
+      `${FOTOMAP}/interieur-slaapkamer-2.jpg`,
+      `${FOTOMAP}/interieur-hal.jpg`,
+    ],
+    plattegronden: [`${FOTOMAP}/plattegrond-t3-01r.jpg`],
+    plattegrondLabel: "Plattegrond",
+    omschrijving: [
+      {
+        kop: "Over dit appartement",
+        tekst:
+          "Dit 2-kamerappartement van circa 57 m² biedt de perfecte balans tussen comfort en functionaliteit. De royale woonkamer, aparte slaapkamer en het eigen balkon zorgen voor een aangename woonomgeving.",
+      },
+      BLOK_AFWERKING,
+      BLOK_DUURZAAM,
+      BLOK_KEUKEN,
+    ],
   },
 ];
 
-/* ─── Demo: woningen op de gevelaanzichten ──────────────────────────
- * Overgetrokken van de aangeleverde huisnummeroverzichten (WEV24003):
- * Voorgevel Zuidwest (11A–17D) en Achtergevel Noordoost (11D–17H).
- * De vlakken zijn per woning uit de kleurcodering van de tekening
- * gedetecteerd en genormaliseerd (0–1). In productie trekt de redactie
- * ze over met de PolygonTracer in Sanity.
+/* ─── Demo/PoC: woningen op de gevelaanzichten ──────────────────────
+ * LET OP: dit is de proof of concept van de render-overlay, overgetrokken
+ * van de oude huisnummeroverzichten (WEV24003) met fictieve nummers
+ * (11A-17H) en prijzen. NIET gekoppeld aan de echte Taanschuurkade-data:
+ * de definitieve gevel-/adressenoverzichten (huisnr. 110-188) en de
+ * huurprijzen per woning zijn nog niet aangeleverd. Alleen nog in
+ * gebruik door de losse /woningzoeker-demoroute; zodra de echte
+ * gevelbeelden er zijn worden hier nieuwe aanzichten overgetrokken.
  * ------------------------------------------------------------------- */
 
 function rechthoek(x0: number, y0: number, x1: number, y1: number) {
@@ -680,39 +821,58 @@ export const demoBegeleiding: BegeleidingSectie = {
   knopTekst: "Contact opnemen",
 };
 
-const demoPlanning: PlanningFase[] = [
+/* Planning afgeleid van de interne kick-off-planning (feb 2026); de
+ * bewoordingen zijn bewust voorzichtig ("verwacht") en de data lopen tot
+ * de maand, niet tot de dag. TODO: laten bevestigen door Weverskade. */
+const taanschuurkadePlanning: PlanningFase[] = [
   {
-    periode: "Februari 2025",
-    titel: "Conceptontwikkeling",
+    periode: "Zomer 2026",
+    titel: "Laatste voorbereidingen",
     omschrijving:
-      "In deze fase werken we het woonconcept uit: de architectuur, de indelingen en de kwaliteit van de afwerking.",
+      "De bouw nadert de afronding. Achter de schermen worden de woningen, de gemeenschappelijke ruimtes en de verhuurdocumentatie gereedgemaakt.",
     verwachtingenTitel: "Dit mag je verwachten",
-    verwachtingen: ["Informatie over het plan", "Eerste impressies", "Planning op hoofdlijnen"],
-  },
-  {
-    periode: "December 2025",
-    titel: "Verkoopvoorbereiding",
-    omschrijving:
-      "De verhuurdocumentatie wordt voorbereid: plattegronden, prijzen en de brochure worden definitief gemaakt.",
-    verwachtingenTitel: "Dit mag je verwachten",
-    verwachtingen: ["Inschrijven", "Plattegronden en prijzen", "Verhuurbrochure"],
-  },
-  {
-    periode: "April 2026",
-    titel: "In verhuur",
-    omschrijving:
-      "De inschrijving is geopend. Na de selectie ontvangen kandidaten persoonlijk bericht over de toewijzing.",
-    verwachtingenTitel: "Dit mag je verwachten",
-    verwachtingen: ["Bezichtigingen", "Toewijzing woningen", "Huurcontracten"],
+    verwachtingen: [
+      "Eerste impressies en plattegronden",
+      "Projectinformatie op deze pagina",
+      "Aankondiging van de start verhuur",
+    ],
     actief: true,
   },
   {
-    periode: "September 2026",
-    titel: "Oplevering",
+    periode: "Eind september 2026",
+    titel: "Start verhuur",
     omschrijving:
-      "De woningen worden opgeleverd en de sleutels overgedragen. Welkom thuis in Taanschuurkade.",
+      "De inschrijving opent via deze website. Na je inschrijving nemen we persoonlijk contact met je op over de beschikbare woningen en de vervolgstappen.",
     verwachtingenTitel: "Dit mag je verwachten",
-    verwachtingen: ["Sleuteloverdracht", "Opleverinspectie", "Servicepunt voor bewoners"],
+    verwachtingen: [
+      "Inschrijven via de website",
+      "Huurprijzen en beschikbaarheid",
+      "Persoonlijke terugkoppeling",
+    ],
+  },
+  {
+    periode: "Oktober 2026",
+    titel: "Oplevering en toewijzing",
+    omschrijving:
+      "Het gebouw wordt naar verwachting opgeleverd en de woningen worden toegewezen. Kandidaten worden uitgenodigd voor een kijkdag en ondertekenen aansluitend de huurovereenkomst.",
+    verwachtingenTitel: "Dit mag je verwachten",
+    verwachtingen: [
+      "Toewijzing van de woningen",
+      "Kijkdag voor kandidaten",
+      "Ondertekening huurovereenkomst",
+    ],
+  },
+  {
+    periode: "November - december 2026",
+    titel: "Sleuteloverdracht",
+    omschrijving:
+      "De eerste bewoners ontvangen de sleutel van hun nieuwe woning. Ook na de overdracht kun je rekenen op betrokken service en een vast aanspreekpunt.",
+    verwachtingenTitel: "Dit mag je verwachten",
+    verwachtingen: [
+      "Sleuteloverdracht",
+      "Welkom in Taanschuurkade",
+      "Service voor bewoners",
+    ],
   },
 ];
 
@@ -721,37 +881,46 @@ export const demoWonenBijProjecten: WonenBijProject[] = [
     slug: "taanschuurkade",
     naam: "Taanschuurkade",
     plaats: "Maassluis",
-    heroImage: "/images/wonenbij/vogelvlucht-hero.jpg",
+    // Sfeerbeeld van de entree (Higgsfield). Het brede voorgevelbeeld toont
+    // ook torens 1/2 (geen Taanschuurkade); Vivianne wil dat beeld ingezoomd
+    // hebben - haar referentie-uitsnede is nog niet ontvangen. TODO.
+    heroImage: "/images/wonenbij/taanschuurkade/exterieur-entree.jpg",
     intro:
-      "Aan de Taanschuurkade verrijst Weverskade: drie karaktervolle woongebouwen met veertig vrije sector huurappartementen, op een van de mooiste plekken van De Kade in Maassluis. De robuuste architectuur, geïnspireerd op de historische pakhuizen langs de haven, geeft het project een krachtig en tijdloos karakter. Met uitzicht op de Nieuwe Waterweg, duurzame technieken en hoogwaardige afwerking biedt Weverskade een eigentijdse woonomgeving waar comfort, ruimte en het leven aan het water vanzelfsprekend samenkomen.",
+      "Aan de Taanschuurkade verrijst Weverskade: drie karaktervolle woongebouwen met veertig vrije sector huurwoningen - studio's en appartementen - op een van de mooiste plekken van De Kade in Maassluis. De robuuste architectuur, geïnspireerd op de historische pakhuizen langs de haven, geeft het project een krachtig en tijdloos karakter. Met uitzicht op de Nieuwe Waterweg, duurzame technieken, hoogwaardige afwerking en een gemeenschappelijke co-workingruimte op de begane grond biedt Weverskade een eigentijdse woonomgeving waar comfort, ruimte en het leven aan het water vanzelfsprekend samenkomen.",
+    // Bronnen: oppervlaktestaat splitsing (aantallen, m²) en kick-off feb
+    // 2026 (energielabel, huurprijsindicatie). Prijzen zijn indicatief tot
+    // Weverskade de definitieve huurprijzen aanlevert.
     feiten: [
       { icoon: "locatie", label: "Locatie", waarde: "Taanschuurkade, Maassluis" },
-      { icoon: "woningen", label: "Aantal woningen", waarde: "42 appartementen\n2 penthouses" },
-      { icoon: "oppervlakte", label: "Oppervlakte", waarde: "ca. 56 tot 128 m²" },
-      { icoon: "slaapkamers", label: "Aantal slaapkamers", waarde: "2 tot 4" },
-      { icoon: "buitenruimte", label: "Buitenruimte", waarde: "ca. 5 tot 12 m² balkon" },
-      { icoon: "duurzaamheid", label: "Duurzaamheid", waarde: "Energielabel A++++" },
-      { icoon: "huurprijs", label: "Huurprijs", waarde: "€1.200 - €2.600" },
-      { icoon: "beschikbaarheid", label: "Beschikbaarheid", waarde: "42 woningen" },
+      { icoon: "woningen", label: "Aantal woningen", waarde: "38 appartementen\n2 studio's" },
+      { icoon: "oppervlakte", label: "Oppervlakte", waarde: "ca. 38 tot 70 m²" },
+      { icoon: "slaapkamers", label: "Aantal slaapkamers", waarde: "1 tot 2" },
+      { icoon: "buitenruimte", label: "Buitenruimte", waarde: "Balkon bij de appartementen" },
+      { icoon: "duurzaamheid", label: "Duurzaamheid", waarde: "Energielabel A+++" },
+      { icoon: "huurprijs", label: "Huurprijs", waarde: "€1.100 - €1.400 (indicatie)" },
+      { icoon: "beschikbaarheid", label: "Beschikbaarheid", waarde: "40 woningen" },
     ],
     hurenFotos: [
-      "/images/wonenbij/carousel-2.png",
-      "/images/wonenbij/carousel-1.png",
-      "/images/wonenbij/carousel-3.png",
+      "/images/wonenbij/taanschuurkade/interieur-woonkamer.jpg",
+      "/images/wonenbij/taanschuurkade/interieur-keuken.jpg",
+      "/images/wonenbij/taanschuurkade/interieur-slaapkamer.jpg",
     ],
     begeleiding: demoBegeleiding,
     welkomLabel: "Welkom bij",
     welkomTitel: "Taanschuurkade",
     welkomTekst:
-      "Aan de Taanschuurkade verrijst Weverskade: drie karaktervolle woongebouwen met veertig vrije sector huurappartementen, op een van de mooiste plekken van De Kade in Maassluis.",
+      "Aan de Taanschuurkade verrijst Weverskade: drie karaktervolle woongebouwen met veertig vrije sector huurwoningen, op een van de mooiste plekken van De Kade in Maassluis.",
     welkomTekstRechts:
       "De robuuste architectuur, geïnspireerd op de historische pakhuizen langs de haven, geeft het project een krachtig en tijdloos karakter aan het water.",
-    welkomFotos: ["/images/wonenbij/picture-1.jpg", "/images/wonenbij/picture-21.png"],
+    welkomFotos: [
+      "/images/wonenbij/taanschuurkade/interieur-eethoek.jpg",
+      "/images/wonenbij/taanschuurkade/interieur-woonkamer-2.jpg",
+    ],
     carouselFotos: [
-      "/images/wonenbij/carousel-1.png",
-      "/images/wonenbij/carousel-2.png",
-      "/images/wonenbij/carousel-3.png",
-      "/images/wonenbij/picture-1.jpg",
+      "/images/wonenbij/taanschuurkade/exterieur-galerijzijde.jpg",
+      "/images/wonenbij/taanschuurkade/coworking.jpg",
+      "/images/wonenbij/taanschuurkade/exterieur-binnenhof.jpg",
+      "/images/wonenbij/taanschuurkade/interieur-woonkamer-3.jpg",
     ],
     locatieLabel: "De locatie",
     locatieTitel: "Midden in Maassluis",
@@ -771,19 +940,20 @@ export const demoWonenBijProjecten: WonenBijProject[] = [
       {
         titel: "Bereikbaarheid",
         tekst:
-          "Met metrostation Maassluis Centrum op loopafstand sta je binnen een half uur in Rotterdam. Ook met de auto ben je via de A20 snel op weg; parkeren kan op eigen terrein.",
+          "Met metrostation Maassluis Centrum op loopafstand sta je binnen een half uur in Rotterdam. Ook met de auto ben je via de A20 snel op weg.",
       },
     ],
-    mapImage: "/images/wonenbij/map-taanschuurkade.png",
+    // Statische kaart (Google Static Maps, grijze stijl) zo gecentreerd dat
+    // de marker-overlay van de component (42% / 45.6%) op de projectlocatie
+    // valt. Bij andere coördinaten dus ook de kaart opnieuw genereren.
+    mapImage: "/images/wonenbij/taanschuurkade/map-maassluis.png",
     mapLat: 51.918,
     mapLng: 4.246,
-    planning: demoPlanning,
-    downloads: [
-      { titel: "Verhuurbrochure", url: "#" },
-      { titel: "Technische omschrijving", url: "#" },
-      { titel: "Keukenbrochure", url: "#" },
-      { titel: "Sanitairbrochure", url: "#" },
-    ],
+    planning: taanschuurkadePlanning,
+    // TODO: brochure, technische omschrijving en huurvoorwaarden zijn nog
+    // niet aangeleverd (map "Project informatie" in de OneDrive is leeg).
+    // Zonder items verbergt de downloadsectie zichzelf.
+    downloads: [],
     faq: [
       {
         vraag: "Zijn de woningen van Weverskade instapklaar?",
@@ -798,7 +968,7 @@ export const demoWonenBijProjecten: WonenBijProject[] = [
       {
         vraag: "Wat voor type woningen verhuurt Weverskade?",
         antwoord:
-          "Weverskade verhuurt vrije sector huurappartementen en penthouses, variërend in oppervlakte en aantal slaapkamers. Alle woningen worden compleet en duurzaam opgeleverd.",
+          "Weverskade verhuurt vrije sector huurappartementen en studio's, variërend in oppervlakte en aantal slaapkamers. Alle woningen worden compleet en duurzaam opgeleverd.",
       },
       {
         vraag: "Kan ik mij aanmelden voor meerdere projecten tegelijk?",
@@ -806,13 +976,13 @@ export const demoWonenBijProjecten: WonenBijProject[] = [
           "Ja, dat kan. Schrijf je per project in via de betreffende projectpagina. Je inschrijvingen staan los van elkaar en zijn altijd vrijblijvend.",
       },
     ],
-    woningTypes: demoWoningTypes,
-    render: "/images/woningzoeker/taanschuur-voorgevel.jpg",
-    renderAlt: "Voorgevel Zuidwest van Taanschuurkade met beschikbare woningen",
-    renderWidth: 3803,
-    renderHeight: 2484,
-    woningen: [...voorgevelWoningen, ...achtergevelWoningen],
-    aanzichten: demoAanzichten,
+    woningTypes: taanschuurkadeWoningTypes,
+    // Geen render-overlay en geen losse woningenlijst: de definitieve
+    // gevel-/adressenoverzichten (huisnr. 110-188) en de huurprijzen per
+    // woning zijn nog niet aangeleverd. De woningzoeker toont daarom
+    // alleen de woningtypes; zodra de gevelbeelden binnen zijn worden hier
+    // echte aanzichten overgetrokken (PoC: demoAanzichten hierboven).
+    woningen: [],
   },
 ];
 
