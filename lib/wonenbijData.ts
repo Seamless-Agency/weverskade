@@ -48,12 +48,14 @@ function mapWoning(raw: any): Woning | null {
   return {
     id: raw._key,
     nummer: raw.nummer ?? "",
+    bouwnummer: raw.bouwnummer ?? undefined,
     woningType: raw.woningType ?? "",
     status: raw.status ?? "beschikbaar",
     verdieping: raw.verdieping ?? 0,
     oppervlakte: raw.oppervlakte ?? 0,
     slaapkamers: raw.slaapkamers ?? 0,
     huurprijs: raw.huurprijs ?? 0,
+    prijsVanaf: raw.prijsVanaf ?? undefined,
     orientatie: raw.orientatie ?? undefined,
     buitenruimte: raw.buitenruimte ?? undefined,
     plattegrond: raw.plattegrond ?? undefined,
@@ -196,19 +198,23 @@ function fromSanity(raw: any): WonenBijProject | null {
     renderAlt: `Render van ${naam}`,
     renderWidth: raw.renderDimensions?.width ?? fallback.renderWidth,
     renderHeight: raw.renderDimensions?.height ?? fallback.renderHeight,
+    // Woningen en aanzichten zijn projectspecifieke data: die vallen alleen
+    // terug op de demo van HETZELFDE project (slug-match), nooit op het
+    // algemene taanschuurkade-vangnet - anders lekt de Taanschuurkade-gevel
+    // met 40 woningen naar elk ander wonenbij-project zonder CMS-woningen.
     woningen: cmsAanzichten.length
       ? woningen.length
         ? woningen
         : aanzichtWoningen
       : woningen.length
         ? woningen
-        : fallback.woningen,
+        : (demo?.woningen ?? []),
     // Voorrang: CMS-aanzichten > losse CMS-render met woningen > demo.
     aanzichten: cmsAanzichten.length
       ? cmsAanzichten
       : woningen.length
         ? undefined
-        : fallback.aanzichten,
+        : demo?.aanzichten,
   };
 }
 
