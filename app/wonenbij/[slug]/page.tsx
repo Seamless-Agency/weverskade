@@ -1,4 +1,5 @@
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
+import { getWonenBijProjectByAlias } from "@/data/wonenbij";
 import WonenBijProjectPage, {
   type NieuwsKaart,
 } from "@/components/wonenbij/WonenBijProjectPage";
@@ -46,6 +47,12 @@ export default async function WonenBijProject({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
+
+  // Alias (bijv. de Sanity-gebouwslug) doorsturen naar de hoofdpagina van
+  // het project, zodat er maar één Taanschuurkade-pagina bestaat.
+  const aliasDoel = getWonenBijProjectByAlias(slug);
+  if (aliasDoel) redirect(`/wonenbij/${aliasDoel.slug}`);
+
   const [project, nieuwsData, footerData] = await Promise.all([
     getWonenBijProjectData(slug),
     sanityFetch<any[]>({ query: ALL_NIEUWS_QUERY, tags: ["nieuwsArtikel"] }),

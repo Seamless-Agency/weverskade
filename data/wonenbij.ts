@@ -111,6 +111,12 @@ export interface Aanzicht {
 
 export interface WonenBijProject {
   slug: string;
+  /**
+   * Andere slugs die dezelfde projectpagina bedoelen, zoals de slug van het
+   * bestaande Sanity-gebouwdocument. Die routes sturen door naar deze pagina
+   * zolang de content in code leeft (na de CMS-migratie vervalt dit).
+   */
+  aliasSlugs?: string[];
   naam: string;
   plaats: string;
   heroImage: string;
@@ -1244,6 +1250,10 @@ const taanschuurkadePlanning: PlanningFase[] = [
 export const demoWonenBijProjecten: WonenBijProject[] = [
   {
     slug: "taanschuurkade",
+    // Het bestaande Sanity-gebouwdocument (nog zonder wonenbij-content)
+    // stuurt door naar deze pagina, zodat de landing-kaart en oude links
+    // altijd op de volledige woningzoeker uitkomen.
+    aliasSlugs: ["taanschuur-appartementen-maasluis"],
     naam: "Taanschuurkade",
     plaats: "Maassluis",
     // Sfeerbeeld van de entree (Higgsfield). Het brede voorgevelbeeld toont
@@ -1349,6 +1359,13 @@ export const demoWonenBijProjecten: WonenBijProject[] = [
 
 export function getWonenBijProject(slug: string): WonenBijProject | undefined {
   return demoWonenBijProjecten.find((p) => p.slug === slug);
+}
+
+/** Project waarvan `slug` een alias is (bijv. de Sanity-gebouwslug). */
+export function getWonenBijProjectByAlias(
+  slug: string
+): WonenBijProject | undefined {
+  return demoWonenBijProjecten.find((p) => p.aliasSlugs?.includes(slug));
 }
 
 /* ─── Demo: landing (one-pager) ─────────────────────────────────────── */

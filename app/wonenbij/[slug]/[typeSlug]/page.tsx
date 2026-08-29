@@ -1,4 +1,5 @@
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
+import { getWonenBijProjectByAlias } from "@/data/wonenbij";
 import WoningTypePage from "@/components/wonenbij/WoningTypePage";
 import Footer from "@/components/Footer";
 import FooterReveal from "@/components/FooterReveal";
@@ -48,6 +49,11 @@ export default async function WoningType({
     searchParams,
     sanityFetch<any>({ query: FOOTER_QUERY, tags: ["footer"] }),
   ]);
+
+  // Alias-slug (bijv. de Sanity-gebouwslug) doorsturen naar dezelfde
+  // typepagina onder de hoofdslug van het project.
+  const aliasDoel = getWonenBijProjectByAlias(slug);
+  if (aliasDoel) redirect(`/wonenbij/${aliasDoel.slug}/${typeSlug}`);
 
   const project = await getWonenBijProjectData(slug);
   const typeIndex =
