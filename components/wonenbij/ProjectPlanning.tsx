@@ -90,10 +90,16 @@ export default function ProjectPlanning({ fases }: { fases: PlanningFase[] }) {
                   />
                 ) : null}
               </span>
-              {/* Zelfde rechtermarge als de omschrijving eronder, zodat een
-                  lange fasetitel afbreekt vóór de scheidingslijn (die staat
-                  1.875vw links van de volgende kolom). */}
-              <div className="mr-[2.708vw] max-lg:mr-0">
+              {/* Rechtermarge zodat een lange fasetitel afbreekt vóór de
+                  scheidingslijn (1.875vw links van de volgende kolom) —
+                  alleen nodig als er rechts een lijn IS; de laatste kolom
+                  gebruikt de volle breedte zodat een lange periode als
+                  "November - december 2026" op één regel blijft. */}
+              <div
+                className={
+                  i < fases.length - 1 ? "mr-[2.708vw] max-lg:mr-0" : ""
+                }
+              >
                 <p className="font-body font-normal text-[0.833vw] leading-[1.458vw] text-off-white max-lg:text-[12px] max-lg:leading-[18px]">
                   {fase.periode}
                 </p>
