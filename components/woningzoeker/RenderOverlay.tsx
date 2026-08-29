@@ -292,7 +292,7 @@ export default function RenderOverlay({
               {" · "}
               {active.oppervlakte} m²
               {active.status === "beschikbaar"
-                ? ` · ${formatHuur(active.huurprijs)}`
+                ? ` · ${active.prijsVanaf ? "v.a. " : ""}${formatHuur(active.huurprijs)}`
                 : ` · ${STATUS_META[active.status].label}`}
             </span>
           </div>

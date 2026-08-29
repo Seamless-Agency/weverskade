@@ -24,8 +24,10 @@ export interface PolygonPoint {
 export interface Woning {
   /** Stabiele sleutel - in Sanity is dit de _key van het array-item. */
   id: string;
-  /** Bouwnummer, bijv. "A.101". */
+  /** Huisnummer of bouwnummer zoals getoond, bijv. "114". */
   nummer: string;
+  /** Bouwnummer uit de splitsingsakte, bijv. "T3.01R". */
+  bouwnummer?: string;
   /** Woningtype, bijv. "Type B - hoekwoning". */
   woningType: string;
   status: WoningStatus;
@@ -35,6 +37,9 @@ export interface Woning {
   slaapkamers: number;
   /** Kale huur per maand in hele euro's. */
   huurprijs: number;
+  /** Toon de huurprijs als vanaf-prijs ("v.a. €X") zolang alleen een
+   *  indicatieve range per type bekend is. */
+  prijsVanaf?: boolean;
   orientatie?: string;
   buitenruimte?: string;
   /** Pad naar de plattegrond. */

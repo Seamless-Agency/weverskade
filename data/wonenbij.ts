@@ -379,6 +379,371 @@ const taanschuurkadeWoningTypes: WoningType[] = [
   },
 ];
 
+/* ─── Woningen Taanschuurkade (echte data) ──────────────────────────
+ * Alle 40 woningen uit de oppervlaktestaat splitsing "de Taanschuur"
+ * (Excel 14-4-2025), ingetekend op een uitsnede van de Higgsfield-render
+ * "EXTERIEUR balkons 2" (torens 5-4-3, balkon-/waterzijde).
+ *
+ * Toren-identificatie: verdiepingsaantallen geteld op de render (v.l.n.r.
+ * 5+BG / 6 / 8 lagen) matchen exact toren 5, 4, 3 uit de akte.
+ * L/R-orientatie (L = links gezien vanaf deze gevel) is op drie
+ * onafhankelijke manieren geverifieerd: (1) balkon/raam-volgorde in de
+ * plattegronden T3.01L/R en T4.01L/R matcht de gevel alleen met L links,
+ * (2) de kern tussen de T5-plattegronden spiegelt correct, (3) de
+ * huisnummer-looporde 114-124 volgt de galerij aan de achterzijde.
+ * Laat Weverskade dit bevestigen zodra de adressenoverzichten er zijn.
+ *
+ * Toren 3 heeft acht raamrijen boven de gemeenschappelijke plint
+ * (balkonplaten geteld op beide balkonkolommen, pitch ~76px); verd 8
+ * (186/188) is de bovenste raamrij direct onder de TAANSCHUUR-band en
+ * de gable hoort bij dat vlak. De vloerlijnen hellen ~14px mee met het
+ * perspectief van de render.
+ *
+ * Huurprijzen: vanaf-prijs van de indicatieve range per type uit de
+ * kick-off (feb 2026), getoond als "v.a." - definitieve prijzen per
+ * woning volgen. Woning 110 (studio 1B) heeft nog geen plattegrond;
+ * alleen de spiegelvariant T5.00L (1A) is aangeleverd.
+ * ------------------------------------------------------------------- */
+
+export const taanschuurkadeWoningen: Woning[] = [
+  {
+    id: "t5-00r", nummer: "110", bouwnummer: "T5.00R",
+    woningType: "Studio",
+    status: "beschikbaar", verdieping: 0, oppervlakte: 38, slaapkamers: 1,
+    huurprijs: 1100, prijsVanaf: true,
+    polygon: [{ x: 0.1912, y: 0.8599 }, { x: 0.3402, y: 0.8599 }, { x: 0.3402, y: 0.9295 }, { x: 0.1912, y: 0.9295 }],
+  },
+  {
+    id: "t5-00l", nummer: "112", bouwnummer: "T5.00L",
+    woningType: "Studio",
+    status: "beschikbaar", verdieping: 0, oppervlakte: 38, slaapkamers: 1,
+    huurprijs: 1100, prijsVanaf: true,
+    plattegrond: "/images/wonenbij/taanschuurkade/plattegrond-t5-00l.jpg",
+    polygon: [{ x: 0.0454, y: 0.8599 }, { x: 0.1912, y: 0.8599 }, { x: 0.1912, y: 0.9295 }, { x: 0.0454, y: 0.9295 }],
+  },
+  {
+    id: "t3-01r", nummer: "114", bouwnummer: "T3.01R",
+    woningType: "Type 6 - 2-kamerappartement",
+    status: "beschikbaar", verdieping: 1, oppervlakte: 57, slaapkamers: 1,
+    huurprijs: 1250, prijsVanaf: true, buitenruimte: "Balkon",
+    plattegrond: "/images/wonenbij/taanschuurkade/plattegrond-t3-01r.jpg",
+    polygon: [{ x: 0.8367, y: 0.7856 }, { x: 0.9801, y: 0.7923 }, { x: 0.9801, y: 0.8618 }, { x: 0.8367, y: 0.8568 }],
+  },
+  {
+    id: "t3-01l", nummer: "116", bouwnummer: "T3.01L",
+    woningType: "Type 5 - 3-kamerappartement",
+    status: "beschikbaar", verdieping: 1, oppervlakte: 68, slaapkamers: 2,
+    huurprijs: 1300, prijsVanaf: true, buitenruimte: "Balkon",
+    plattegrond: "/images/wonenbij/taanschuurkade/plattegrond-t3-01l.jpg",
+    polygon: [{ x: 0.6486, y: 0.7768 }, { x: 0.8367, y: 0.7856 }, { x: 0.8367, y: 0.8568 }, { x: 0.6486, y: 0.8502 }],
+  },
+  {
+    id: "t4-01r", nummer: "118", bouwnummer: "T4.01R",
+    woningType: "Type 4 - 3-kamerappartement",
+    status: "beschikbaar", verdieping: 1, oppervlakte: 69, slaapkamers: 2,
+    huurprijs: 1300, prijsVanaf: true, buitenruimte: "Balkon",
+    plattegrond: "/images/wonenbij/taanschuurkade/plattegrond-t4-01r.jpg",
+    polygon: [{ x: 0.5116, y: 0.7971 }, { x: 0.6486, y: 0.7971 }, { x: 0.6486, y: 0.8696 }, { x: 0.5116, y: 0.8696 }],
+  },
+  {
+    id: "t4-01l", nummer: "120", bouwnummer: "T4.01L",
+    woningType: "Type 3 - 3-kamerappartement",
+    status: "beschikbaar", verdieping: 1, oppervlakte: 70, slaapkamers: 2,
+    huurprijs: 1300, prijsVanaf: true, buitenruimte: "Balkon",
+    plattegrond: "/images/wonenbij/taanschuurkade/plattegrond-t4-01l.jpg",
+    polygon: [{ x: 0.3458, y: 0.7971 }, { x: 0.5116, y: 0.7971 }, { x: 0.5116, y: 0.8696 }, { x: 0.3458, y: 0.8696 }],
+  },
+  {
+    id: "t5-01r", nummer: "122", bouwnummer: "T5.01R",
+    woningType: "Type 2 - 3-kamerappartement",
+    status: "beschikbaar", verdieping: 1, oppervlakte: 65, slaapkamers: 2,
+    huurprijs: 1300, prijsVanaf: true, buitenruimte: "Balkon",
+    plattegrond: "/images/wonenbij/taanschuurkade/plattegrond-t5-01r.jpg",
+    polygon: [{ x: 0.1912, y: 0.7845 }, { x: 0.3402, y: 0.7845 }, { x: 0.3402, y: 0.8599 }, { x: 0.1912, y: 0.8599 }],
+  },
+  {
+    id: "t5-01l", nummer: "124", bouwnummer: "T5.01L",
+    woningType: "Type 2 - 3-kamerappartement",
+    status: "beschikbaar", verdieping: 1, oppervlakte: 65, slaapkamers: 2,
+    huurprijs: 1300, prijsVanaf: true, buitenruimte: "Balkon",
+    plattegrond: "/images/wonenbij/taanschuurkade/plattegrond-t5-01l.jpg",
+    polygon: [{ x: 0.0454, y: 0.7845 }, { x: 0.1912, y: 0.7845 }, { x: 0.1912, y: 0.8599 }, { x: 0.0454, y: 0.8599 }],
+  },
+  {
+    id: "t3-02r", nummer: "126", bouwnummer: "T3.02R",
+    woningType: "Type 6 - 2-kamerappartement",
+    status: "beschikbaar", verdieping: 2, oppervlakte: 57, slaapkamers: 1,
+    huurprijs: 1250, prijsVanaf: true, buitenruimte: "Balkon",
+    plattegrond: "/images/wonenbij/taanschuurkade/plattegrond-t3-01r.jpg",
+    polygon: [{ x: 0.8367, y: 0.7127 }, { x: 0.9801, y: 0.7198 }, { x: 0.9801, y: 0.7923 }, { x: 0.8367, y: 0.7856 }],
+  },
+  {
+    id: "t3-02l", nummer: "128", bouwnummer: "T3.02L",
+    woningType: "Type 5 - 3-kamerappartement",
+    status: "beschikbaar", verdieping: 2, oppervlakte: 68, slaapkamers: 2,
+    huurprijs: 1300, prijsVanaf: true, buitenruimte: "Balkon",
+    plattegrond: "/images/wonenbij/taanschuurkade/plattegrond-t3-01l.jpg",
+    polygon: [{ x: 0.6486, y: 0.7034 }, { x: 0.8367, y: 0.7127 }, { x: 0.8367, y: 0.7856 }, { x: 0.6486, y: 0.7768 }],
+  },
+  {
+    id: "t4-02r", nummer: "130", bouwnummer: "T4.02R",
+    woningType: "Type 4 - 3-kamerappartement",
+    status: "beschikbaar", verdieping: 2, oppervlakte: 69, slaapkamers: 2,
+    huurprijs: 1300, prijsVanaf: true, buitenruimte: "Balkon",
+    plattegrond: "/images/wonenbij/taanschuurkade/plattegrond-t4-01r.jpg",
+    polygon: [{ x: 0.5116, y: 0.7246 }, { x: 0.6486, y: 0.7246 }, { x: 0.6486, y: 0.7971 }, { x: 0.5116, y: 0.7971 }],
+  },
+  {
+    id: "t4-02l", nummer: "132", bouwnummer: "T4.02L",
+    woningType: "Type 3 - 3-kamerappartement",
+    status: "beschikbaar", verdieping: 2, oppervlakte: 70, slaapkamers: 2,
+    huurprijs: 1300, prijsVanaf: true, buitenruimte: "Balkon",
+    plattegrond: "/images/wonenbij/taanschuurkade/plattegrond-t4-01l.jpg",
+    polygon: [{ x: 0.3458, y: 0.7246 }, { x: 0.5116, y: 0.7246 }, { x: 0.5116, y: 0.7971 }, { x: 0.3458, y: 0.7971 }],
+  },
+  {
+    id: "t5-02r", nummer: "134", bouwnummer: "T5.02R",
+    woningType: "Type 2 - 3-kamerappartement",
+    status: "beschikbaar", verdieping: 2, oppervlakte: 65, slaapkamers: 2,
+    huurprijs: 1300, prijsVanaf: true, buitenruimte: "Balkon",
+    plattegrond: "/images/wonenbij/taanschuurkade/plattegrond-t5-01r.jpg",
+    polygon: [{ x: 0.1912, y: 0.7101 }, { x: 0.3402, y: 0.7101 }, { x: 0.3402, y: 0.7845 }, { x: 0.1912, y: 0.7845 }],
+  },
+  {
+    id: "t5-02l", nummer: "136", bouwnummer: "T5.02L",
+    woningType: "Type 2 - 3-kamerappartement",
+    status: "beschikbaar", verdieping: 2, oppervlakte: 65, slaapkamers: 2,
+    huurprijs: 1300, prijsVanaf: true, buitenruimte: "Balkon",
+    plattegrond: "/images/wonenbij/taanschuurkade/plattegrond-t5-01l.jpg",
+    polygon: [{ x: 0.0454, y: 0.7101 }, { x: 0.1912, y: 0.7101 }, { x: 0.1912, y: 0.7845 }, { x: 0.0454, y: 0.7845 }],
+  },
+  {
+    id: "t3-03r", nummer: "138", bouwnummer: "T3.03R",
+    woningType: "Type 6 - 2-kamerappartement",
+    status: "beschikbaar", verdieping: 3, oppervlakte: 57, slaapkamers: 1,
+    huurprijs: 1250, prijsVanaf: true, buitenruimte: "Balkon",
+    plattegrond: "/images/wonenbij/taanschuurkade/plattegrond-t3-01r.jpg",
+    polygon: [{ x: 0.8367, y: 0.6398 }, { x: 0.9801, y: 0.6473 }, { x: 0.9801, y: 0.7198 }, { x: 0.8367, y: 0.7127 }],
+  },
+  {
+    id: "t3-03l", nummer: "140", bouwnummer: "T3.03L",
+    woningType: "Type 5 - 3-kamerappartement",
+    status: "beschikbaar", verdieping: 3, oppervlakte: 68, slaapkamers: 2,
+    huurprijs: 1300, prijsVanaf: true, buitenruimte: "Balkon",
+    plattegrond: "/images/wonenbij/taanschuurkade/plattegrond-t3-01l.jpg",
+    polygon: [{ x: 0.6486, y: 0.6300 }, { x: 0.8367, y: 0.6398 }, { x: 0.8367, y: 0.7127 }, { x: 0.6486, y: 0.7034 }],
+  },
+  {
+    id: "t4-03r", nummer: "142", bouwnummer: "T4.03R",
+    woningType: "Type 4 - 3-kamerappartement",
+    status: "beschikbaar", verdieping: 3, oppervlakte: 69, slaapkamers: 2,
+    huurprijs: 1300, prijsVanaf: true, buitenruimte: "Balkon",
+    plattegrond: "/images/wonenbij/taanschuurkade/plattegrond-t4-01r.jpg",
+    polygon: [{ x: 0.5116, y: 0.6522 }, { x: 0.6486, y: 0.6522 }, { x: 0.6486, y: 0.7246 }, { x: 0.5116, y: 0.7246 }],
+  },
+  {
+    id: "t4-03l", nummer: "144", bouwnummer: "T4.03L",
+    woningType: "Type 3 - 3-kamerappartement",
+    status: "beschikbaar", verdieping: 3, oppervlakte: 70, slaapkamers: 2,
+    huurprijs: 1300, prijsVanaf: true, buitenruimte: "Balkon",
+    plattegrond: "/images/wonenbij/taanschuurkade/plattegrond-t4-01l.jpg",
+    polygon: [{ x: 0.3458, y: 0.6522 }, { x: 0.5116, y: 0.6522 }, { x: 0.5116, y: 0.7246 }, { x: 0.3458, y: 0.7246 }],
+  },
+  {
+    id: "t5-03r", nummer: "146", bouwnummer: "T5.03R",
+    woningType: "Type 2 - 3-kamerappartement",
+    status: "beschikbaar", verdieping: 3, oppervlakte: 65, slaapkamers: 2,
+    huurprijs: 1300, prijsVanaf: true, buitenruimte: "Balkon",
+    plattegrond: "/images/wonenbij/taanschuurkade/plattegrond-t5-01r.jpg",
+    polygon: [{ x: 0.1912, y: 0.6329 }, { x: 0.3402, y: 0.6329 }, { x: 0.3402, y: 0.7101 }, { x: 0.1912, y: 0.7101 }],
+  },
+  {
+    id: "t5-03l", nummer: "148", bouwnummer: "T5.03L",
+    woningType: "Type 2 - 3-kamerappartement",
+    status: "beschikbaar", verdieping: 3, oppervlakte: 65, slaapkamers: 2,
+    huurprijs: 1300, prijsVanaf: true, buitenruimte: "Balkon",
+    plattegrond: "/images/wonenbij/taanschuurkade/plattegrond-t5-01l.jpg",
+    polygon: [{ x: 0.0454, y: 0.6329 }, { x: 0.1912, y: 0.6329 }, { x: 0.1912, y: 0.7101 }, { x: 0.0454, y: 0.7101 }],
+  },
+  {
+    id: "t3-04r", nummer: "150", bouwnummer: "T3.04R",
+    woningType: "Type 6 - 2-kamerappartement",
+    status: "beschikbaar", verdieping: 4, oppervlakte: 57, slaapkamers: 1,
+    huurprijs: 1250, prijsVanaf: true, buitenruimte: "Balkon",
+    plattegrond: "/images/wonenbij/taanschuurkade/plattegrond-t3-01r.jpg",
+    polygon: [{ x: 0.8367, y: 0.5677 }, { x: 0.9801, y: 0.5749 }, { x: 0.9801, y: 0.6473 }, { x: 0.8367, y: 0.6398 }],
+  },
+  {
+    id: "t3-04l", nummer: "152", bouwnummer: "T3.04L",
+    woningType: "Type 5 - 3-kamerappartement",
+    status: "beschikbaar", verdieping: 4, oppervlakte: 68, slaapkamers: 2,
+    huurprijs: 1300, prijsVanaf: true, buitenruimte: "Balkon",
+    plattegrond: "/images/wonenbij/taanschuurkade/plattegrond-t3-01l.jpg",
+    polygon: [{ x: 0.6486, y: 0.5585 }, { x: 0.8367, y: 0.5677 }, { x: 0.8367, y: 0.6398 }, { x: 0.6486, y: 0.6300 }],
+  },
+  {
+    id: "t4-04r", nummer: "154", bouwnummer: "T4.04R",
+    woningType: "Type 4 - 3-kamerappartement",
+    status: "beschikbaar", verdieping: 4, oppervlakte: 69, slaapkamers: 2,
+    huurprijs: 1300, prijsVanaf: true, buitenruimte: "Balkon",
+    plattegrond: "/images/wonenbij/taanschuurkade/plattegrond-t4-01r.jpg",
+    polygon: [{ x: 0.5116, y: 0.5778 }, { x: 0.6486, y: 0.5778 }, { x: 0.6486, y: 0.6522 }, { x: 0.5116, y: 0.6522 }],
+  },
+  {
+    id: "t4-04l", nummer: "156", bouwnummer: "T4.04L",
+    woningType: "Type 3 - 3-kamerappartement",
+    status: "beschikbaar", verdieping: 4, oppervlakte: 70, slaapkamers: 2,
+    huurprijs: 1300, prijsVanaf: true, buitenruimte: "Balkon",
+    plattegrond: "/images/wonenbij/taanschuurkade/plattegrond-t4-01l.jpg",
+    polygon: [{ x: 0.3458, y: 0.5778 }, { x: 0.5116, y: 0.5778 }, { x: 0.5116, y: 0.6522 }, { x: 0.3458, y: 0.6522 }],
+  },
+  {
+    id: "t5-04r", nummer: "158", bouwnummer: "T5.04R",
+    woningType: "Type 2 - 3-kamerappartement",
+    status: "beschikbaar", verdieping: 4, oppervlakte: 65, slaapkamers: 2,
+    huurprijs: 1300, prijsVanaf: true, buitenruimte: "Balkon",
+    plattegrond: "/images/wonenbij/taanschuurkade/plattegrond-t5-01r.jpg",
+    polygon: [{ x: 0.1912, y: 0.5604 }, { x: 0.3402, y: 0.5604 }, { x: 0.3402, y: 0.6329 }, { x: 0.1912, y: 0.6329 }],
+  },
+  {
+    id: "t5-04l", nummer: "160", bouwnummer: "T5.04L",
+    woningType: "Type 2 - 3-kamerappartement",
+    status: "beschikbaar", verdieping: 4, oppervlakte: 65, slaapkamers: 2,
+    huurprijs: 1300, prijsVanaf: true, buitenruimte: "Balkon",
+    plattegrond: "/images/wonenbij/taanschuurkade/plattegrond-t5-01l.jpg",
+    polygon: [{ x: 0.0454, y: 0.5604 }, { x: 0.1912, y: 0.5604 }, { x: 0.1912, y: 0.6329 }, { x: 0.0454, y: 0.6329 }],
+  },
+  {
+    id: "t3-05r", nummer: "162", bouwnummer: "T3.05R",
+    woningType: "Type 6 - 2-kamerappartement",
+    status: "beschikbaar", verdieping: 5, oppervlakte: 57, slaapkamers: 1,
+    huurprijs: 1250, prijsVanaf: true, buitenruimte: "Balkon",
+    plattegrond: "/images/wonenbij/taanschuurkade/plattegrond-t3-01r.jpg",
+    polygon: [{ x: 0.8367, y: 0.4949 }, { x: 0.9801, y: 0.5024 }, { x: 0.9801, y: 0.5749 }, { x: 0.8367, y: 0.5677 }],
+  },
+  {
+    id: "t3-05l", nummer: "164", bouwnummer: "T3.05L",
+    woningType: "Type 5 - 3-kamerappartement",
+    status: "beschikbaar", verdieping: 5, oppervlakte: 68, slaapkamers: 2,
+    huurprijs: 1300, prijsVanaf: true, buitenruimte: "Balkon",
+    plattegrond: "/images/wonenbij/taanschuurkade/plattegrond-t3-01l.jpg",
+    polygon: [{ x: 0.6486, y: 0.4850 }, { x: 0.8367, y: 0.4949 }, { x: 0.8367, y: 0.5677 }, { x: 0.6486, y: 0.5585 }],
+  },
+  {
+    id: "t4-05r", nummer: "166", bouwnummer: "T4.05R",
+    woningType: "Type 4 - 3-kamerappartement",
+    status: "beschikbaar", verdieping: 5, oppervlakte: 69, slaapkamers: 2,
+    huurprijs: 1300, prijsVanaf: true, buitenruimte: "Balkon",
+    plattegrond: "/images/wonenbij/taanschuurkade/plattegrond-t4-01r.jpg",
+    polygon: [{ x: 0.5116, y: 0.4995 }, { x: 0.6486, y: 0.4995 }, { x: 0.6486, y: 0.5778 }, { x: 0.5116, y: 0.5778 }],
+  },
+  {
+    id: "t4-05l", nummer: "168", bouwnummer: "T4.05L",
+    woningType: "Type 3 - 3-kamerappartement",
+    status: "beschikbaar", verdieping: 5, oppervlakte: 70, slaapkamers: 2,
+    huurprijs: 1300, prijsVanaf: true, buitenruimte: "Balkon",
+    plattegrond: "/images/wonenbij/taanschuurkade/plattegrond-t4-01l.jpg",
+    polygon: [{ x: 0.3458, y: 0.4995 }, { x: 0.5116, y: 0.4995 }, { x: 0.5116, y: 0.5778 }, { x: 0.3458, y: 0.5778 }],
+  },
+  {
+    id: "t5-05r", nummer: "170", bouwnummer: "T5.05R",
+    woningType: "Type 2 - 3-kamerappartement",
+    status: "beschikbaar", verdieping: 5, oppervlakte: 65, slaapkamers: 2,
+    huurprijs: 1300, prijsVanaf: true, buitenruimte: "Balkon",
+    plattegrond: "/images/wonenbij/taanschuurkade/plattegrond-t5-01r.jpg",
+    polygon: [{ x: 0.1912, y: 0.4372 }, { x: 0.1936, y: 0.4367 }, { x: 0.3402, y: 0.4638 }, { x: 0.3402, y: 0.5604 }, { x: 0.1912, y: 0.5604 }],
+  },
+  {
+    id: "t5-05l", nummer: "172", bouwnummer: "T5.05L",
+    woningType: "Type 2 - 3-kamerappartement",
+    status: "beschikbaar", verdieping: 5, oppervlakte: 65, slaapkamers: 2,
+    huurprijs: 1300, prijsVanaf: true, buitenruimte: "Balkon",
+    plattegrond: "/images/wonenbij/taanschuurkade/plattegrond-t5-01l.jpg",
+    polygon: [{ x: 0.0454, y: 0.4638 }, { x: 0.1912, y: 0.4372 }, { x: 0.1912, y: 0.5604 }, { x: 0.0454, y: 0.5604 }],
+  },
+  {
+    id: "t3-06r", nummer: "174", bouwnummer: "T3.06R",
+    woningType: "Type 6 - 2-kamerappartement",
+    status: "beschikbaar", verdieping: 6, oppervlakte: 57, slaapkamers: 1,
+    huurprijs: 1250, prijsVanaf: true, buitenruimte: "Balkon",
+    plattegrond: "/images/wonenbij/taanschuurkade/plattegrond-t3-01r.jpg",
+    polygon: [{ x: 0.8367, y: 0.4237 }, { x: 0.9801, y: 0.4300 }, { x: 0.9801, y: 0.5024 }, { x: 0.8367, y: 0.4949 }],
+  },
+  {
+    id: "t3-06l", nummer: "176", bouwnummer: "T3.06L",
+    woningType: "Type 5 - 3-kamerappartement",
+    status: "beschikbaar", verdieping: 6, oppervlakte: 68, slaapkamers: 2,
+    huurprijs: 1300, prijsVanaf: true, buitenruimte: "Balkon",
+    plattegrond: "/images/wonenbij/taanschuurkade/plattegrond-t3-01l.jpg",
+    polygon: [{ x: 0.6486, y: 0.4155 }, { x: 0.8367, y: 0.4237 }, { x: 0.8367, y: 0.4949 }, { x: 0.6486, y: 0.4850 }],
+  },
+  {
+    id: "t4-06r", nummer: "178", bouwnummer: "T4.06R",
+    woningType: "Type 4 - 3-kamerappartement",
+    status: "beschikbaar", verdieping: 6, oppervlakte: 69, slaapkamers: 2,
+    huurprijs: 1300, prijsVanaf: true, buitenruimte: "Balkon",
+    plattegrond: "/images/wonenbij/taanschuurkade/plattegrond-t4-01r.jpg",
+    polygon: [{ x: 0.5116, y: 0.3465 }, { x: 0.6486, y: 0.3961 }, { x: 0.6486, y: 0.4995 }, { x: 0.5116, y: 0.4995 }],
+  },
+  {
+    id: "t4-06l", nummer: "180", bouwnummer: "T4.06L",
+    woningType: "Type 3 - 3-kamerappartement",
+    status: "beschikbaar", verdieping: 6, oppervlakte: 70, slaapkamers: 2,
+    huurprijs: 1300, prijsVanaf: true, buitenruimte: "Balkon",
+    plattegrond: "/images/wonenbij/taanschuurkade/plattegrond-t4-01l.jpg",
+    polygon: [{ x: 0.3458, y: 0.3942 }, { x: 0.4940, y: 0.3401 }, { x: 0.5116, y: 0.3465 }, { x: 0.5116, y: 0.4995 }, { x: 0.3458, y: 0.4995 }],
+  },
+  {
+    id: "t3-07r", nummer: "182", bouwnummer: "T3.07R",
+    woningType: "Type 6 - 2-kamerappartement",
+    status: "beschikbaar", verdieping: 7, oppervlakte: 57, slaapkamers: 1,
+    huurprijs: 1250, prijsVanaf: true, buitenruimte: "Balkon",
+    plattegrond: "/images/wonenbij/taanschuurkade/plattegrond-t3-01r.jpg",
+    polygon: [{ x: 0.8367, y: 0.3516 }, { x: 0.9801, y: 0.3575 }, { x: 0.9801, y: 0.4300 }, { x: 0.8367, y: 0.4237 }],
+  },
+  {
+    id: "t3-07l", nummer: "184", bouwnummer: "T3.07L",
+    woningType: "Type 5 - 3-kamerappartement",
+    status: "beschikbaar", verdieping: 7, oppervlakte: 69, slaapkamers: 2,
+    huurprijs: 1300, prijsVanaf: true, buitenruimte: "Balkon",
+    plattegrond: "/images/wonenbij/taanschuurkade/plattegrond-t3-01l.jpg",
+    polygon: [{ x: 0.6486, y: 0.3440 }, { x: 0.8367, y: 0.3516 }, { x: 0.8367, y: 0.4237 }, { x: 0.6486, y: 0.4155 }],
+  },
+  {
+    id: "t3-08r", nummer: "186", bouwnummer: "T3.08R",
+    woningType: "Type 6 - 2-kamerappartement",
+    status: "beschikbaar", verdieping: 8, oppervlakte: 57, slaapkamers: 1,
+    huurprijs: 1250, prijsVanaf: true, buitenruimte: "Balkon",
+    plattegrond: "/images/wonenbij/taanschuurkade/plattegrond-t3-01r.jpg",
+    polygon: [{ x: 0.8367, y: 0.1804 }, { x: 0.9801, y: 0.2415 }, { x: 0.9801, y: 0.3575 }, { x: 0.8367, y: 0.3516 }],
+  },
+  {
+    id: "t3-08l", nummer: "188", bouwnummer: "T3.08L",
+    woningType: "Type 5 - 3-kamerappartement",
+    status: "beschikbaar", verdieping: 8, oppervlakte: 68, slaapkamers: 2,
+    huurprijs: 1300, prijsVanaf: true, buitenruimte: "Balkon",
+    plattegrond: "/images/wonenbij/taanschuurkade/plattegrond-t3-01l.jpg",
+    polygon: [{ x: 0.6486, y: 0.2493 }, { x: 0.8191, y: 0.1729 }, { x: 0.8367, y: 0.1804 }, { x: 0.8367, y: 0.3516 }, { x: 0.6486, y: 0.3440 }],
+  },
+];
+
+const taanschuurkadeAanzichten: Aanzicht[] = [
+  {
+    key: "voorgevel",
+    label: "Voorgevel",
+    // "vullend": het paneel volgt de beeldverhouding van deze render
+    // (WoningzoekerSection), dus cover vult rand-tot-rand zonder dat er
+    // gevel buiten beeld valt.
+    weergave: "vullend",
+    render: "/images/wonenbij/taanschuurkade/woningzoeker-voorgevel.jpg",
+    renderAlt:
+      "Voorgevel van Taanschuurkade (torens 5, 4 en 3) met alle veertig woningen",
+    renderWidth: 1255,
+    renderHeight: 1035,
+    woningen: taanschuurkadeWoningen,
+  },
+];
+
 /* ─── Demo/PoC: woningen op de gevelaanzichten ──────────────────────
  * LET OP: dit is de proof of concept van de render-overlay, overgetrokken
  * van de oude huisnummeroverzichten (WEV24003) met fictieve nummers
@@ -977,12 +1342,8 @@ export const demoWonenBijProjecten: WonenBijProject[] = [
       },
     ],
     woningTypes: taanschuurkadeWoningTypes,
-    // Geen render-overlay en geen losse woningenlijst: de definitieve
-    // gevel-/adressenoverzichten (huisnr. 110-188) en de huurprijzen per
-    // woning zijn nog niet aangeleverd. De woningzoeker toont daarom
-    // alleen de woningtypes; zodra de gevelbeelden binnen zijn worden hier
-    // echte aanzichten overgetrokken (PoC: demoAanzichten hierboven).
-    woningen: [],
+    woningen: taanschuurkadeWoningen,
+    aanzichten: taanschuurkadeAanzichten,
   },
 ];
 

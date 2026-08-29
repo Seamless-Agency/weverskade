@@ -19,10 +19,16 @@ export const woning = defineType({
   fields: [
     defineField({
       name: 'nummer',
-      title: 'Bouwnummer',
-      description: 'Bijv. "A.101". Wordt getoond op de render en in de lijst.',
+      title: 'Huisnummer',
+      description: 'Bijv. "114". Wordt getoond op de render en in de lijst.',
       type: 'string',
       validation: (rule) => rule.required(),
+    }),
+    defineField({
+      name: 'bouwnummer',
+      title: 'Bouwnummer (akte)',
+      description: 'Bijv. "T3.01R" - de code uit de splitsingsakte.',
+      type: 'string',
     }),
     defineField({
       name: 'status',
@@ -71,6 +77,14 @@ export const woning = defineType({
       description: 'Alleen het bedrag, zonder euroteken.',
       type: 'number',
       validation: (rule) => rule.min(0),
+    }),
+    defineField({
+      name: 'prijsVanaf',
+      title: 'Toon als vanaf-prijs',
+      description:
+        'Aanvinken zolang alleen een indicatieve prijs bekend is; de zoeker toont dan "v.a. €…".',
+      type: 'boolean',
+      initialValue: false,
     }),
     defineField({
       name: 'orientatie',
