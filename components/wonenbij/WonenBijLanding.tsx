@@ -278,7 +278,10 @@ export default function WonenBijLanding({ data }: { data?: WonenBijLandingData }
                       </div>
                       <div className="font-body font-medium text-[0.833vw] leading-[1.806vw] text-off-black max-lg:text-[12px] max-lg:leading-[19px]">
                         <p>{formatPrijs(kaart.prijsVan)} p/m</p>
-                        <p>{kaart.slaapkamers} slaapkamers</p>
+                        <p>
+                          {kaart.slaapkamers}{" "}
+                          {kaart.slaapkamers === 1 ? "slaapkamer" : "slaapkamers"}
+                        </p>
                         <p>{kaart.oppervlakte} m²</p>
                       </div>
                     </div>

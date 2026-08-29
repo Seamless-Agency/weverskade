@@ -250,7 +250,7 @@ export default function WoningzoekerSection({
               ? gefilterd.length < woningen.length
                 ? `${gefilterd.length} van ${woningen.length} woningen gevonden`
                 : `${woningen.length} woningen gevonden`
-              : `${woningTypes.length} woningen gevonden`}
+              : `${woningTypes.length} woningtypes gevonden`}
             {woningen.length && filtersActief ? (
               <button
                 onClick={() =>
@@ -353,7 +353,7 @@ export default function WoningzoekerSection({
                   <div className="mt-[2.222vw] max-lg:mt-2">
                     {[
                       { icoon: "key-klein.svg", w: "w-[0.833vw]", tekst: `${formatPrijs(type.prijsVan)} p/m` },
-                      { icoon: "bed-klein.svg", w: "w-[0.972vw]", tekst: `${type.slaapkamers} slaapkamers` },
+                      { icoon: "bed-klein.svg", w: "w-[0.972vw]", tekst: `${type.slaapkamers} ${type.slaapkamers === 1 ? "slaapkamer" : "slaapkamers"}` },
                       { icoon: "m2-klein.svg", w: "w-[0.764vw]", tekst: `${type.oppervlakte} m²` },
                     ].map(({ icoon, w, tekst }) => (
                       <div key={icoon} className="flex items-center h-[1.389vw] max-lg:h-[17px]">

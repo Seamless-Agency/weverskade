@@ -56,6 +56,12 @@ export default function WonenBijProjectPage({
   const intro = useHeroIntro();
   const reduced = useReducedMotion();
 
+  // Zonder downloads verbergt die sectie zichzelf; het anker gaat dan ook
+  // uit de navigatie zodat er geen dode link in de header staat.
+  const anchors = project.downloads.length
+    ? ANCHORS
+    : ANCHORS.filter((anchor) => anchor.href !== "#downloads");
+
   const scrollNaar = (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
     e.preventDefault();
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
@@ -92,7 +98,7 @@ export default function WonenBijProjectPage({
         <div className="absolute inset-x-0 bottom-0 h-[16.111vw] bg-gradient-to-b from-transparent to-black/70 max-lg:h-[120px]" />
         <WonenBijHeader
           variant="licht"
-          anchors={ANCHORS}
+          anchors={anchors}
           ctaLabel="Inschrijven"
           ctaHref="#inschrijven"
         />

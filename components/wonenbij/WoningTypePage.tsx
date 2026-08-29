@@ -225,7 +225,10 @@ export default function WoningTypePage({
             >
               <Spec icoon="m2-klein.svg" tekst={`${type.oppervlakte} m² oppervlakte`} />
               <Spec icoon="key-klein.svg" tekst={prijsLabel} />
-              <Spec icoon="bed-klein.svg" tekst={`${type.slaapkamers} slaapkamers`} />
+              <Spec
+                icoon="bed-klein.svg"
+                tekst={`${type.slaapkamers} ${type.slaapkamers === 1 ? "slaapkamer" : "slaapkamers"}`}
+              />
               {type.energielabel ? (
                 <Spec icoon="leaf-klein.svg" tekst={`${type.energielabel} energielabel`} />
               ) : null}
