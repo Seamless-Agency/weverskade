@@ -367,9 +367,14 @@ export default function WonenBijProjectPage({
         {/* Kaart */}
         {project.mapImage ? (
           <RevealGroup className="relative mt-[7.986vw] mx-[2.431vw] max-lg:mt-8 max-lg:mx-5">
+            {/* Bewust GEEN mix-blend-multiply meer op de kaart: Chrome trok
+                die blend op compositing-niveau over de marker heen, waardoor
+                kaartlijnen door het label en de tekst schenen. De kaart wordt
+                zelf al in off-white-stijl gegenereerd, dus de blend voegde
+                niets meer toe. */}
             <RevealMedia
               duration={1.4}
-              className="relative w-full aspect-[1366/743] overflow-hidden mix-blend-multiply"
+              className="relative w-full aspect-[1366/743] overflow-hidden"
             >
               <Image
                 src={project.mapImage}
@@ -379,17 +384,26 @@ export default function WonenBijProjectPage({
                 className="object-cover"
               />
             </RevealMedia>
-            {/* De marker valt op de kaart zodra die onthuld is */}
+            {/* De marker valt op de kaart zodra die onthuld is. Het anker
+                (left/top) is de plek waar de PIN-PUNT prikt; de kaart wordt
+                zo gegenereerd dat de projectlocatie exact op dit punt ligt.
+                De translate zit op een binnen-div omdat Reveal de transform
+                van zijn eigen element beheert. */}
             <Reveal
               delay={0.75}
               y={-18}
               duration={0.7}
-              className="absolute left-[42%] top-[45.6%] -translate-x-1/2 flex flex-col items-center"
+              className="absolute z-10 left-[42%] top-[45.6%]"
             >
-              <span className="flex items-center bg-green text-off-white font-heading font-normal text-[1.667vw] leading-[2.056vw] tracking-[-0.033vw] h-[3.194vw] px-[1.111vw] max-lg:text-[13px] max-lg:h-auto max-lg:px-3 max-lg:py-1.5 max-lg:leading-normal">
-                {project.naam}
-              </span>
-              <span className="-mt-[1.111vw] size-[2.153vw] rotate-45 bg-green max-lg:size-[10px] max-lg:-mt-[6px]" />
+              <div className="flex -translate-x-1/2 -translate-y-full flex-col items-center">
+                <span className="flex items-center bg-green text-off-white font-heading font-normal text-[1.667vw] leading-[2.056vw] tracking-[-0.033vw] h-[3.194vw] px-[1.111vw] max-lg:text-[13px] max-lg:h-auto max-lg:px-3 max-lg:py-1.5 max-lg:leading-normal">
+                  {project.naam}
+                </span>
+                {/* relative -z-10: de gedraaide punt hoort ACHTER het label;
+                    als latere sibling rendert zijn geroteerde laag anders
+                    vlekkerig over de labeltekst heen. */}
+                <span className="relative -z-10 -mt-[1.111vw] size-[2.153vw] rotate-45 bg-green max-lg:size-[10px] max-lg:-mt-[6px]" />
+              </div>
             </Reveal>
             {project.mapLat && project.mapLng ? (
               <Reveal
@@ -399,7 +413,7 @@ export default function WonenBijProjectPage({
                 href={`https://www.google.com/maps/search/?api=1&query=${project.mapLat},${project.mapLng}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="pill-hover absolute right-[2.569vw] bottom-[2.292vw] inline-flex items-center justify-center w-[11.181vw] h-[2.847vw] bg-off-black text-off-white no-underline rounded-full font-heading font-normal text-[1.181vw] leading-[1.458vw] tracking-[-0.024vw] max-lg:right-3 max-lg:bottom-3 max-lg:w-auto max-lg:h-auto max-lg:px-4 max-lg:py-2 max-lg:text-[13px] max-lg:leading-normal"
+                className="pill-hover absolute z-10 right-[2.569vw] bottom-[2.292vw] inline-flex items-center justify-center w-[11.181vw] h-[2.847vw] bg-off-black text-off-white no-underline rounded-full font-heading font-normal text-[1.181vw] leading-[1.458vw] tracking-[-0.024vw] max-lg:right-3 max-lg:bottom-3 max-lg:w-auto max-lg:h-auto max-lg:px-4 max-lg:py-2 max-lg:text-[13px] max-lg:leading-normal"
               >
                 Google Maps
               </Reveal>
