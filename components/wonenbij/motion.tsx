@@ -135,7 +135,11 @@ export function Reveal({
       style={{
         ...style,
         opacity: on ? 1 : 0,
-        transform: on ? "translateY(0)" : `translateY(${y}px)`,
+        // "none" i.p.v. translateY(0) als eindtoestand: een blijvende
+        // (identity-)transform maakt de Reveal het containing block voor
+        // position:sticky-kinderen, waardoor het woningzoeker-paneel niet
+        // meer plakt. De overgang animeert identiek (none == identity).
+        transform: on ? "none" : `translateY(${y}px)`,
         transition:
           on && !reduced
             ? `opacity ${duration}s ${EASE} ${delay}s, transform ${duration}s ${EASE} ${delay}s`

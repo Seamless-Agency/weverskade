@@ -382,10 +382,29 @@ export default function WoningzoekerSection({
 
           {heeftRender && actiefAanzicht ? (
             // Figma: de render is een paneel dat exact even hoog is als de
-            // lijst en er naadloos tegenaan ligt; het beeld vult het paneel
-            // (cover). De aanzicht-knoppen liggen als overlay op de foto zodat
-            // de gelijke hoogte nooit breekt; op mobiel staan ze eronder.
-            <div className="relative max-lg:order-first">
+            // lijst en er naadloos tegenaan ligt. Het Figma-frame kende maar
+            // drie typekaarten; bij een langere lijst zou het paneel onbeperkt
+            // meegroeien. Daarom is het paneel gemaxt op de viewport en plakt
+            // het (sticky) terwijl de lijst doorscrolt — bij een korte lijst
+            // volgt het gewoon de lijsthoogte en blijft het exact Figma. De
+            // aanzicht-knoppen liggen als overlay op het paneel zodat de
+            // gelijke hoogte nooit breekt; op mobiel staan ze eronder.
+            <div className="max-lg:order-first">
+              {/* Het paneel volgt de beeldverhouding van het actieve aanzicht:
+                  zo vult de foto het paneel rand-tot-rand (Figma) zonder dat
+                  cover iets van de klikbare gevel afsnijdt. Het plakt
+                  verticaal gecentreerd in de viewport, zodat de restruimte
+                  op hoge schermen boven en onder verdeeld wordt i.p.v. als
+                  één gat onder de foto te vallen. --wz-paneel-h = de
+                  paneelbreedte (100vw - marges - lijstkolom = 51.181vw)
+                  gedeeld door de beeldverhouding. */}
+              <div
+                className="relative lg:sticky lg:top-[max(1.389vw,calc((100svh-var(--wz-paneel-h))/2))] lg:max-h-[calc(100svh-2.778vw)]"
+                style={{
+                  aspectRatio: `${actiefAanzicht.renderWidth} / ${actiefAanzicht.renderHeight}`,
+                  "--wz-paneel-h": `${((51.181 * actiefAanzicht.renderHeight) / actiefAanzicht.renderWidth).toFixed(3)}vw`,
+                } as React.CSSProperties}
+              >
               <RenderOverlay
                 key={actiefAanzicht.key}
                 vullend
@@ -453,6 +472,7 @@ export default function WoningzoekerSection({
                       ? "Klik op het gebouw om de beschikbare woningen per gevel te bekijken."
                       : "Klik op een woning in het gebouw voor meer informatie en om in te schrijven."}
                 </p>
+              </div>
               </div>
             </div>
           ) : null}
