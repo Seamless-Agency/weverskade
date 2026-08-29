@@ -32,13 +32,19 @@ export default function ProjectPlanning({ fases }: { fases: PlanningFase[] }) {
         </h2>
       </div>
 
-      <RevealGroup className="mt-[5.139vw] pl-[18.958vw] grid grid-cols-[16.111vw_16.111vw_16.111vw_16.111vw] max-lg:mt-10 max-lg:px-5 max-lg:grid-cols-1 max-lg:gap-10">
+      {/* Mobiel bewust geen grid-gap: die zou via de subgrid ook tussen de
+          rijen bínnen een fase komen; de fase-afstand zit in max-lg:mt-10
+          op de fases zelf. */}
+      <RevealGroup className="mt-[5.139vw] pl-[18.958vw] grid grid-cols-[16.111vw_16.111vw_16.111vw_16.111vw] max-lg:mt-10 max-lg:px-5 max-lg:grid-cols-1">
         {fases.map((fase, i) => (
+          // Subgrid met drie rijen (kop / omschrijving / verwachtingen):
+          // zo beginnen die blokken in alle kolommen op dezelfde hoogte,
+          // ook als een fasetitel of omschrijving langer is (CMS-tekst).
           <div
             key={fase.titel + fase.periode}
-            className={`relative max-lg:pl-0 ${
+            className={`relative grid grid-rows-subgrid row-span-3 content-start max-lg:pl-0 ${
               i > 0
-                ? "max-lg:border-t max-lg:border-off-white/40 max-lg:pt-8"
+                ? "max-lg:mt-10 max-lg:border-t max-lg:border-off-white/40 max-lg:pt-8"
                 : ""
             }`}
           >
@@ -102,21 +108,26 @@ export default function ProjectPlanning({ fases }: { fases: PlanningFase[] }) {
               className="mt-[1.667vw] ml-[0.278vw] mr-[2.708vw] font-body font-medium text-[0.833vw] leading-[1.181vw] tracking-[-0.017vw] text-off-white max-lg:mt-4 max-lg:mx-0 max-lg:text-[13px] max-lg:leading-[19px]"
             >
               <p>{fase.omschrijving}</p>
-              {fase.verwachtingen.length ? (
-                <>
-                  <p className="mt-[1.389vw] font-semibold leading-[1.389vw] max-lg:mt-4 max-lg:leading-[20px]">
-                    {fase.verwachtingenTitel ?? "Dit mag je verwachten"}
-                  </p>
-                  <ul className="list-disc ml-[1.25vw] max-lg:ml-5">
-                    {fase.verwachtingen.map((punt) => (
-                      <li key={punt} className="leading-[1.389vw] max-lg:leading-[20px]">
-                        {punt}
-                      </li>
-                    ))}
-                  </ul>
-                </>
-              ) : null}
             </Reveal>
+            {fase.verwachtingen.length ? (
+              <Reveal
+                delay={0.28 + i * 0.12}
+                className="mt-[1.389vw] ml-[0.278vw] mr-[2.708vw] font-body font-medium text-[0.833vw] leading-[1.181vw] tracking-[-0.017vw] text-off-white max-lg:mt-4 max-lg:mx-0 max-lg:text-[13px] max-lg:leading-[19px]"
+              >
+                <p className="font-semibold leading-[1.389vw] max-lg:leading-[20px]">
+                  {fase.verwachtingenTitel ?? "Dit mag je verwachten"}
+                </p>
+                <ul className="list-disc ml-[1.25vw] max-lg:ml-5">
+                  {fase.verwachtingen.map((punt) => (
+                    <li key={punt} className="leading-[1.389vw] max-lg:leading-[20px]">
+                      {punt}
+                    </li>
+                  ))}
+                </ul>
+              </Reveal>
+            ) : (
+              <div />
+            )}
           </div>
         ))}
       </RevealGroup>
