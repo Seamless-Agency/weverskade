@@ -2,6 +2,7 @@
 
 import { useEffect, useState, type CSSProperties } from "react";
 import { usePageNavigation } from "@/hooks/usePageNavigation";
+import { useFocusTrap } from "@/hooks/useFocusTrap";
 import { PijlIcon } from "@/components/wonenbij/icons";
 import { EASE, useHeroIntro, useReducedMotion } from "@/components/wonenbij/motion";
 
@@ -50,18 +51,17 @@ export default function WonenBijHeader({
         : "none",
   });
 
-  // Open menu: pagina-scroll bevriezen en met Escape kunnen sluiten.
+  // Open menu: pagina-scroll bevriezen; Escape, focus-trap en focus-restore
+  // komen uit useFocusTrap.
+  const menuRef = useFocusTrap<HTMLDivElement>(menuOpen, () =>
+    setMenuOpen(false)
+  );
   useEffect(() => {
     if (!menuOpen) return;
     const vorige = document.documentElement.style.overflow;
     document.documentElement.style.overflow = "hidden";
-    const opToets = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setMenuOpen(false);
-    };
-    window.addEventListener("keydown", opToets);
     return () => {
       document.documentElement.style.overflow = vorige;
-      window.removeEventListener("keydown", opToets);
     };
   }, [menuOpen]);
 
@@ -173,7 +173,13 @@ export default function WonenBijHeader({
 
       {/* Fullscreen ankermenu (tablet/mobiel) */}
       {metNav && menuOpen ? (
-        <div className="fixed inset-0 z-50 bg-off-black text-off-white overflow-y-auto lg:hidden menu-overlay-in">
+        <div
+          ref={menuRef}
+          role="dialog"
+          aria-modal="true"
+          aria-label="Menu"
+          className="fixed inset-0 z-50 bg-off-black text-off-white overflow-y-auto lg:hidden menu-overlay-in"
+        >
           <div className="flex items-center justify-between px-5 pt-5">
             <span className="font-body font-medium text-[17px] leading-none">
               Wonen bij Weverskade
@@ -181,7 +187,6 @@ export default function WonenBijHeader({
             <button
               onClick={() => setMenuOpen(false)}
               aria-label="Menu sluiten"
-              autoFocus
               className="flex items-center justify-center size-11 rounded-full bg-off-white/15 text-off-white border-none cursor-pointer"
             >
               <svg viewBox="0 0 14 14" className="w-[14px] h-auto" aria-hidden>

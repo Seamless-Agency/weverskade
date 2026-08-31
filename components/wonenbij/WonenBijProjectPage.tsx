@@ -562,11 +562,17 @@ function HurenCarousel({ naam, fotos }: { naam: string; fotos: string[] }) {
               alt={`${naam} - beeld ${i + 1}`}
               fill
               sizes="95vw"
+              aria-hidden={i !== index}
               className={`object-cover transition-opacity duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] ${
                 i === index ? "opacity-100" : "opacity-0"
               }`}
             />
           ))}
+          {fotos.length > 1 ? (
+            <span className="sr-only" aria-live="polite">
+              Foto {index + 1} van {fotos.length}
+            </span>
+          ) : null}
           {fotos.length > 1 ? (
             <div className="absolute inset-x-0 bottom-[0.972vw] hidden justify-center gap-[0.417vw] max-lg:flex max-lg:bottom-3 max-lg:gap-1.5">
               {fotos.map((_, i) => (
@@ -660,6 +666,8 @@ function LocatieAccordion({
               y={16}
               onClick={() => setOpenIndex(open ? null : i)}
               aria-expanded={open}
+              id={`locatie-knop-${i}`}
+              aria-controls={`locatie-paneel-${i}`}
               className="w-full flex items-center justify-between gap-4 pt-[0.903vw] pb-[1.458vw] cursor-pointer bg-transparent border-none p-0 text-left max-lg:py-3"
             >
               <span className="font-heading font-normal text-[2.153vw] leading-[2.653vw] tracking-[-0.043vw] text-off-black max-lg:text-[20px] max-lg:leading-[1.1]">
@@ -672,13 +680,18 @@ function LocatieAccordion({
               />
             </Reveal>
             <div
+              id={`locatie-paneel-${i}`}
+              role="region"
+              aria-labelledby={`locatie-knop-${i}`}
               className="grid"
               style={{
                 gridTemplateRows: open ? "1fr" : "0fr",
                 transition: "grid-template-rows 0.5s cubic-bezier(0.16, 1, 0.3, 1)",
               }}
             >
-              <div className="overflow-hidden">
+              {/* inert houdt dichte content uit de accessibility tree
+                  zonder de 0fr-animatie te raken */}
+              <div className="overflow-hidden" inert={!open}>
                 <p
                   className="pb-[2.361vw] max-w-[40.417vw] font-body font-medium text-[0.972vw] leading-[1.528vw] tracking-[-0.019vw] text-off-black max-lg:pb-4 max-lg:max-w-none max-lg:text-[14px] max-lg:leading-[21px]"
                   style={{

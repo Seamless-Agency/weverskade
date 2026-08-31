@@ -5,6 +5,7 @@ import Footer from "@/components/Footer";
 import FooterReveal from "@/components/FooterReveal";
 import { sanityFetch } from "@/sanity/lib/fetch";
 import { FOOTER_QUERY } from "@/sanity/lib/queries";
+import { wonenbijUrl } from "@/lib/siteConfig";
 import {
   getWonenBijProjectData,
   getWonenBijProjectSlugs,
@@ -33,20 +34,26 @@ export async function generateMetadata({
   if (!project || !type) return { title: "Wonen bij Weverskade" };
   return {
     title: `${type.naam} - ${project.naam} | Wonen bij Weverskade`,
-    description: type.omschrijving[0]?.tekst?.slice(0, 160),
+    description:
+      type.omschrijving[0]?.tekst?.slice(0, 160) ??
+      `${type.naam} in ${project.naam}: ca. ${type.oppervlakte} m² woonoppervlak, huur vanaf € ${type.prijsVan.toLocaleString("nl-NL")} per maand.`,
+    alternates: {
+      canonical: wonenbijUrl(`/${project.slug}/${type.slug}`),
+    },
+    openGraph: { images: [type.fotos[0] ?? project.heroImage] },
   };
 }
 
 export default async function WoningType({
   params,
-  searchParams,
 }: {
   params: Promise<{ slug: string; typeSlug: string }>;
-  searchParams: Promise<{ woning?: string }>;
 }) {
-  const [{ slug, typeSlug }, { woning }, footerData] = await Promise.all([
+  // Bewust géén searchParams hier: die zouden de route per request dynamisch
+  // maken ondanks generateStaticParams. ?woning= wordt client-side gelezen
+  // in WoningTypePage.
+  const [{ slug, typeSlug }, footerData] = await Promise.all([
     params,
-    searchParams,
     sanityFetch<any>({ query: FOOTER_QUERY, tags: ["footer"] }),
   ]);
 
@@ -85,7 +92,6 @@ export default async function WoningType({
         project={project}
         type={type}
         volgendeTypeSlug={volgendeType?.slug}
-        voorgeselecteerdeWoning={woning}
       />
       <FooterReveal>
         <Footer bg="bg-green" data={footerProps} />

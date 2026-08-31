@@ -24,7 +24,7 @@ export default function WonenBijLayout({
           __html: "nav[data-main-nav]{display:none !important}",
         }}
       />
-      {children}
+      <main>{children}</main>
     </>
   );
 }

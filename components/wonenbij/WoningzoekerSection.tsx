@@ -191,7 +191,9 @@ export default function WoningzoekerSection({
     if (!woning) return;
     const typeSlug = typeSlugVoorWoning(woning);
     if (!typeSlug) return;
-    window.location.href = `/wonenbij/${projectSlug}/${typeSlug}?woning=${encodeURIComponent(woning.nummer)}`;
+    navigate.to(
+      `/wonenbij/${projectSlug}/${typeSlug}?woning=${encodeURIComponent(woning.nummer)}`
+    );
   };
 
   /** Vanuit een overzichtsbeeld (luchtfoto) doorklikken naar een gevel-aanzicht. */
@@ -273,6 +275,10 @@ export default function WoningzoekerSection({
                 <button
                   key={key}
                   onClick={() => toggleSort(key)}
+                  aria-pressed={actief}
+                  aria-label={`Sorteer op ${label.toLowerCase()}${
+                    actief ? (sortAsc ? ", oplopend" : ", aflopend") : ""
+                  }`}
                   className={`flex items-center justify-between ${breedte} h-[1.875vw] pl-[0.694vw] pr-[1.528vw] ${i === 1 ? "ml-[-0.069vw] max-lg:ml-0" : ""} font-body font-medium text-[1.111vw] tracking-[-0.022vw] cursor-pointer border-none transition-colors duration-200 max-lg:w-full max-lg:h-11 max-lg:gap-2 max-lg:px-3 max-lg:text-[14px] ${
                     actief
                       ? "bg-green text-off-white"

@@ -8,6 +8,7 @@ import DownloadsSection from "@/components/wonenbij/DownloadsSection";
 import InschrijfForm from "@/components/wonenbij/InschrijfForm";
 import { PijlIcon } from "@/components/wonenbij/icons";
 import { usePageNavigation } from "@/hooks/usePageNavigation";
+import { useFocusTrap } from "@/hooks/useFocusTrap";
 import { formatPrijs, type WonenBijProject, type WoningType } from "@/data/wonenbij";
 import {
   Reveal,
@@ -21,8 +22,6 @@ interface WoningTypePageProps {
   type: WoningType;
   /** Slug van het volgende woningtype binnen het project. */
   volgendeTypeSlug?: string;
-  /** Voorgeselecteerde woning (bouwnummer) vanaf de render-overlay. */
-  voorgeselecteerdeWoning?: string;
 }
 
 /**
@@ -33,10 +32,21 @@ export default function WoningTypePage({
   project,
   type,
   volgendeTypeSlug,
-  voorgeselecteerdeWoning,
 }: WoningTypePageProps) {
   const navigate = usePageNavigation();
   const intro = useHeroIntro();
+  // ?woning= (preselectie vanaf de render-overlay) wordt hier client-side
+  // gelezen zodat de route statisch kan blijven; useSearchParams zou een
+  // Suspense-bailout forceren.
+  const [voorgeselecteerdeWoning, setVoorgeselecteerdeWoning] = useState<
+    string | undefined
+  >(undefined);
+  useEffect(() => {
+    const woning = new URLSearchParams(window.location.search).get("woning");
+    // Async plannen: de lint-regel verbiedt synchrone setState in een effect
+    // (cascading render); één microtask later is hier functioneel identiek.
+    if (woning) queueMicrotask(() => setVoorgeselecteerdeWoning(woning));
+  }, []);
   const [fotoIndex, setFotoIndex] = useState(0);
   const [plattegrondIndex, setPlattegrondIndex] = useState(0);
   const [omschrijvingOpen, setOmschrijvingOpen] = useState(false);
@@ -53,9 +63,12 @@ export default function WoningTypePage({
   const fotoSwipe = useSwipe(stapFoto);
   const plattegrondSwipe = useSwipe(stapPlattegrond);
 
-  // Sluit de plattegrond-lightbox met Escape; bevries de pagina-scroll en
-  // centreer de (op mobiel uitvergrote) tekening in beeld.
-  const lightboxRef = useRef<HTMLDivElement>(null);
+  // Plattegrond-lightbox: focus-trap + Escape + focus-restore via de hook;
+  // dit effect bevriest de pagina-scroll en centreert de (op mobiel
+  // uitvergrote) tekening in beeld.
+  const lightboxRef = useFocusTrap<HTMLDivElement>(lightboxOpen, () =>
+    setLightboxOpen(false)
+  );
   useEffect(() => {
     if (!lightboxOpen) return;
     const vorige = document.documentElement.style.overflow;
@@ -67,15 +80,10 @@ export default function WoningTypePage({
         (el.scrollHeight - el.clientHeight) / 2
       );
     }
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setLightboxOpen(false);
-    };
-    window.addEventListener("keydown", onKey);
     return () => {
       document.documentElement.style.overflow = vorige;
-      window.removeEventListener("keydown", onKey);
     };
-  }, [lightboxOpen]);
+  }, [lightboxOpen, lightboxRef]);
 
   const projectHref = `/wonenbij/${project.slug}`;
   const zichtbareBlokken = omschrijvingOpen
@@ -137,11 +145,17 @@ export default function WoningTypePage({
                     fill
                     priority={i === 0}
                     sizes="(max-width: 768px) 100vw, 47vw"
+                    aria-hidden={i !== fotoIndex}
                     className={`object-cover transition-opacity duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] ${
                       i === fotoIndex ? "opacity-100" : "opacity-0"
                     }`}
                   />
                 ))}
+                {type.fotos.length > 1 ? (
+                  <span className="sr-only" aria-live="polite">
+                    Foto {fotoIndex + 1} van {type.fotos.length}
+                  </span>
+                ) : null}
               </RevealMedia>
               {type.fotos.length > 1 ? (
                 <CarouselPijlen
@@ -176,11 +190,18 @@ export default function WoningTypePage({
                       alt={`${type.naam} - plattegrond ${i + 1}`}
                       fill
                       sizes="(max-width: 768px) 90vw, 40vw"
+                      aria-hidden={i !== plattegrondIndex}
                       className={`object-contain transition-opacity duration-500 ${
                         i === plattegrondIndex ? "opacity-100" : "opacity-0"
                       }`}
                     />
                   ))}
+                  {type.plattegronden.length > 1 ? (
+                    <span className="sr-only" aria-live="polite">
+                      Plattegrond {plattegrondIndex + 1} van{" "}
+                      {type.plattegronden.length}
+                    </span>
+                  ) : null}
                   {/* Onzichtbaar tikvlak dat de lightbox opent; laat de
                       desktop-rendering volledig ongemoeid. */}
                   <button

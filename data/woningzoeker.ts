@@ -103,8 +103,8 @@ export const demoProjecten: WoningzoekerProject[] = [
       "Klik een woning aan op het gevelaanzicht om de plattegrond, oppervlakte en huurprijs te bekijken. De kleur geeft de actuele status aan.",
     render: "/images/woningzoeker/taanschuur-voorgevel.jpg",
     renderAlt: "Voorgevel Zuidwest van Taanschuurkade met beschikbare woningen",
-    renderWidth: 3803,
-    renderHeight: 2484,
+    renderWidth: 2560,
+    renderHeight: 1672,
     woningen: voorgevelWoningen,
   },
 ];

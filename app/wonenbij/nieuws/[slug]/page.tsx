@@ -10,6 +10,22 @@ import {
   FOOTER_QUERY,
 } from "@/sanity/lib/queries";
 import { formatSanityDate, sanityImageUrl } from "@/sanity/lib/helpers";
+import { wonenbijUrl } from "@/lib/siteConfig";
+import { notFound } from "next/navigation";
+
+// De enige slug die zonder CMS-artikel mag renderen (demo uit het Figma-frame).
+const DEMO_SLUG = "start-bouw-taanschuurkade";
+
+/** Eerste alinea van een Sanity-body als platte tekst, voor de description. */
+function eersteAlinea(body: unknown): string | undefined {
+  if (!Array.isArray(body)) return undefined;
+  const eerste = body[0];
+  const tekst =
+    typeof eerste === "string"
+      ? eerste
+      : eerste?.children?.map((c: any) => c.text).join("") ?? "";
+  return tekst ? tekst.slice(0, 160) : undefined;
+}
 
 export async function generateStaticParams() {
   const slugs =
@@ -46,8 +62,18 @@ export async function generateMetadata({
     params: { slug },
     tags: ["nieuwsArtikel"],
   });
+  if (!artikel && slug !== DEMO_SLUG) return {};
   return {
     title: `${artikel?.title ?? demoArtikel.titel} | Wonen bij Weverskade`,
+    description: eersteAlinea(artikel?.body) ?? demoArtikel.body[0].slice(0, 160),
+    alternates: { canonical: wonenbijUrl(`/nieuws/${slug}`) },
+    openGraph: {
+      images: [
+        artikel?.heroImage
+          ? sanityImageUrl(artikel.heroImage, demoArtikel.image ?? "")
+          : demoArtikel.image ?? "",
+      ],
+    },
   };
 }
 
@@ -65,6 +91,10 @@ export default async function WonenBijNieuws({
     }),
     sanityFetch<any>({ query: FOOTER_QUERY, tags: ["footer"] }),
   ]);
+
+  // Zonder CMS-artikel bestaat alleen de demo-slug; elke andere slug is een
+  // echte 404 (voorheen rendde hier het demo-artikel met status 200).
+  if (!artikel && slug !== DEMO_SLUG) notFound();
 
   const data: WonenBijNieuwsData = artikel
     ? {

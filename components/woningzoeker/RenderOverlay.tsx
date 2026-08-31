@@ -37,6 +37,11 @@ interface RenderOverlayProps {
    * achtergrond) i.p.v. bijgesneden — voor technische geveltekeningen.
    */
   passend?: boolean;
+  /**
+   * Alleen aanzetten waar de render de LCP is (standalone woningzoeker);
+   * in een sectie onder de vouw zou priority de hero-preload verdringen.
+   */
+  prioriteit?: boolean;
 }
 
 function toPoints(polygon: PolygonPoint[]): string {
@@ -67,6 +72,7 @@ export default function RenderOverlay({
   onZoneOpen,
   vullend = false,
   passend = false,
+  prioriteit = false,
 }: RenderOverlayProps) {
   const [hoveredZoneKey, setHoveredZoneKey] = useState<string | null>(null);
   const active = woningen.find((w) => w.id === (hoveredId ?? selectedId)) ?? null;
@@ -146,7 +152,7 @@ export default function RenderOverlay({
         fill
         sizes="(max-width: 768px) 100vw, 60vw"
         className="object-cover"
-        priority
+        priority={prioriteit}
       />
 
       {/* De overlay deelt exact het coördinatenstelsel van de render:

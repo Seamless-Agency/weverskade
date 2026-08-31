@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useId, useRef, useState } from "react";
 import Image from "next/image";
 import TurnstileWidget, {
   isTurnstileEnabled,
@@ -50,7 +50,9 @@ export default function WoningDetail({
   >("idle");
   const [submitMessage, setSubmitMessage] = useState("");
   const [turnstileToken, setTurnstileToken] = useState("");
+  const [turnstileFout, setTurnstileFout] = useState(false);
   const turnstileRef = useRef<TurnstileHandle>(null);
+  const turnstileHintId = useId();
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -172,6 +174,8 @@ export default function WoningDetail({
                 type="text"
                 name="name"
                 placeholder="Naam"
+                aria-label="Naam"
+                autoComplete="name"
                 required
                 value={formData.name}
                 onChange={(e) =>
@@ -183,6 +187,8 @@ export default function WoningDetail({
                 type="email"
                 name="email"
                 placeholder="Emailadres"
+                aria-label="Emailadres"
+                autoComplete="email"
                 required
                 value={formData.email}
                 onChange={(e) =>
@@ -196,6 +202,8 @@ export default function WoningDetail({
               type="tel"
               name="phone"
               placeholder="Telefoonnummer"
+              aria-label="Telefoonnummer"
+              autoComplete="tel"
               value={formData.phone}
               onChange={(e) =>
                 setFormData((p) => ({ ...p, phone: e.target.value }))
@@ -206,6 +214,7 @@ export default function WoningDetail({
             <textarea
               name="message"
               placeholder="Eventuele vraag of opmerking"
+              aria-label="Eventuele vraag of opmerking"
               rows={3}
               value={formData.message}
               onChange={(e) =>
@@ -217,7 +226,11 @@ export default function WoningDetail({
             <TurnstileWidget
               ref={turnstileRef}
               action="woningzoeker"
-              onVerify={setTurnstileToken}
+              onVerify={(token) => {
+                setTurnstileToken(token);
+                if (token) setTurnstileFout(false);
+              }}
+              onError={() => setTurnstileFout(true)}
               className="mt-[1.2vw] max-lg:mt-5"
             />
 
@@ -247,6 +260,11 @@ export default function WoningDetail({
                 submitState === "submitting" ||
                 (isTurnstileEnabled && !turnstileToken)
               }
+              aria-describedby={
+                isTurnstileEnabled && !turnstileToken
+                  ? turnstileHintId
+                  : undefined
+              }
               className="mt-[1.2vw] cursor-pointer rounded-full border-none bg-green px-[1.5vw] py-[0.65vw] font-heading text-[1vw] font-normal tracking-[-0.02vw] text-off-white disabled:cursor-not-allowed disabled:opacity-40 max-lg:mt-5 max-lg:px-6 max-lg:py-2.5 max-lg:text-[15px]"
             >
               {submitState === "submitting"
@@ -254,12 +272,25 @@ export default function WoningDetail({
                 : "Interesse doorgeven"}
             </button>
 
+            {isTurnstileEnabled && !turnstileToken ? (
+              <p
+                id={turnstileHintId}
+                role={turnstileFout ? "alert" : "status"}
+                className={`mt-[0.8vw] font-body text-[0.78vw] leading-snug max-lg:mt-3 max-lg:text-[12px] ${
+                  turnstileFout ? "text-red-700" : "text-off-black/50"
+                }`}
+              >
+                {turnstileFout
+                  ? "De beveiligingscheck kon niet worden geladen. Herlaad de pagina of probeer het later opnieuw."
+                  : "Beveiligingscheck wordt geladen…"}
+              </p>
+            ) : null}
             {submitMessage ? (
               <p
                 className={`mt-[0.8vw] font-body text-[0.85vw] leading-snug max-lg:mt-3 max-lg:text-[13px] ${
                   submitState === "error" ? "text-red-700" : "text-green"
                 }`}
-                role="status"
+                role={submitState === "error" ? "alert" : "status"}
               >
                 {submitMessage}
               </p>

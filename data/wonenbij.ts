@@ -1160,8 +1160,8 @@ export const demoAanzichten: Aanzicht[] = [
     label: "Voorgevel",
     render: "/images/woningzoeker/taanschuur-voorgevel.jpg",
     renderAlt: "Voorgevel Zuidwest van Taanschuurkade met beschikbare woningen",
-    renderWidth: 3803,
-    renderHeight: 2484,
+    renderWidth: 2560,
+    renderHeight: 1672,
     woningen: voorgevelWoningen,
   },
   {
@@ -1170,8 +1170,8 @@ export const demoAanzichten: Aanzicht[] = [
     label: "Achtergevel",
     render: "/images/woningzoeker/taanschuur-achtergevel.jpg",
     renderAlt: "Achtergevel Noordoost van Taanschuurkade met beschikbare woningen",
-    renderWidth: 3617,
-    renderHeight: 2510,
+    renderWidth: 2560,
+    renderHeight: 1776,
     woningen: achtergevelWoningen,
   },
 ];

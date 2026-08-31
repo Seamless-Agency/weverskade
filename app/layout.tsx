@@ -4,6 +4,7 @@ import Navbar from "@/components/Navbar";
 import PageTransition from "@/components/PageTransition";
 import { sanityFetch } from "@/sanity/lib/fetch";
 import { SITE_SETTINGS_QUERY } from "@/sanity/lib/queries";
+import { SITE_URL } from "@/lib/siteConfig";
 import "./globals.css";
 
 const arizonaMix = localFont({
@@ -21,20 +22,12 @@ const gtStandard = localFont({
       weight: "400",
       style: "normal",
     },
-    {
-      path: "../fonts/GT-Standard-L-Standard-Regular-Oblique.woff2",
-      weight: "400",
-      style: "italic",
-    },
+    // De Oblique-varianten worden bewust niet meegeladen: italic komt in de
+    // hele codebase niet voor en next/font preload't elke src-entry (~130 KB).
     {
       path: "../fonts/GT-Standard-L-Standard-Medium.woff2",
       weight: "500",
       style: "normal",
-    },
-    {
-      path: "../fonts/GT-Standard-L-Standard-Medium-Oblique.woff2",
-      weight: "500",
-      style: "italic",
     },
     {
       path: "../fonts/GT-Standard-L-Standard-Semibold.woff2",
@@ -53,10 +46,17 @@ export async function generateMetadata(): Promise<Metadata> {
   }>({ query: SITE_SETTINGS_QUERY, tags: ["siteSettings"] });
 
   return {
+    metadataBase: new URL(SITE_URL),
     title: settings?.metaTitle ?? "Weverskade | Aandacht voor ruimte",
     description:
       settings?.metaDescription ??
       "Weverskade is een ontwikkelende belegger in woningen en commercieel vastgoed.",
+    openGraph: {
+      siteName: "Weverskade",
+      type: "website",
+      locale: "nl_NL",
+      images: ["/images/hero-bg.webp"],
+    },
     // Next.js will also auto-emit links for app/icon.svg and app/apple-icon
     // thanks to filename conventions — listing them here makes the intent
     // explicit and ensures the SVG is preferred on modern browsers.

@@ -8,6 +8,7 @@ import FooterReveal from "@/components/FooterReveal";
 import { sanityFetch } from "@/sanity/lib/fetch";
 import { ALL_NIEUWS_QUERY, FOOTER_QUERY } from "@/sanity/lib/queries";
 import { formatSanityDate, sanityImageUrl } from "@/sanity/lib/helpers";
+import { wonenbijUrl } from "@/lib/siteConfig";
 import {
   getWonenBijProjectData,
   getWonenBijProjectSlugs,
@@ -29,6 +30,8 @@ export async function generateMetadata({
   return {
     title: `${project.naam} | Wonen bij Weverskade`,
     description: project.intro.slice(0, 160),
+    alternates: { canonical: wonenbijUrl(`/${project.slug}`) },
+    openGraph: { images: [project.heroImage] },
   };
 }
 

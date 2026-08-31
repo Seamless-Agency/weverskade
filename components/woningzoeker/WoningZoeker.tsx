@@ -119,6 +119,7 @@ export default function WoningZoeker({ project }: WoningZoekerProps) {
         {/* Render - blijft in beeld tijdens het scrollen door de lijst. */}
         <div className="sticky top-[6vw] max-lg:static">
           <RenderOverlay
+            prioriteit
             render={project.render}
             renderAlt={project.renderAlt}
             renderWidth={project.renderWidth}

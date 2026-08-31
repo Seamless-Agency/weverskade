@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import TurnstileWidget, {
   isTurnstileEnabled,
   type TurnstileHandle,
@@ -70,12 +70,28 @@ export default function InschrijfForm({
     message: "",
     agreed: false,
   });
+
+  // De preselectie kan ná de eerste render binnenkomen (?woning= wordt
+  // client-side gelezen op de statische typepagina). Volg die wijziging
+  // alleen zolang de bezoeker het veld zelf nog niet heeft aangepast.
+  const vorigePreselect = useRef(voorkeurPreselect ?? "");
+  useEffect(() => {
+    const nieuw = voorkeurPreselect ?? "";
+    if (nieuw === vorigePreselect.current) return;
+    setForm((f) =>
+      f.voorkeur === vorigePreselect.current ? { ...f, voorkeur: nieuw } : f
+    );
+    vorigePreselect.current = nieuw;
+  }, [voorkeurPreselect]);
+
   const [submitState, setSubmitState] = useState<
     "idle" | "submitting" | "success" | "error"
   >("idle");
   const [submitMessage, setSubmitMessage] = useState("");
   const [turnstileToken, setTurnstileToken] = useState("");
+  const [turnstileFout, setTurnstileFout] = useState(false);
   const turnstileRef = useRef<TurnstileHandle>(null);
+  const turnstileHintId = useId();
 
   const set = <K extends keyof typeof form>(key: K, value: (typeof form)[K]) =>
     setForm((p) => ({ ...p, [key]: value }));
@@ -133,8 +149,10 @@ export default function InschrijfForm({
     }
   };
 
+  // focus-visible verdubbelt de onderlijn optisch (shadow, geen layoutshift)
+  // zodat toetsenbordfocus zichtbaar is ondanks outline-none.
   const veldClass =
-    "w-full bg-transparent border-b border-off-black pb-[1.292vw] font-body font-medium text-[1.042vw] leading-[1.208vw] text-off-black placeholder:text-off-black/55 outline-none max-lg:text-[16px] max-lg:leading-normal max-lg:pt-2 max-lg:pb-3";
+    "w-full bg-transparent border-b border-off-black pb-[1.292vw] font-body font-medium text-[1.042vw] leading-[1.208vw] text-off-black placeholder:text-off-black/55 outline-none focus-visible:shadow-[0_1px_0_0_currentColor] max-lg:text-[16px] max-lg:leading-normal max-lg:pt-2 max-lg:pb-3";
 
   return (
     // Figma projectpagina: op wit, 134 boven het label, 298 onder de knop.
@@ -179,7 +197,7 @@ export default function InschrijfForm({
                 onChange={(e) => set("voorkeur", e.target.value)}
                 className={`block w-full h-[1.208vw] appearance-none bg-transparent font-body ${
                   voorkeurPreselect ? "font-semibold" : "font-medium"
-                } text-[1.042vw] leading-[1.208vw] text-off-black outline-none cursor-pointer max-lg:h-11 max-lg:text-[16px] max-lg:leading-normal`}
+                } text-[1.042vw] leading-[1.208vw] text-off-black outline-none focus-visible:shadow-[0_1px_0_0_currentColor] cursor-pointer max-lg:h-11 max-lg:text-[16px] max-lg:leading-normal`}
               >
                 <option value="">{voorkeurLabel}</option>
                 {voorkeurOpties.map((optie) => (
@@ -283,7 +301,11 @@ export default function InschrijfForm({
             <TurnstileWidget
               ref={turnstileRef}
               action="wonenbij-inschrijving"
-              onVerify={setTurnstileToken}
+              onVerify={(token) => {
+                setTurnstileToken(token);
+                if (token) setTurnstileFout(false);
+              }}
+              onError={() => setTurnstileFout(true)}
               className="mt-[2.014vw] max-lg:mt-6"
             />
 
@@ -295,7 +317,7 @@ export default function InschrijfForm({
                   required
                   checked={form.agreed}
                   onChange={(e) => set("agreed", e.target.checked)}
-                  className="shrink-0 mt-[1.111vw] w-[0.764vw] h-[0.764vw] border border-off-black appearance-none checked:bg-green checked:border-green cursor-pointer max-lg:w-[16px] max-lg:h-[16px] max-lg:mt-[2px]"
+                  className="shrink-0 mt-[1.111vw] w-[0.764vw] h-[0.764vw] border border-off-black appearance-none checked:bg-green checked:border-green cursor-pointer focus-visible:outline-2 focus-visible:outline-off-black focus-visible:outline-offset-2 max-lg:w-[16px] max-lg:h-[16px] max-lg:mt-[2px]"
                 />
                 <span className="mt-[0.764vw] font-body font-normal text-[0.764vw] leading-[0.889vw] text-off-black max-w-[27.431vw] max-lg:mt-0 max-lg:text-[11px] max-lg:leading-normal max-lg:max-w-none">
                   Ik ga akkoord met de{" "}
@@ -312,6 +334,11 @@ export default function InschrijfForm({
                   submitState === "submitting" ||
                   (isTurnstileEnabled && !turnstileToken)
                 }
+                aria-describedby={
+                  isTurnstileEnabled && !turnstileToken
+                    ? turnstileHintId
+                    : undefined
+                }
                 className="pill-hover inline-flex items-center justify-center w-[14.722vw] h-[3.194vw] bg-green text-off-white font-heading font-normal text-[1.181vw] leading-[1.458vw] tracking-[-0.024vw] rounded-full cursor-pointer border-none disabled:opacity-40 disabled:cursor-not-allowed max-lg:w-auto max-lg:h-auto max-lg:text-[15px] max-lg:px-6 max-lg:py-3 max-lg:leading-normal"
               >
                 {submitState === "submitting"
@@ -320,12 +347,21 @@ export default function InschrijfForm({
               </button>
             </div>
             {isTurnstileEnabled && !turnstileToken ? (
-              <p className="mt-2 font-body font-normal text-[12px] leading-normal text-off-black/50">
-                Beveiligingscheck wordt geladen…
+              <p
+                id={turnstileHintId}
+                role={turnstileFout ? "alert" : "status"}
+                className={`mt-2 font-body font-normal text-[12px] leading-normal ${
+                  turnstileFout ? "text-red-700" : "text-off-black/50"
+                }`}
+              >
+                {turnstileFout
+                  ? "De beveiligingscheck kon niet worden geladen. Herlaad de pagina of probeer het later opnieuw."
+                  : "Beveiligingscheck wordt geladen…"}
               </p>
             ) : null}
             {submitMessage ? (
               <p
+                role={submitState === "error" ? "alert" : "status"}
                 className={`mt-4 font-body text-[0.972vw] leading-[1.25] max-lg:text-[13px] ${
                   submitState === "error" ? "text-red-700" : "text-green"
                 }`}
@@ -361,7 +397,7 @@ function SelectVeld({
         aria-label={placeholder}
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="block w-full appearance-none bg-transparent border-b border-off-black pb-[1.292vw] font-body font-medium text-[1.042vw] leading-[1.208vw] text-off-black outline-none cursor-pointer max-lg:text-[16px] max-lg:leading-normal max-lg:pt-2 max-lg:pb-3"
+        className="block w-full appearance-none bg-transparent border-b border-off-black pb-[1.292vw] font-body font-medium text-[1.042vw] leading-[1.208vw] text-off-black outline-none focus-visible:shadow-[0_1px_0_0_currentColor] cursor-pointer max-lg:text-[16px] max-lg:leading-normal max-lg:pt-2 max-lg:pb-3"
       >
         <option value="">{placeholder}</option>
         {opties.map((optie) => (

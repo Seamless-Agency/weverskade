@@ -65,6 +65,8 @@ export default function FaqSection({ items }: { items: FaqItem[] }) {
                     y={16}
                     onClick={() => setOpenIndex(open ? null : i)}
                     aria-expanded={open}
+                    id={`faq-knop-${i}`}
+                    aria-controls={`faq-paneel-${i}`}
                     className={`w-full flex items-start justify-between gap-[2vw] pt-[1.528vw] cursor-pointer bg-transparent border-none p-0 text-left max-lg:py-4 max-lg:gap-4 ${
                       open ? "pb-0" : "pb-[3.056vw]"
                     }`}
@@ -79,6 +81,9 @@ export default function FaqSection({ items }: { items: FaqItem[] }) {
                     />
                   </Reveal>
                   <div
+                    id={`faq-paneel-${i}`}
+                    role="region"
+                    aria-labelledby={`faq-knop-${i}`}
                     className="grid"
                     style={{
                       gridTemplateRows: open ? "1fr" : "0fr",
@@ -86,7 +91,9 @@ export default function FaqSection({ items }: { items: FaqItem[] }) {
                         "grid-template-rows 0.5s cubic-bezier(0.16, 1, 0.3, 1)",
                     }}
                   >
-                    <div className="overflow-hidden">
+                    {/* inert houdt het dichtgeklapte antwoord uit de
+                        accessibility tree zonder de 0fr-animatie te raken */}
+                    <div className="overflow-hidden" inert={!open}>
                       <p
                         className="mt-[2.757vw] pb-[3.056vw] max-w-[59.375vw] font-body font-medium text-[1.319vw] leading-[2.153vw] tracking-[-0.026vw] text-off-black max-lg:mt-0 max-lg:pb-5 max-lg:max-w-none max-lg:text-[15px] max-lg:leading-[23px]"
                         style={{

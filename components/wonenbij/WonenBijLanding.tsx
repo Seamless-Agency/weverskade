@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useRef, useState } from "react";
+import { useId, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import TurnstileWidget, {
   isTurnstileEnabled,
@@ -100,6 +100,9 @@ export default function WonenBijLanding({ data }: { data?: WonenBijLandingData }
           ctaHref="#aanbod"
         />
       </div>
+
+      {/* Enige h1 van de landing; visueel is het merk in de hero de kop. */}
+      <h1 className="sr-only">Wonen bij Weverskade</h1>
 
       {/* Statement — de knop staat inline achter de laatste regel; vaste paddings
           (geen hoogte) zodat langere CMS-tekst de sectie laat meegroeien */}
@@ -388,11 +391,13 @@ function ContactSectie({ tekst }: { tekst: string }) {
   >("idle");
   const [submitMessage, setSubmitMessage] = useState("");
   const [turnstileToken, setTurnstileToken] = useState("");
+  const [turnstileFout, setTurnstileFout] = useState(false);
   const turnstileRef = useRef<TurnstileHandle>(null);
+  const turnstileHintId = useId();
 
   const veldClass = useMemo(
     () =>
-      "w-full bg-transparent border-b border-off-black pb-[1.458vw] font-body font-medium text-[1.319vw] leading-[1.528vw] text-off-black placeholder:text-off-black/55 outline-none max-lg:text-[16px] max-lg:leading-normal max-lg:pt-2 max-lg:pb-3",
+      "w-full bg-transparent border-b border-off-black pb-[1.458vw] font-body font-medium text-[1.319vw] leading-[1.528vw] text-off-black placeholder:text-off-black/55 outline-none focus-visible:shadow-[0_1px_0_0_currentColor] max-lg:text-[16px] max-lg:leading-normal max-lg:pt-2 max-lg:pb-3",
     []
   );
 
@@ -486,6 +491,7 @@ function ContactSectie({ tekst }: { tekst: string }) {
                 type="text"
                 name="interestedProject"
                 placeholder="In welk project heeft u interesse?"
+                aria-label="In welk project heeft u interesse?"
                 value={form.interestedProject}
                 onChange={(e) =>
                   setForm((p) => ({ ...p, interestedProject: e.target.value }))
@@ -497,6 +503,7 @@ function ContactSectie({ tekst }: { tekst: string }) {
             <textarea
               name="message"
               placeholder="Eventuele vraag of opmerking"
+              aria-label="Eventuele vraag of opmerking"
               value={form.message}
               onChange={(e) => setForm((p) => ({ ...p, message: e.target.value }))}
               rows={4}
@@ -506,7 +513,11 @@ function ContactSectie({ tekst }: { tekst: string }) {
             <TurnstileWidget
               ref={turnstileRef}
               action="wonenbij-contact"
-              onVerify={setTurnstileToken}
+              onVerify={(token) => {
+                setTurnstileToken(token);
+                if (token) setTurnstileFout(false);
+              }}
+              onError={() => setTurnstileFout(true)}
               className="mt-[2.014vw] max-lg:mt-6"
             />
 
@@ -520,7 +531,7 @@ function ContactSectie({ tekst }: { tekst: string }) {
                   onChange={(e) =>
                     setForm((p) => ({ ...p, agreed: e.target.checked }))
                   }
-                  className="shrink-0 mt-[0.347vw] w-[0.764vw] h-[0.764vw] border border-off-black appearance-none checked:bg-green checked:border-green cursor-pointer max-lg:w-[16px] max-lg:h-[16px] max-lg:mt-[2px]"
+                  className="shrink-0 mt-[0.347vw] w-[0.764vw] h-[0.764vw] border border-off-black appearance-none checked:bg-green checked:border-green cursor-pointer focus-visible:outline-2 focus-visible:outline-off-black focus-visible:outline-offset-2 max-lg:w-[16px] max-lg:h-[16px] max-lg:mt-[2px]"
                 />
                 <span className="font-body font-normal text-[0.764vw] leading-[0.889vw] text-off-black max-w-[27.431vw] max-lg:text-[11px] max-lg:leading-normal max-lg:max-w-none">
                   Ik ga akkoord met de{" "}
@@ -537,6 +548,11 @@ function ContactSectie({ tekst }: { tekst: string }) {
                   submitState === "submitting" ||
                   (isTurnstileEnabled && !turnstileToken)
                 }
+                aria-describedby={
+                  isTurnstileEnabled && !turnstileToken
+                    ? turnstileHintId
+                    : undefined
+                }
                 className="pill-hover inline-flex items-center justify-center shrink-0 -mt-[0.694vw] w-[14.722vw] h-[3.194vw] bg-green text-off-white font-heading font-normal text-[1.181vw] tracking-[-0.024vw] rounded-full cursor-pointer border-none disabled:opacity-40 disabled:cursor-not-allowed max-lg:mt-0 max-lg:w-auto max-lg:h-auto max-lg:text-[15px] max-lg:px-6 max-lg:py-3"
               >
                 {submitState === "submitting"
@@ -545,12 +561,21 @@ function ContactSectie({ tekst }: { tekst: string }) {
               </button>
             </div>
             {isTurnstileEnabled && !turnstileToken ? (
-              <p className="mt-2 font-body font-medium text-[0.833vw] leading-[1.25] text-off-black/50 max-lg:text-[12px]">
-                Beveiligingscheck wordt geladen…
+              <p
+                id={turnstileHintId}
+                role={turnstileFout ? "alert" : "status"}
+                className={`mt-2 font-body font-medium text-[0.833vw] leading-[1.25] max-lg:text-[12px] ${
+                  turnstileFout ? "text-red-700" : "text-off-black/50"
+                }`}
+              >
+                {turnstileFout
+                  ? "De beveiligingscheck kon niet worden geladen. Herlaad de pagina of probeer het later opnieuw."
+                  : "Beveiligingscheck wordt geladen…"}
               </p>
             ) : null}
             {submitMessage ? (
               <p
+                role={submitState === "error" ? "alert" : "status"}
                 className={`mt-4 font-body text-[0.972vw] leading-[1.25] max-lg:text-[13px] ${
                   submitState === "error" ? "text-red-700" : "text-green"
                 }`}

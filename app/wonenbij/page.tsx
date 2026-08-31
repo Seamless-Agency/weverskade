@@ -8,6 +8,7 @@ import {
 } from "@/sanity/lib/queries";
 import { sanityImageUrl } from "@/sanity/lib/helpers";
 import { wonenbijNaam } from "@/lib/wonenbijData";
+import { wonenbijUrl } from "@/lib/siteConfig";
 import {
   demoAanbod,
   demoLandingProjecten,
@@ -19,6 +20,8 @@ export const metadata = {
   title: "Wonen bij Weverskade",
   description:
     "Van stedelijke appartementen tot woonconcepten met extra service: kwaliteit, gebruiksgemak en een prettige leefomgeving staan centraal binnen de projecten van Weverskade.",
+  alternates: { canonical: wonenbijUrl() },
+  openGraph: { images: ["/images/wonenbij/hero.png"] },
 };
 
 export default async function WonenBijHome() {
