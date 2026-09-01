@@ -64,11 +64,32 @@ export default function WonenBijProjectPage({
     threshold: 0,
   });
 
-  // Zonder downloads verbergt die sectie zichzelf; het anker gaat dan ook
-  // uit de navigatie zodat er geen dode link in de header staat.
-  const anchors = project.downloads.length
-    ? ANCHORS
-    : ANCHORS.filter((anchor) => anchor.href !== "#downloads");
+  // Variant zonder woningzoeker (Jims besluit 01-09): een project zonder
+  // eigen woningtypes toont geen aanbod-sectie en geen typepagina's; secties
+  // zonder eigen content verdwijnen, en hun ankers gaan mee uit de navigatie
+  // zodat er geen dode links in de header staan.
+  const heeftAanbod = project.woningTypes.length > 0;
+  const heeftLocatieTekst = Boolean(
+    project.locatieTitel && project.locatieIntro
+  );
+  const heeftKaart =
+    Boolean(project.mapLat && project.mapLng) || Boolean(project.mapImage);
+  const anchors = ANCHORS.filter((anchor) => {
+    switch (anchor.href) {
+      case "#aanbod":
+        return heeftAanbod;
+      case "#locatie":
+        return heeftLocatieTekst || heeftKaart;
+      case "#planning":
+        return Boolean(project.planning?.length);
+      case "#downloads":
+        return Boolean(project.downloads?.length);
+      case "#faq":
+        return Boolean(project.faq?.length);
+      default:
+        return true;
+    }
+  });
 
   const scrollNaar = (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
     e.preventDefault();
@@ -157,13 +178,15 @@ export default function WonenBijProjectPage({
               delay={0.25}
               className="mt-[2.222vw] flex gap-[1.528vw] max-lg:mt-7 max-lg:flex-wrap max-lg:gap-3"
             >
-              <a
-                href="#aanbod"
-                onClick={(e) => scrollNaar(e, "aanbod")}
-                className="pill-hover bg-off-black text-off-white no-underline rounded-full px-[1.528vw] py-[0.694vw] font-heading font-normal text-[1.181vw] leading-[1.458vw] tracking-[-0.024vw] max-lg:px-5 max-lg:py-2.5 max-lg:text-[14px] max-lg:leading-normal"
-              >
-                Bekijk het aanbod
-              </a>
+              {heeftAanbod ? (
+                <a
+                  href="#aanbod"
+                  onClick={(e) => scrollNaar(e, "aanbod")}
+                  className="pill-hover bg-off-black text-off-white no-underline rounded-full px-[1.528vw] py-[0.694vw] font-heading font-normal text-[1.181vw] leading-[1.458vw] tracking-[-0.024vw] max-lg:px-5 max-lg:py-2.5 max-lg:text-[14px] max-lg:leading-normal"
+                >
+                  Bekijk het aanbod
+                </a>
+              ) : null}
               <a
                 href="#inschrijven"
                 onClick={(e) => scrollNaar(e, "inschrijven")}
@@ -178,7 +201,7 @@ export default function WonenBijProjectPage({
 
       {/* Feiten en cijfers — Figma: titel op x=144, kolommen op 144/495/779/1033,
           tekst 55px rechts van de kolomrand, rijritme 108px (2-regelcel + 57 gap) */}
-      {project.feiten.length > 0 ? (
+      {project.feiten?.length ? (
         <div className="bg-green pt-[5.694vw] pb-[5.486vw] max-lg:py-12" data-nav-theme="green">
           <div className="pl-[10vw] pr-[4.167vw] max-lg:px-5">
             <h2 className="font-heading font-normal text-[4.653vw] leading-[5.736vw] tracking-[-0.093vw] text-off-white max-lg:text-[32px] max-lg:leading-[1.1] max-lg:tracking-[-0.64px]">
@@ -218,21 +241,23 @@ export default function WonenBijProjectPage({
       ) : null}
 
       {/* Huren in - fotocarrousel */}
-      {project.hurenFotos.length > 0 ? (
+      {project.hurenFotos?.length ? (
         <HurenCarousel naam={project.naam} fotos={project.hurenFotos} />
       ) : null}
 
-      {/* Woningzoeker */}
-      <WoningzoekerSection
-        projectSlug={project.slug}
-        woningTypes={project.woningTypes}
-        woningen={project.woningen}
-        render={project.render}
-        renderAlt={project.renderAlt}
-        renderWidth={project.renderWidth}
-        renderHeight={project.renderHeight}
-        aanzichten={project.aanzichten}
-      />
+      {/* Woningzoeker — exclusief voor projecten met eigen woningtypes */}
+      {heeftAanbod ? (
+        <WoningzoekerSection
+          projectSlug={project.slug}
+          woningTypes={project.woningTypes}
+          woningen={project.woningen}
+          render={project.render}
+          renderAlt={project.renderAlt}
+          renderWidth={project.renderWidth}
+          renderHeight={project.renderHeight}
+          aanzichten={project.aanzichten}
+        />
+      ) : null}
 
       {/* Persoonlijk begeleid — Figma: label op 146 van de bandtop (x=268),
           lijstblok en knop op x=258, vaste witruimtes 13/31/38/31, onder 178 */}
@@ -279,22 +304,43 @@ export default function WonenBijProjectPage({
           tekstblokken onder-verankerd aan de foto-onderkant, fotoblokken 319 uit elkaar */}
       <div className="bg-off-white pt-[23.333vw] pb-[8.056vw] max-lg:pt-12 max-lg:pb-10">
         <div className="px-[2.361vw] max-lg:px-5">
-          <div className="relative min-h-[43.889vw] max-lg:min-h-0">
+          {/* De tekst staat bewust ín de flow (flex + mt-auto) in plaats van
+              absoluut aan de foto-onderkant verankerd: bij korte tekst is het
+              resultaat pixelgelijk aan Figma (onderkant tekst = onderkant
+              foto), maar lange CMS-tekst laat de sectie meegroeien i.p.v.
+              omhoog door de kop te lopen. De pt-[3.472vw] is de minimale
+              witruimte onder de kop in dat groei-geval; bij korte tekst valt
+              hij binnen de mt-auto-ruimte en verandert er niets. */}
+          <div className="relative flex flex-col min-h-[43.889vw] max-lg:min-h-0 max-lg:flex max-lg:flex-col">
             <Reveal
               as="p"
-              className="font-body font-medium text-[1.389vw] leading-[1.611vw] text-off-black max-lg:text-[16px] max-lg:leading-[21px]"
+              className="order-1 font-body font-medium text-[1.389vw] leading-[1.611vw] text-off-black max-lg:text-[16px] max-lg:leading-[21px]"
             >
               {project.welkomLabel}
             </Reveal>
-            <h2 className="mt-[0.903vw] max-w-[37.5vw] font-heading font-normal text-[4.931vw] leading-[6.076vw] tracking-[-0.099vw] text-off-black max-lg:mt-3 max-lg:max-w-none max-lg:text-[36px] max-lg:leading-[1.1] max-lg:tracking-[-0.72px]">
+            <h2 className="order-2 mt-[0.903vw] max-w-[37.5vw] font-heading font-normal text-[4.931vw] leading-[6.076vw] tracking-[-0.099vw] text-off-black max-lg:mt-3 max-lg:max-w-none max-lg:text-[36px] max-lg:leading-[1.1] max-lg:tracking-[-0.72px]">
               <RevealWords text={project.welkomTitel} delay={0.1} />
             </h2>
 
-            <div className="absolute top-0 right-[0.486vw] w-[54.514vw] max-lg:static max-lg:mt-6 max-lg:w-full max-lg:right-0">
+            {project.welkomTekst ? (
+              <Reveal
+                as="p"
+                delay={0.15}
+                className="order-4 lg:mt-auto lg:pt-[3.472vw] lg:-mb-[0.486vw] w-[29.792vw] font-body font-medium text-[1.597vw] leading-[2.153vw] tracking-[-0.032vw] text-off-black max-lg:mt-4 max-lg:w-full max-lg:text-[17px] max-lg:leading-[24px]"
+              >
+                {project.welkomTekst}
+              </Reveal>
+            ) : null}
+
+            {/* bottom-0 i.p.v. top-0: bij tekst langer dan de foto zakt de
+                foto mee zodat zijn onderkant op de laatste tekstregel ligt
+                (design-intentie); bij korte tekst is de rij exact fotohoogte
+                en is dit identiek aan top-0. */}
+            <div className="order-3 absolute bottom-0 right-[0.486vw] w-[54.514vw] max-lg:static max-lg:mt-6 max-lg:w-full max-lg:right-0">
               <RevealMedia className="relative w-full aspect-[785/632] overflow-hidden">
                 <Parallax>
                   <Image
-                    src={project.welkomFotos[0] ?? "/images/wonenbij/picture-1.jpg"}
+                    src={project.welkomFotos?.[0] ?? "/images/wonenbij/picture-1.jpg"}
                     alt={`Interieur ${project.naam}`}
                     fill
                     sizes="(max-width: 768px) 100vw, 55vw"
@@ -302,21 +348,17 @@ export default function WonenBijProjectPage({
                   />
                 </Parallax>
               </RevealMedia>
-              <Reveal
-                as="p"
-                delay={0.15}
-                className="absolute left-[-40.278vw] bottom-[-0.486vw] w-[29.792vw] font-body font-medium text-[1.597vw] leading-[2.153vw] tracking-[-0.032vw] text-off-black max-lg:static max-lg:mt-4 max-lg:w-full max-lg:text-[17px] max-lg:leading-[24px]"
-              >
-                {project.welkomTekst}
-              </Reveal>
             </div>
           </div>
 
-          <div className="mt-[22.153vw] relative max-lg:mt-6">
-            <RevealMedia className="relative ml-[0.139vw] w-[54.931vw] aspect-[791/630] overflow-hidden max-lg:ml-0 max-lg:w-full">
+          {/* Zelfde principe: tekst naast de foto in de flow, onderkanten
+              gelijk via items-end; lange tekst maakt de rij hoger i.p.v.
+              boven de foto uit te groeien. */}
+          <div className="mt-[22.153vw] lg:flex lg:items-end lg:justify-between max-lg:mt-6">
+            <RevealMedia className="relative ml-[0.139vw] w-[54.931vw] shrink-0 aspect-[791/630] overflow-hidden max-lg:ml-0 max-lg:w-full">
               <Parallax>
                 <Image
-                  src={project.welkomFotos[1] ?? "/images/wonenbij/picture-21.png"}
+                  src={project.welkomFotos?.[1] ?? "/images/wonenbij/picture-21.png"}
                   alt={`Woonkamer ${project.naam}`}
                   fill
                   sizes="(max-width: 768px) 100vw, 55vw"
@@ -324,13 +366,15 @@ export default function WonenBijProjectPage({
                 />
               </Parallax>
             </RevealMedia>
-            <Reveal
-              as="p"
-              delay={0.15}
-              className="absolute right-[0.069vw] bottom-0 w-[30.764vw] font-body font-medium text-[1.597vw] leading-[2.153vw] tracking-[-0.032vw] text-off-black max-lg:static max-lg:mt-4 max-lg:w-full max-lg:text-[17px] max-lg:leading-[24px]"
-            >
-              {project.welkomTekstRechts}
-            </Reveal>
+            {project.welkomTekstRechts ? (
+              <Reveal
+                as="p"
+                delay={0.15}
+                className="w-[30.764vw] mr-[0.069vw] font-body font-medium text-[1.597vw] leading-[2.153vw] tracking-[-0.032vw] text-off-black max-lg:mt-4 max-lg:w-full max-lg:mr-0 max-lg:text-[17px] max-lg:leading-[24px]"
+              >
+                {project.welkomTekstRechts}
+              </Reveal>
+            ) : null}
           </div>
         </div>
 
@@ -338,10 +382,11 @@ export default function WonenBijProjectPage({
             twee foto's vullen samen altijd de volle breedte, met snap en
             scrubbare voortgangsbalk. Wrapper-mt = Figma-afstand 213 minus de
             ingebouwde 20px van het component. */}
-        {project.carouselFotos.length > 0 ? (
+        {/* Eén foto maakt geen carrousel: dan de sectie weglaten. */}
+        {(project.carouselFotos?.length ?? 0) > 1 ? (
           <Reveal duration={1.1} className="mt-[13.403vw] max-lg:mt-8">
             <GebouwImageCarousel
-              images={project.carouselFotos}
+              images={project.carouselFotos ?? []}
               projectName={project.naam}
             />
           </Reveal>
@@ -350,7 +395,9 @@ export default function WonenBijProjectPage({
 
       {/* De locatie — Figma: label én content op x=384, kaart 115 onder de
           laatste accordionlijn, planningband 81 onder de kaart */}
+      {heeftLocatieTekst || heeftKaart ? (
       <div id="locatie" className="pt-[6.528vw] pb-[5.625vw] max-lg:py-12 scroll-mt-[2vw]">
+        {heeftLocatieTekst ? (
         <div className="pl-[26.667vw] pr-[2.361vw] max-lg:px-5">
           <Reveal
             as="p"
@@ -359,7 +406,7 @@ export default function WonenBijProjectPage({
             {project.locatieLabel}
           </Reveal>
           <h2 className="mt-[0.903vw] font-heading font-normal text-[4.931vw] leading-[6.076vw] tracking-[-0.099vw] text-off-black max-lg:mt-3 max-lg:text-[34px] max-lg:leading-[1.1] max-lg:tracking-[-0.68px]">
-            <RevealWords text={project.locatieTitel} delay={0.1} />
+            <RevealWords text={project.locatieTitel ?? ""} delay={0.1} />
           </h2>
           <Reveal
             as="p"
@@ -369,8 +416,9 @@ export default function WonenBijProjectPage({
             {project.locatieIntro}
           </Reveal>
 
-          <LocatieAccordion items={project.locatieItems} />
+          <LocatieAccordion items={project.locatieItems ?? []} />
         </div>
+        ) : null}
 
         {/* Kaart — interactieve Google Maps zoals op de hoofdsite
             (GebouwMap tekent zelf de groene marker); pas geladen als de
@@ -461,10 +509,13 @@ export default function WonenBijProjectPage({
           </RevealGroup>
         ) : null}
       </div>
+      ) : null}
 
-      <ProjectPlanning fases={project.planning} />
+      {project.planning?.length ? (
+        <ProjectPlanning fases={project.planning} />
+      ) : null}
 
-      <DownloadsSection items={project.downloads} />
+      <DownloadsSection items={project.downloads ?? []} />
 
       {/* Nieuws en updates — Figma: op wit, titel 128 onder de groene band,
           rijen van 208 (foto 27 boven/28 onder de lijnen), kop op x=496 */}
@@ -540,12 +591,16 @@ export default function WonenBijProjectPage({
         </div>
       ) : null}
 
-      <FaqSection items={project.faq} />
+      {project.faq?.length ? <FaqSection items={project.faq} /> : null}
 
       <InschrijfForm
         label="Beschikbaarheid"
         heading="Interesse in dit project?"
-        intro={`Schrijf u vrijblijvend in als geïnteresseerde voor ${project.naam}. Geef aan welk woningtype of welke specifieke woning uw voorkeur heeft en vul uw gegevens in. Zo kunnen wij u gericht informeren over het actuele aanbod en toekomstige beschikbaarheid.`}
+        intro={
+          heeftAanbod
+            ? `Schrijf u vrijblijvend in als geïnteresseerde voor ${project.naam}. Geef aan welk woningtype of welke specifieke woning uw voorkeur heeft en vul uw gegevens in. Zo kunnen wij u gericht informeren over het actuele aanbod en toekomstige beschikbaarheid.`
+            : `Schrijf u vrijblijvend in als geïnteresseerde voor ${project.naam}. Vul uw gegevens in, dan informeren wij u over het actuele aanbod en toekomstige beschikbaarheid.`
+        }
         projectName={project.naam}
         projectSlug={project.slug}
         voorkeurOpties={project.woningTypes.map((t) => t.naam)}

@@ -120,26 +120,30 @@ export interface WonenBijProject {
   naam: string;
   plaats: string;
   heroImage: string;
-  intro: string;
-  feiten: Feit[];
-  hurenFotos: string[];
+  // Sectie-content is optioneel: een project zonder eigen data voor een
+  // sectie (variant B, zonder woningzoeker) laat die sectie gewoon weg.
+  // Alleen Taanschuurkade heeft het volledige demo-vangnet.
+  intro?: string;
+  feiten?: Feit[];
+  hurenFotos?: string[];
+  /** Generieke Weverskade-tekst; geldt voor elke variant. */
   begeleiding: BegeleidingSectie;
   welkomLabel: string;
   welkomTitel: string;
-  welkomTekst: string;
-  welkomTekstRechts: string;
-  welkomFotos: string[];
-  carouselFotos: string[];
+  welkomTekst?: string;
+  welkomTekstRechts?: string;
+  welkomFotos?: string[];
+  carouselFotos?: string[];
   locatieLabel: string;
-  locatieTitel: string;
-  locatieIntro: string;
-  locatieItems: LocatieItem[];
+  locatieTitel?: string;
+  locatieIntro?: string;
+  locatieItems?: LocatieItem[];
   mapImage?: string;
   mapLat?: number;
   mapLng?: number;
-  planning: PlanningFase[];
-  downloads: DownloadItem[];
-  faq: FaqItem[];
+  planning?: PlanningFase[];
+  downloads?: DownloadItem[];
+  faq?: FaqItem[];
   woningTypes: WoningType[];
   /** Render + overgetrokken woningen voor de woningzoeker-overlay. */
   render?: string;

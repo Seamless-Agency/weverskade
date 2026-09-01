@@ -29,7 +29,9 @@ export async function generateMetadata({
   if (!project) return { title: "Wonen bij Weverskade" };
   return {
     title: `${project.naam} | Wonen bij Weverskade`,
-    description: project.intro.slice(0, 160),
+    description:
+      project.intro?.slice(0, 160) ??
+      `${project.naam}: wonen bij Weverskade in ${project.plaats}.`,
     alternates: { canonical: wonenbijUrl(`/${project.slug}`) },
     openGraph: { images: [project.heroImage] },
   };
@@ -64,8 +66,20 @@ export default async function WonenBijProject({
 
   if (!project) notFound();
 
-  const nieuws: NieuwsKaart[] = nieuwsData?.length
-    ? nieuwsData.slice(0, 3).map((artikel: any) => ({
+  // Artikelen die het project bij naam noemen eerst (er is geen formele
+  // project-koppeling in het nieuws-schema, dus we matchen op de titel);
+  // de rest vult aan tot drie kaarten.
+  const naamMatch = (titel: string) =>
+    titel.toLowerCase().includes(project.naam.toLowerCase());
+  const gesorteerd = nieuwsData?.length
+    ? [...nieuwsData].sort(
+        (a, b) =>
+          Number(naamMatch(b.title ?? "")) - Number(naamMatch(a.title ?? ""))
+      )
+    : nieuwsData;
+
+  const nieuws: NieuwsKaart[] = gesorteerd?.length
+    ? gesorteerd.slice(0, 3).map((artikel: any) => ({
         slug: artikel.slug?.current ?? artikel.slug ?? "",
         titel: artikel.title ?? "",
         datum: formatSanityDate(artikel.date, ""),

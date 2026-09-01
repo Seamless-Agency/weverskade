@@ -319,9 +319,11 @@ export default function WoningTypePage({
         </div>
       </div>
 
-      <ProjectPlanning fases={project.planning} />
+      {project.planning?.length ? (
+        <ProjectPlanning fases={project.planning} />
+      ) : null}
 
-      <DownloadsSection items={project.downloads} />
+      <DownloadsSection items={project.downloads ?? []} />
 
       <InschrijfForm
         variant="woning"

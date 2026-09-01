@@ -188,7 +188,10 @@ export default function InschrijfForm({
 
           <Reveal delay={0.25}>
           <form onSubmit={handleSubmit} className="mt-[5.139vw] max-w-[46.944vw] max-lg:mt-8 max-lg:max-w-none">
-            {/* Voorkeursveld tussen twee lijnen, zoals in het design */}
+            {/* Voorkeursveld tussen twee lijnen, zoals in het design; alleen
+                bij projecten mét woningtypes (variant zonder woningzoeker
+                heeft geen types om uit te kiezen) */}
+            {voorkeurOpties.length ? (
             <div className="relative border-y border-off-black pt-[1.736vw] pb-[1.847vw] max-lg:py-3">
               <select
                 name="voorkeur"
@@ -208,6 +211,7 @@ export default function InschrijfForm({
               </select>
               <ChevronIcon className="pointer-events-none absolute right-0 top-1/2 -translate-y-1/2 w-[1.528vw] h-auto text-off-black max-lg:w-[13px]" />
             </div>
+            ) : null}
 
             <div className="mt-[1.944vw] grid grid-cols-2 gap-x-[1.389vw] gap-y-[2.014vw] max-lg:mt-6 max-lg:grid-cols-1 max-lg:gap-y-6">
               <input
