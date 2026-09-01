@@ -11,6 +11,8 @@ import FaqSection from "@/components/wonenbij/FaqSection";
 import InschrijfForm from "@/components/wonenbij/InschrijfForm";
 import { PijlIcon } from "@/components/wonenbij/icons";
 import { usePageNavigation } from "@/hooks/usePageNavigation";
+import { useInView } from "@/hooks/useInView";
+import GebouwMap from "@/components/GebouwMap";
 import type { WonenBijProject } from "@/data/wonenbij";
 import {
   EASE,
@@ -55,6 +57,12 @@ export default function WonenBijProjectPage({
   const navigate = usePageNavigation();
   const intro = useHeroIntro();
   const reduced = useReducedMotion();
+
+  // Google Maps pas initialiseren als de locatiesectie in de buurt komt.
+  const [kaartRef, kaartInView] = useInView<HTMLDivElement>({
+    rootMargin: "800px 0px 800px 0px",
+    threshold: 0,
+  });
 
   // Zonder downloads verbergt die sectie zichzelf; het anker gaat dan ook
   // uit de navigatie zodat er geen dode link in de header staat.
@@ -364,8 +372,40 @@ export default function WonenBijProjectPage({
           <LocatieAccordion items={project.locatieItems} />
         </div>
 
-        {/* Kaart */}
-        {project.mapImage ? (
+        {/* Kaart — interactieve Google Maps zoals op de hoofdsite
+            (GebouwMap tekent zelf de groene marker); pas geladen als de
+            sectie in de buurt komt zodat het Maps-script niet elke
+            paginaweergave kost. Zonder coördinaten valt de sectie terug
+            op de statische kaartafbeelding. */}
+        {project.mapLat && project.mapLng ? (
+          <RevealGroup className="relative mt-[7.986vw] mx-[2.431vw] max-lg:mt-8 max-lg:mx-5">
+            <RevealMedia
+              duration={1.4}
+              className="relative w-full aspect-[1366/743] overflow-hidden"
+            >
+              <div ref={kaartRef} className="absolute inset-0 bg-[#eeebe4]">
+                {kaartInView ? (
+                  <GebouwMap
+                    lat={project.mapLat}
+                    lng={project.mapLng}
+                    projectName={project.naam}
+                  />
+                ) : null}
+              </div>
+            </RevealMedia>
+            <Reveal
+              as="a"
+              delay={0.9}
+              y={10}
+              href={`https://www.google.com/maps/search/?api=1&query=${project.mapLat},${project.mapLng}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="pill-hover absolute z-10 right-[2.569vw] bottom-[2.292vw] inline-flex items-center justify-center w-[11.181vw] h-[2.847vw] bg-off-black text-off-white no-underline rounded-full font-heading font-normal text-[1.181vw] leading-[1.458vw] tracking-[-0.024vw] max-lg:right-3 max-lg:bottom-3 max-lg:w-auto max-lg:h-auto max-lg:px-4 max-lg:py-2 max-lg:text-[13px] max-lg:leading-normal"
+            >
+              Google Maps
+            </Reveal>
+          </RevealGroup>
+        ) : project.mapImage ? (
           <RevealGroup className="relative mt-[7.986vw] mx-[2.431vw] max-lg:mt-8 max-lg:mx-5">
             {/* Bewust GEEN mix-blend-multiply meer op de kaart: Chrome trok
                 die blend op compositing-niveau over de marker heen, waardoor
