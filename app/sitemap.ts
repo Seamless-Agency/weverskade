@@ -8,7 +8,7 @@ import {
 } from "@/sanity/lib/queries";
 import { getWonenBijProject, getWonenBijProjectByAlias } from "@/data/wonenbij";
 import { getAllDemoSlugs } from "@/data/woningzoeker";
-import { SITE_URL } from "@/lib/siteConfig";
+import { SITE_URL, wonenbijUrl } from "@/lib/siteConfig";
 
 // Statische hoofdsite-routes; /studio en /api blijven bewust buiten de sitemap.
 const STATISCHE_PADEN = [
@@ -21,7 +21,6 @@ const STATISCHE_PADEN = [
   "/privacybeleid",
   "/werken-bij",
   "/wonen-bij",
-  "/wonenbij",
 ];
 
 async function slugsVoor(query: string, tag: string): Promise<string[]> {
@@ -49,28 +48,30 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     paden.push(`/woningzoeker/${s}`)
   );
 
-  // Wonen-bij: bewust alleen de projecten die volwaardig in de code-omgeving
-  // bestaan (met woningtypes). De Sanity-vlag showInWonen levert ook dunne
-  // placeholder-pagina's op (o.a. de-dirigent) — die renderen wel, maar
-  // bieden we een crawler niet actief aan. Uitbreiden zodra meer projecten
-  // een echte wonen-bij pagina krijgen.
+  // Wonen-bij: op de leidende subdomein-host, en bewust alleen de projecten
+  // die volwaardig in de code-omgeving bestaan (met woningtypes). De
+  // Sanity-vlag showInWonen levert ook dunne placeholder-pagina's op
+  // (o.a. de-dirigent) — die renderen wel, maar bieden we een crawler niet
+  // actief aan. Cross-host in één sitemap is toegestaan doordat dezelfde
+  // robots.txt (met sitemap-verwijzing) ook op het subdomein geserveerd
+  // wordt. Uitbreiden zodra meer projecten een echte pagina krijgen.
+  const urls: string[] = [wonenbijUrl()];
   const wonenbijSlugs = ["taanschuurkade"];
   for (const slug of wonenbijSlugs) {
     const project = getWonenBijProject(slug);
     if (!project) continue;
-    paden.push(`/wonenbij/${slug}`);
+    urls.push(wonenbijUrl(`/${slug}`));
     project.woningTypes.forEach((t) =>
-      paden.push(`/wonenbij/${slug}/${t.slug}`)
+      urls.push(wonenbijUrl(`/${slug}/${t.slug}`))
     );
   }
 
   // Wonen-bij nieuws: alleen het eigen demo-artikel. De overige slugs onder
-  // /wonenbij/nieuws/ zijn duplicaten van /nieuws/ en staan daar al in.
-  paden.push("/wonenbij/nieuws/start-bouw-taanschuurkade");
+  // nieuws zijn duplicaten van /nieuws/ op de hoofdsite en staan daar al in.
+  urls.push(wonenbijUrl("/nieuws/start-bouw-taanschuurkade"));
 
   const nu = new Date();
-  return [...new Set(paden)].map((pad) => ({
-    url: `${SITE_URL}${pad}`,
-    lastModified: nu,
-  }));
+  return [
+    ...new Set([...paden.map((pad) => `${SITE_URL}${pad}`), ...urls]),
+  ].map((url) => ({ url, lastModified: nu }));
 }

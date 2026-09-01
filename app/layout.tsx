@@ -47,6 +47,10 @@ export async function generateMetadata(): Promise<Metadata> {
 
   return {
     metadataBase: new URL(SITE_URL),
+    // Zelf-verwijzende canonical voor elke pagina (relatief pad resolvet per
+    // route tegen metadataBase); de wonenbij-routes overschrijven dit met
+    // hun subdomein-canonical.
+    alternates: { canonical: "./" },
     title: settings?.metaTitle ?? "Weverskade | Aandacht voor ruimte",
     description:
       settings?.metaDescription ??
