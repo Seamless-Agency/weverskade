@@ -15,6 +15,7 @@ import {
   type WoningType,
 } from "@/data/wonenbij";
 import { usePageNavigation } from "@/hooks/usePageNavigation";
+import { useInView } from "@/hooks/useInView";
 import { Reveal, RevealWords } from "@/components/wonenbij/motion";
 
 type SortKey = "prijs" | "oppervlakte" | "beschikbaarheid" | "slaapkamers";
@@ -61,6 +62,13 @@ export default function WoningzoekerSection({
   const [hoveredType, setHoveredType] = useState<string | null>(null);
   const [hoveredWoningId, setHoveredWoningId] = useState<string | null>(null);
   const [aanzichtIndex, setAanzichtIndex] = useState(0);
+
+  // Affordance: puls de woningvlakken zodra het paneel goed in beeld is, en
+  // toon een hint-label tot de bezoeker voor het eerst met de gevel werkt.
+  const [paneelKijkRef, paneelInView] = useInView<HTMLDivElement>({
+    threshold: 0.35,
+  });
+  const [hintWeg, setHintWeg] = useState(false);
 
   // ─── Filters (status / slaapkamers / max. huur) over alle woningen ───
   const huurBereik = useMemo(() => {
@@ -405,6 +413,7 @@ export default function WoningzoekerSection({
                   paneelbreedte (100vw - marges - lijstkolom = 51.181vw)
                   gedeeld door de beeldverhouding. */}
               <div
+                ref={paneelKijkRef}
                 className="relative lg:sticky lg:top-[max(1.389vw,calc((100svh-var(--wz-paneel-h))/2))] lg:max-h-[calc(100svh-2.778vw)]"
                 style={{
                   aspectRatio: `${actiefAanzicht.renderWidth} / ${actiefAanzicht.renderHeight}`,
@@ -415,6 +424,7 @@ export default function WoningzoekerSection({
                 key={actiefAanzicht.key}
                 vullend
                 passend={actiefAanzicht.weergave === "passend"}
+                pulseer={paneelInView}
                 render={actiefAanzicht.render}
                 renderAlt={actiefAanzicht.renderAlt}
                 renderWidth={actiefAanzicht.renderWidth}
@@ -424,10 +434,30 @@ export default function WoningzoekerSection({
                 selectedId={null}
                 hoveredId={hoveredWoningId}
                 onSelect={openWoning}
-                onHover={setHoveredWoningId}
+                onHover={(id) => {
+                  setHoveredWoningId(id);
+                  if (id) setHintWeg(true);
+                }}
                 zones={actiefAanzicht.zones}
                 onZoneOpen={openAanzicht}
               />
+              {/* Hint dat de gevel interactief is; verdwijnt na de eerste
+                  hover/tik op een woningvlak. */}
+              <div
+                aria-hidden={hintWeg}
+                className={`pointer-events-none absolute top-[1.111vw] left-[1.111vw] z-10 transition-opacity duration-500 max-lg:top-3 max-lg:left-3 ${
+                  hintWeg ? "opacity-0" : "opacity-100"
+                }`}
+              >
+                <span className="inline-flex items-center bg-off-black/75 text-off-white rounded-full h-[2.083vw] px-[1.042vw] font-body font-medium text-[0.903vw] leading-none max-lg:h-auto max-lg:px-3 max-lg:py-1.5 max-lg:text-[12px]">
+                  <span className="max-lg:hidden">
+                    Beweeg over de gevel voor prijs en beschikbaarheid
+                  </span>
+                  <span className="hidden max-lg:inline">
+                    Tik op een woning op de gevel
+                  </span>
+                </span>
+              </div>
               {views.length > 1 ? (
                 <div className="absolute bottom-[1.111vw] left-[1.111vw] z-10 hidden gap-[0.556vw] lg:flex">
                   {views.map((view, i) => (

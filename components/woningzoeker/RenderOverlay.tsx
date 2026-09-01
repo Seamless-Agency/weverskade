@@ -42,6 +42,12 @@ interface RenderOverlayProps {
    * in een sectie onder de vouw zou priority de hero-preload verdringen.
    */
   prioriteit?: boolean;
+  /**
+   * Laat de woningvlakken één keer zacht oplichten (affordance: "dit is
+   * interactief"). Zet 'm op true zodra de render in beeld komt; de puls
+   * speelt eenmalig en respecteert prefers-reduced-motion.
+   */
+  pulseer?: boolean;
 }
 
 function toPoints(polygon: PolygonPoint[]): string {
@@ -73,8 +79,24 @@ export default function RenderOverlay({
   vullend = false,
   passend = false,
   prioriteit = false,
+  pulseer = false,
 }: RenderOverlayProps) {
   const [hoveredZoneKey, setHoveredZoneKey] = useState<string | null>(null);
+
+  // Eenmalige affordance-puls van de vlakken zodra de render in beeld komt.
+  const [pulse, setPulse] = useState(false);
+  const heeftGepulst = useRef(false);
+  useEffect(() => {
+    if (!pulseer || heeftGepulst.current) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    heeftGepulst.current = true;
+    const aan = setTimeout(() => setPulse(true), 400);
+    const uit = setTimeout(() => setPulse(false), 1600);
+    return () => {
+      clearTimeout(aan);
+      clearTimeout(uit);
+    };
+  }, [pulseer]);
   const active = woningen.find((w) => w.id === (hoveredId ?? selectedId)) ?? null;
   const activeAnchor = active ? centroid(active.polygon) : null;
 
@@ -207,7 +229,15 @@ export default function RenderOverlay({
 
           // Uitgefilterde woningen blijven zichtbaar als vage vorm, zodat je
           // ziet dat er meer is - maar ze trekken geen aandacht meer.
-          const fillOpacity = !isVisible ? 0.08 : isActive ? 0.78 : 0.5;
+          // Tijdens de eenmalige affordance-puls lichten alle zichtbare
+          // vlakken kort op richting hun hover-stand.
+          const fillOpacity = !isVisible
+            ? 0.08
+            : isActive
+              ? 0.78
+              : pulse
+                ? 0.72
+                : 0.5;
           const strokeOpacity = !isVisible ? 0.2 : 1;
 
           return (
@@ -239,7 +269,9 @@ export default function RenderOverlay({
               role="button"
               aria-label={`${woning.nummer} - ${woning.woningType}, ${meta.label}`}
               aria-pressed={isSelected}
-              className="cursor-pointer outline-none transition-[fill-opacity] duration-200 focus-visible:stroke-off-white"
+              className={`cursor-pointer outline-none transition-[fill-opacity] focus-visible:stroke-off-white ${
+                pulse ? "duration-700" : "duration-200"
+              }`}
               style={{ pointerEvents: isVisible ? "auto" : "none" }}
               onClick={() => onSelect(woning.id)}
               onMouseEnter={() => onHover(woning.id)}
