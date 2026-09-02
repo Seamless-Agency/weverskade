@@ -120,7 +120,7 @@ export default function WonenBijLanding({ data }: { data?: WonenBijLandingData }
             onClick={scrollNaarAanbod}
             delay={0.75}
             y={14}
-            className="pill-hover relative -top-[0.104vw] inline-flex items-center justify-center align-middle indent-0 leading-none whitespace-nowrap ml-[2.465vw] w-[12.083vw] h-[2.847vw] bg-green text-off-white no-underline rounded-full font-heading font-normal text-[1.181vw] tracking-[-0.024vw] max-lg:top-0 max-lg:ml-3 max-lg:w-auto max-lg:h-auto max-lg:px-6 max-lg:py-2.5 max-lg:text-[15px]"
+            className="pill-hover relative -top-[0.104vw] inline-flex items-center justify-center align-middle indent-0 leading-none whitespace-nowrap ml-[2.465vw] w-[12.083vw] h-[2.847vw] bg-green text-off-white no-underline rounded-full font-heading font-normal text-[1.181vw] tracking-[-0.024vw] max-lg:top-0 max-lg:flex max-lg:w-fit max-lg:ml-0 max-lg:mt-6 max-lg:h-auto max-lg:px-6 max-lg:py-2.5 max-lg:text-[15px]"
           >
             {d.introKnop}
           </Reveal>
