@@ -112,7 +112,7 @@ export default function WonenBijLanding({ data }: { data?: WonenBijLandingData }
       {/* Statement — de knop staat inline achter de laatste regel; vaste paddings
           (geen hoogte) zodat langere CMS-tekst de sectie laat meegroeien */}
       <RevealGroup className="pt-[6.181vw] pb-[16.667vw] px-[2.569vw] max-lg:pt-12 max-lg:px-5 max-lg:pb-12" data-nav-theme="white">
-        <p className="font-body font-medium text-[4.028vw] leading-[4.097vw] text-off-black indent-[10.278vw] max-w-[83.264vw] max-lg:indent-10 max-lg:text-[28px] max-lg:leading-[33px] max-lg:max-w-none">
+        <p className="font-body font-medium text-[4.028vw] leading-[4.097vw] text-off-black indent-[10.278vw] max-w-[83.264vw] max-lg:indent-0 max-lg:text-[28px] max-lg:leading-[33px] max-lg:max-w-none">
           <RevealWords text={introStatement} stagger={0.04} duration={1} />
           <Reveal
             as="a"

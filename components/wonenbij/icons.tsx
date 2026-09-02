@@ -37,3 +37,19 @@ export function ChevronIcon({ className = "" }: { className?: string }) {
     </svg>
   );
 }
+
+/** Het Weverskade-beeldmerk uit de hoofdnavigatie; dient daar (en hier) als menuknop. */
+export function MenuMerkIcon({ className = "" }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 59 50" fill="none" className={className} aria-hidden>
+      <path
+        d="M8.0437 28.4972L24.78 43.6251H51.2907V36.0911H24.78L8.0437 20.9632V28.4972Z"
+        fill="currentColor"
+      />
+      <path
+        d="M8.0437 5.81535V13.3493H34.5544L51.2907 28.4972V20.9432L34.5544 5.81535H8.0437Z"
+        fill="currentColor"
+      />
+    </svg>
+  );
+}

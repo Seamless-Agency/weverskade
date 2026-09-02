@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import RenderOverlay from "@/components/woningzoeker/RenderOverlay";
 import WoningFilters, {
@@ -213,7 +213,20 @@ export default function WoningzoekerSection({
     return type?.slug ?? woningTypes[0]?.slug ?? "";
   };
 
+  // Touch: de eerste tik toont alleen het label (prijs/beschikbaarheid), de
+  // tweede tik op dezelfde woning opent de pagina. Een ref i.p.v. de
+  // hover-state, omdat mobiele browsers vóór de tik al mouseenter sturen.
+  const laatsteTik = useRef<string | null>(null);
+
   const openWoning = (id: string) => {
+    const touch = window.matchMedia("(pointer: coarse)").matches;
+    if (touch && laatsteTik.current !== id) {
+      laatsteTik.current = id;
+      setHoveredWoningId(id);
+      setHintWeg(true);
+      return;
+    }
+    laatsteTik.current = null;
     // Zoek in alle aanzichten: de vakjes op de luchtfoto zijn andere
     // woning-objecten dan die op de gevelaanzichten.
     const woning =
@@ -233,6 +246,7 @@ export default function WoningzoekerSection({
     if (index < 0) return;
     setAanzichtIndex(index);
     setHoveredWoningId(null);
+    laatsteTik.current = null;
   };
 
   const heeftRender = Boolean(
@@ -456,7 +470,7 @@ export default function WoningzoekerSection({
                     Beweeg over de gevel voor prijs en beschikbaarheid
                   </span>
                   <span className="hidden max-lg:inline">
-                    Tik op een woning op de gevel
+                    Tik op een woning, tik nogmaals om te openen
                   </span>
                 </span>
               </div>
@@ -508,7 +522,7 @@ export default function WoningzoekerSection({
                     ? "Klik op een ingetekende woning voor meer informatie, of op het gebouw voor de gevelweergave."
                     : actiefAanzicht.zones?.length
                       ? "Klik op het gebouw om de beschikbare woningen per gevel te bekijken."
-                      : "Klik op een woning in het gebouw voor meer informatie en om in te schrijven."}
+                      : "Tik op een woning voor prijs en beschikbaarheid; tik nogmaals om de woning te openen en in te schrijven."}
                 </p>
               </div>
               </div>

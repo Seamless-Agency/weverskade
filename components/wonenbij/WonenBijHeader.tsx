@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { usePageNavigation } from "@/hooks/usePageNavigation";
 import { useFocusTrap } from "@/hooks/useFocusTrap";
-import { PijlIcon } from "@/components/wonenbij/icons";
+import { MenuMerkIcon, PijlIcon } from "@/components/wonenbij/icons";
 import { EASE, useHeroIntro, useReducedMotion } from "@/components/wonenbij/motion";
 
 interface AnchorLink {
@@ -207,7 +207,7 @@ export default function WonenBijHeader({
             href="/wonenbij"
             onClick={(e) => navigate(e, "/wonenbij")}
             style={introStyle(0.05)}
-            className="font-body font-medium text-[2.5vw] leading-[2.9vw] tracking-[-0.05vw] whitespace-nowrap no-underline max-lg:text-[15px] max-lg:leading-none"
+            className="font-body font-medium text-[2.5vw] leading-[2.9vw] tracking-[-0.05vw] whitespace-nowrap no-underline max-lg:text-[17px] max-lg:leading-none"
           >
             Wonen bij Weverskade
           </a>
@@ -243,7 +243,7 @@ export default function WonenBijHeader({
                   metTerug
                     ? "h-[3.194vw] gap-[1.319vw] pl-[1.111vw] pr-[1.736vw]"
                     : `h-[2.847vw] gap-[0.694vw] ${metNav ? "pl-[2.014vw] pr-[1.806vw]" : "px-[1.597vw]"}`
-                } max-lg:h-11 max-lg:px-3 max-lg:py-0`}
+                } max-lg:h-9 max-lg:px-3 max-lg:py-0`}
               >
                 {ctaArrow ? (
                   <PijlIcon className="w-[1.528vw] h-auto rotate-180 max-lg:w-[16px]" />
@@ -251,8 +251,8 @@ export default function WonenBijHeader({
                 <span
                   className={`whitespace-nowrap ${
                     metTerug
-                      ? "font-heading font-normal text-[1.181vw] leading-[1.458vw] tracking-[-0.024vw] max-lg:text-[13px] max-lg:leading-none"
-                      : "font-body font-medium text-[0.903vw] leading-[1.047vw] max-lg:text-[13px] max-lg:leading-none"
+                      ? "font-heading font-normal text-[1.181vw] leading-[1.458vw] tracking-[-0.024vw] max-lg:text-[12px] max-lg:leading-none"
+                      : "font-body font-medium text-[0.903vw] leading-[1.047vw] max-lg:text-[12px] max-lg:leading-none"
                   }`}
                 >
                   {metTerug ? (
@@ -267,22 +267,17 @@ export default function WonenBijHeader({
               </a>
             ) : null}
 
-            {/* Menu-knop voor de ankerlinks op tablet/mobiel */}
+            {/* Menu-knop voor de ankerlinks op tablet/mobiel: hetzelfde
+                beeldmerk als de menuknop van de hoofdnavigatie */}
             {metNav ? (
               <button
                 onClick={() => setMenuOpen(true)}
                 aria-label="Menu openen"
                 aria-expanded={menuOpen}
                 style={introStyle(0.25)}
-                className="hidden max-lg:flex items-center justify-center size-11 rounded-full border-none cursor-pointer bg-current/15 text-current"
+                className="hidden max-lg:flex items-center h-11 p-0 border-none cursor-pointer bg-transparent text-current transition-opacity duration-200 ease-in-out hover:opacity-70"
               >
-                <svg viewBox="0 0 18 12" className="w-[18px] h-auto" aria-hidden>
-                  <path
-                    d="M0 1h18M0 6h18M0 11h18"
-                    stroke="currentColor"
-                    strokeWidth="1.5"
-                  />
-                </svg>
+                <MenuMerkIcon className="w-[34px] h-auto" />
               </button>
             ) : null}
           </div>
@@ -307,15 +302,9 @@ export default function WonenBijHeader({
             <button
               onClick={() => setMenuOpen(false)}
               aria-label="Menu sluiten"
-              className="flex items-center justify-center size-11 rounded-full bg-off-white/15 text-off-white border-none cursor-pointer"
+              className="flex items-center h-11 p-0 border-none cursor-pointer bg-transparent text-off-white transition-opacity duration-200 ease-in-out hover:opacity-70"
             >
-              <svg viewBox="0 0 14 14" className="w-[14px] h-auto" aria-hidden>
-                <path
-                  d="M1 1l12 12M13 1L1 13"
-                  stroke="currentColor"
-                  strokeWidth="1.5"
-                />
-              </svg>
+              <MenuMerkIcon className="w-[34px] h-auto" />
             </button>
           </div>
           <nav className="flex flex-col gap-1 px-5 pt-12 pb-8">
