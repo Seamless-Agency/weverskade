@@ -16,12 +16,14 @@ import GebouwMap from "@/components/GebouwMap";
 import type { WonenBijProject } from "@/data/wonenbij";
 import {
   EASE,
+  HeroParallax,
   Parallax,
   Reveal,
   RevealGroup,
   RevealLine,
   RevealMedia,
   RevealWords,
+  Statisch,
   useHeroIntro,
   useReducedMotion,
 } from "@/components/wonenbij/motion";
@@ -101,7 +103,8 @@ export default function WonenBijProjectPage({
       {/* Hero — bewuste afwijking van Figma (903px-frame): altijd exact één
           viewport hoog zodat titel en navigatie op elk scherm in beeld zijn */}
       <div className="relative h-svh overflow-hidden" data-nav-theme="dark">
-        {/* Zoom-out entrance, zelfde geste als de hero van de hoofdsite */}
+        {/* Zoom-out entrance, zelfde geste als de hero van de hoofdsite;
+            daarbinnen zakt de foto mee tijdens het scrollen (parallax). */}
         <div
           className="absolute inset-0 will-change-transform"
           style={{
@@ -109,14 +112,16 @@ export default function WonenBijProjectPage({
             transition: intro && !reduced ? `transform 2.4s ${EASE}` : "none",
           }}
         >
-          <Image
-            src={project.heroImage}
-            alt={project.naam}
-            fill
-            priority
-            sizes="100vw"
-            className="object-cover"
-          />
+          <HeroParallax>
+            <Image
+              src={project.heroImage}
+              alt={project.naam}
+              fill
+              priority
+              sizes="100vw"
+              className="object-cover"
+            />
+          </HeroParallax>
         </div>
         {/* Top-scrim voor leesbaarheid van de navigatie. Bewuste afwijking van
             Figma (dat stopte op 20% zwart, waardoor de onderkant als een balk
@@ -158,7 +163,7 @@ export default function WonenBijProjectPage({
       </div>
 
       {/* Over het project — Figma: tekst op 109 onder de hero, 165 boven de groene band */}
-      <div id="over" className="pt-[7.569vw] pb-[11.458vw] max-lg:py-12 scroll-mt-[2vw]">
+      <div id="over" className="pt-[7.569vw] pb-[11.458vw] max-lg:py-12 scroll-mt-[2vw]" data-nav-theme="white">
         <RevealGroup className="grid grid-cols-12 gap-x-[1.389vw] px-[2.361vw] max-lg:grid-cols-1 max-lg:px-5 max-lg:gap-y-5">
           <Reveal
             as="p"
@@ -260,7 +265,9 @@ export default function WonenBijProjectPage({
       ) : null}
 
       {/* Persoonlijk begeleid — Figma: label op 146 van de bandtop (x=268),
-          lijstblok en knop op x=258, vaste witruimtes 13/31/38/31, onder 178 */}
+          lijstblok en knop op x=258, vaste witruimtes 13/31/38/31, onder 178.
+          Bewust statisch (geen scroll-reveal) voor ritme tussen de secties. */}
+      <Statisch>
       <div className="bg-blue pt-[10.139vw] pb-[12.361vw] max-lg:py-14" data-nav-theme="blue">
         <div className="pl-[18.611vw] pr-[2.431vw] max-lg:px-5">
           <Reveal
@@ -299,10 +306,11 @@ export default function WonenBijProjectPage({
           </Reveal>
         </div>
       </div>
+      </Statisch>
 
       {/* Welkom bij + beeldcarrousel — Figma: label op 336 van de bandtop,
           tekstblokken onder-verankerd aan de foto-onderkant, fotoblokken 319 uit elkaar */}
-      <div className="bg-off-white pt-[23.333vw] pb-[8.056vw] max-lg:pt-12 max-lg:pb-10">
+      <div className="bg-off-white pt-[23.333vw] pb-[8.056vw] max-lg:pt-12 max-lg:pb-10" data-nav-theme="light">
         <div className="px-[2.361vw] max-lg:px-5">
           {/* De tekst staat bewust ín de flow (flex + mt-auto) in plaats van
               absoluut aan de foto-onderkant verankerd: bij korte tekst is het
@@ -394,9 +402,11 @@ export default function WonenBijProjectPage({
       </div>
 
       {/* De locatie — Figma: label én content op x=384, kaart 115 onder de
-          laatste accordionlijn, planningband 81 onder de kaart */}
+          laatste accordionlijn, planningband 81 onder de kaart.
+          Bewust statisch (geen scroll-reveal) voor ritme tussen de secties. */}
       {heeftLocatieTekst || heeftKaart ? (
-      <div id="locatie" className="pt-[6.528vw] pb-[5.625vw] max-lg:py-12 scroll-mt-[2vw]">
+      <Statisch>
+      <div id="locatie" className="pt-[6.528vw] pb-[5.625vw] max-lg:py-12 scroll-mt-[2vw]" data-nav-theme="white">
         {heeftLocatieTekst ? (
         <div className="pl-[26.667vw] pr-[2.361vw] max-lg:px-5">
           <Reveal
@@ -509,6 +519,7 @@ export default function WonenBijProjectPage({
           </RevealGroup>
         ) : null}
       </div>
+      </Statisch>
       ) : null}
 
       {project.planning?.length ? (
@@ -520,7 +531,7 @@ export default function WonenBijProjectPage({
       {/* Nieuws en updates — Figma: op wit, titel 128 onder de groene band,
           rijen van 208 (foto 27 boven/28 onder de lijnen), kop op x=496 */}
       {nieuws.length > 0 ? (
-        <div id="nieuws" className="bg-white pt-[8.889vw] pb-[15.625vw] max-lg:py-12 scroll-mt-[2vw]">
+        <div id="nieuws" className="bg-white pt-[8.889vw] pb-[15.625vw] max-lg:py-12 scroll-mt-[2vw]" data-nav-theme="white">
           <div className="px-[2.5vw] max-lg:px-5">
             <h2 className="font-heading font-normal text-[4.931vw] leading-[6.076vw] tracking-[-0.099vw] text-off-black max-lg:text-[34px] max-lg:leading-[1.1] max-lg:tracking-[-0.68px]">
               <RevealWords text="Nieuws en updates" />
@@ -593,6 +604,8 @@ export default function WonenBijProjectPage({
 
       {project.faq?.length ? <FaqSection items={project.faq} /> : null}
 
+      {/* Bewust statisch (geen scroll-reveal) voor ritme tussen de secties. */}
+      <Statisch>
       <InschrijfForm
         label="Beschikbaarheid"
         heading="Interesse in dit project?"
@@ -606,6 +619,7 @@ export default function WonenBijProjectPage({
         voorkeurOpties={project.woningTypes.map((t) => t.naam)}
         voorkeurLabel="Selecteer voorkeurstype woning"
       />
+      </Statisch>
     </section>
   );
 }
@@ -632,7 +646,7 @@ function HurenCarousel({ naam, fotos }: { naam: string; fotos: string[] }) {
 
   return (
     // Figma: titel 139 onder de groene band (x=32), foto 1368×810 op x=35, 34 onder de titel
-    <div className="pt-[9.653vw] max-lg:py-10">
+    <div className="pt-[9.653vw] max-lg:py-10" data-nav-theme="white">
       <h2 className="px-[2.222vw] font-heading font-normal text-[4.653vw] leading-[5.736vw] tracking-[-0.093vw] text-off-black max-lg:px-5 max-lg:text-[30px] max-lg:leading-[1.1] max-lg:tracking-[-0.6px]">
         <RevealWords text={`Huren in ${naam}`} />
       </h2>
@@ -710,12 +724,12 @@ function CarouselKnop({
       delay={0.9}
       onClick={onClick}
       aria-label={links ? "Vorige foto" : "Volgende foto"}
-      className={`pill-hover absolute top-1/2 -translate-y-1/2 flex items-center justify-center size-[2.778vw] rounded-full bg-off-white cursor-pointer border-none max-lg:size-11 ${
+      className={`pill-hover absolute top-1/2 -translate-y-1/2 flex items-center justify-center size-[2.778vw] rounded-full bg-off-white text-off-black cursor-pointer border-none max-lg:size-11 ${
         links ? "left-[1.181vw] max-lg:left-3" : "right-[1.181vw] max-lg:right-3"
       }`}
     >
       <PijlIcon
-        className={`w-[1.389vw] h-auto text-off-black max-lg:w-[16px] ${
+        className={`w-[1.389vw] h-auto max-lg:w-[16px] ${
           links ? "rotate-180" : ""
         }`}
       />

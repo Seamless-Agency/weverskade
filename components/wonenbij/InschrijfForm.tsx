@@ -165,7 +165,7 @@ export default function InschrijfForm({
           ? "bg-off-white pt-[14.722vw] pb-[9.514vw]"
           : "bg-white pt-[9.306vw] pb-[20.694vw]"
       } max-lg:py-14`}
-      data-nav-theme="light"
+      data-nav-theme={variant === "woning" ? "light" : "white"}
     >
       <div className="flex items-start pl-[2.569vw] pr-[2.431vw] max-lg:flex-col max-lg:px-5 max-lg:gap-4">
         <Reveal

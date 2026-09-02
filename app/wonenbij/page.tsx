@@ -84,9 +84,12 @@ export default async function WonenBijHome() {
   return (
     <>
       <WonenBijLanding data={{ projecten, aanbod }} />
-      <FooterReveal>
-        <Footer bg="bg-green" data={footerProps} mobielTot="lg" />
-      </FooterReveal>
+      {/* Nav-thema voor de wonen-bij kop: groen zodra de footer bovenin komt */}
+      <div data-nav-theme="green">
+        <FooterReveal>
+          <Footer bg="bg-green" data={footerProps} mobielTot="lg" />
+        </FooterReveal>
+      </div>
     </>
   );
 }

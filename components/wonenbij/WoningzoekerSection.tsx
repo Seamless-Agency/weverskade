@@ -4,7 +4,9 @@ import { useMemo, useState } from "react";
 import Image from "next/image";
 import RenderOverlay from "@/components/woningzoeker/RenderOverlay";
 import WoningFilters, {
+  SorteerVeld,
   type FilterState,
+  type SorteerOptie,
 } from "@/components/woningzoeker/WoningFilters";
 import { STATUS_ORDER } from "@/data/woningzoeker";
 import type { Woning, WoningStatus } from "@/data/woningzoeker";
@@ -13,20 +15,42 @@ import {
   formatPrijs,
   type Aanzicht,
   type WoningType,
+  type WoningTypeStatus,
 } from "@/data/wonenbij";
 import { usePageNavigation } from "@/hooks/usePageNavigation";
 import { useInView } from "@/hooks/useInView";
 import { Reveal, RevealWords } from "@/components/wonenbij/motion";
 
-type SortKey = "prijs" | "oppervlakte" | "beschikbaarheid" | "slaapkamers";
+// Sorteren zit als één menu in de filterbalk (bewuste afwijking van de vier
+// losse sorteerknoppen in Figma): alle opties op één plek, naast de filters.
+type Sortering =
+  | "standaard"
+  | "prijs-asc"
+  | "prijs-desc"
+  | "oppervlakte-asc"
+  | "oppervlakte-desc"
+  | "slaapkamers-asc"
+  | "slaapkamers-desc"
+  | "beschikbaarheid";
 
-// Vaste veldbreedtes uit Figma (132/184/183/184 px).
-const SORT_LABELS: { key: SortKey; label: string; breedte: string }[] = [
-  { key: "prijs", label: "Prijs", breedte: "w-[9.167vw]" },
-  { key: "oppervlakte", label: "Oppervlakte", breedte: "w-[12.778vw]" },
-  { key: "beschikbaarheid", label: "Beschikbaarheid", breedte: "w-[12.708vw]" },
-  { key: "slaapkamers", label: "Slaapkamers", breedte: "w-[12.778vw]" },
+const SORTEER_OPTIES: (SorteerOptie & { value: Sortering })[] = [
+  { value: "standaard", label: "Standaard" },
+  { value: "prijs-asc", label: "Prijs: laag - hoog" },
+  { value: "prijs-desc", label: "Prijs: hoog - laag" },
+  { value: "oppervlakte-asc", label: "Oppervlakte: klein - groot" },
+  { value: "oppervlakte-desc", label: "Oppervlakte: groot - klein" },
+  { value: "slaapkamers-asc", label: "Slaapkamers: weinig - veel" },
+  { value: "slaapkamers-desc", label: "Slaapkamers: veel - weinig" },
+  { value: "beschikbaarheid", label: "Beschikbaarheid" },
 ];
+
+/** Sorteervolgorde op status: eerst wat je nu kunt huren. */
+const STATUS_TYPE_VOLGORDE: Record<WoningTypeStatus, number> = {
+  beschikbaar: 0,
+  inschrijven: 1,
+  "in-optie": 2,
+  bezet: 3,
+};
 
 interface WoningzoekerSectionProps {
   projectSlug: string;
@@ -57,8 +81,7 @@ export default function WoningzoekerSection({
   aanzichten,
 }: WoningzoekerSectionProps) {
   const navigate = usePageNavigation();
-  const [sortKey, setSortKey] = useState<SortKey | null>(null);
-  const [sortAsc, setSortAsc] = useState(true);
+  const [sortering, setSortering] = useState<Sortering>("standaard");
   const [hoveredType, setHoveredType] = useState<string | null>(null);
   const [hoveredWoningId, setHoveredWoningId] = useState<string | null>(null);
   const [aanzichtIndex, setAanzichtIndex] = useState(0);
@@ -135,29 +158,29 @@ export default function WoningzoekerSection({
   const actiefAanzicht = views[Math.min(aanzichtIndex, views.length - 1)] ?? null;
 
   const gesorteerd = useMemo(() => {
-    if (!sortKey) return woningTypes;
-    const richting = sortAsc ? 1 : -1;
+    if (sortering === "standaard") return woningTypes;
+    const [veld, richting] = sortering.split("-");
+    const factor = richting === "desc" ? -1 : 1;
     return [...woningTypes].sort((a, b) => {
-      switch (sortKey) {
+      switch (veld) {
         case "prijs":
-          return (a.prijsVan - b.prijsVan) * richting;
+          return (a.prijsVan - b.prijsVan) * factor;
         case "oppervlakte":
-          return (a.oppervlakte - b.oppervlakte) * richting;
+          return (a.oppervlakte - b.oppervlakte) * factor;
         case "slaapkamers":
-          return (a.slaapkamers - b.slaapkamers) * richting;
+          return (a.slaapkamers - b.slaapkamers) * factor;
         case "beschikbaarheid":
-          return a.status.localeCompare(b.status) * richting;
+          return STATUS_TYPE_VOLGORDE[a.status] - STATUS_TYPE_VOLGORDE[b.status];
+        default:
+          return 0;
       }
     });
-  }, [woningTypes, sortKey, sortAsc]);
+  }, [woningTypes, sortering]);
 
-  const toggleSort = (key: SortKey) => {
-    if (sortKey === key) {
-      setSortAsc((v) => !v);
-    } else {
-      setSortKey(key);
-      setSortAsc(true);
-    }
+  const sorteerMenu = {
+    waarde: sortering,
+    opties: SORTEER_OPTIES,
+    onChange: (waarde: string) => setSortering(waarde as Sortering),
   };
 
   /** Woningen die oplichten op de render: door het filter én (bij type-hover)
@@ -224,38 +247,24 @@ export default function WoningzoekerSection({
 
   return (
     // Figma: titel op x=31 (55 onder de fotosectie), resultaatregel op x=36,
-    // sorteervelden rechts tot x=1399, lijst 35..666, render sluit op 666 aan.
-    <section id="aanbod" className="bg-white pt-[3.819vw] pb-[8.681vw] max-lg:py-14" data-nav-theme="light">
+    // lijst 35..666, render sluit op 666 aan. Bewuste afwijking: de vier
+    // losse sorteerknoppen zijn vervangen door één filterbalk (status,
+    // slaapkamers, max. huur en sorteren) zodat filteren en sorteren als
+    // één geheel voelen; de teller staat rechts op de titelregel.
+    <section id="aanbod" className="bg-white pt-[3.819vw] pb-[8.681vw] max-lg:py-14" data-nav-theme="white">
       <div>
-        {/* Titelregel: de filters benutten de witruimte rechts van de kop,
-            onder-uitgelijnd op de titel */}
-        <div className="flex items-end justify-between pl-[2.153vw] pr-[2.569vw] max-lg:block max-lg:px-5">
+        {/* Titelregel: kop links, resultaatteller (met wissen-link zodra er
+            een filter actief is) rechts op dezelfde basislijn */}
+        <div className="flex items-end justify-between pl-[2.153vw] pr-[2.847vw] max-lg:block max-lg:px-5">
           <h2 className="font-heading font-normal text-[4.653vw] leading-[5.736vw] tracking-[-0.093vw] text-off-black max-lg:text-[36px] max-lg:leading-[1.1] max-lg:tracking-[-0.72px]">
             <RevealWords text="Woningzoeker" />
           </h2>
-          {woningen.length ? (
-            <Reveal delay={0.2} y={16} className="hidden pb-[0.417vw] lg:block">
-              <WoningFilters
-                inline
-                filters={filters}
-                onChange={setFilters}
-                aantallen={aantallen}
-                huurBereik={huurBereik}
-                slaapkamerOpties={slaapkamerOpties}
-                resultaatAantal={gefilterd.length}
-                totaalAantal={woningen.length}
-              />
-            </Reveal>
-          ) : null}
-        </div>
-
-        {/* Resultaatregel + sorteervelden (Figma) — de teller toont het
-            filterresultaat, met de wissen-link ernaast zodra er iets actief is */}
-        <Reveal
-          delay={0.1}
-          className="mt-[2.014vw] flex items-center justify-between pl-[2.5vw] pr-[2.847vw] max-lg:mt-8 max-lg:flex-col max-lg:items-start max-lg:gap-4 max-lg:px-5"
-        >
-          <p className="font-heading font-normal text-[1.667vw] leading-[2.056vw] text-off-black max-lg:text-[18px] max-lg:leading-[1.1]">
+          <Reveal
+            as="p"
+            delay={0.2}
+            y={16}
+            className="shrink-0 pb-[0.833vw] font-heading font-normal text-[1.667vw] leading-[2.056vw] text-off-black max-lg:mt-5 max-lg:pb-0 max-lg:text-[18px] max-lg:leading-[1.1]"
+          >
             {woningen.length
               ? gefilterd.length < woningen.length
                 ? `${gefilterd.length} van ${woningen.length} woningen gevonden`
@@ -275,43 +284,33 @@ export default function WoningzoekerSection({
                 Filters wissen
               </button>
             ) : null}
-          </p>
-          <div className="flex flex-wrap gap-[1.181vw] max-lg:grid max-lg:w-full max-lg:grid-cols-2 max-lg:gap-2">
-            {SORT_LABELS.map(({ key, label, breedte }, i) => {
-              const actief = sortKey === key;
-              return (
-                <button
-                  key={key}
-                  onClick={() => toggleSort(key)}
-                  aria-pressed={actief}
-                  aria-label={`Sorteer op ${label.toLowerCase()}${
-                    actief ? (sortAsc ? ", oplopend" : ", aflopend") : ""
-                  }`}
-                  className={`flex items-center justify-between ${breedte} h-[1.875vw] pl-[0.694vw] pr-[1.528vw] ${i === 1 ? "ml-[-0.069vw] max-lg:ml-0" : ""} font-body font-medium text-[1.111vw] tracking-[-0.022vw] cursor-pointer border-none transition-colors duration-200 max-lg:w-full max-lg:h-11 max-lg:gap-2 max-lg:px-3 max-lg:text-[14px] ${
-                    actief
-                      ? "bg-green text-off-white"
-                      : "bg-off-white text-off-black"
-                  }`}
-                >
-                  {label}
-                  <svg
-                    viewBox="0 0 10 13"
-                    className={`w-[0.694vw] h-auto max-lg:w-[8px] transition-transform duration-300 ${
-                      actief && !sortAsc ? "rotate-180" : ""
-                    }`}
-                    fill="none"
-                    aria-hidden
-                  >
-                    <path
-                      d="M5 0.5V11.5M5 11.5L0.9 7.4M5 11.5L9.1 7.4"
-                      stroke="currentColor"
-                      strokeWidth="1.2"
-                    />
-                  </svg>
-                </button>
-              );
-            })}
-          </div>
+          </Reveal>
+        </div>
+
+        {/* Filterbalk (desktop): status, slaapkamers en max. huur links,
+            sorteren rechts — één geheel op één onderlijn. Zonder woningen
+            valt er niets te filteren en blijft alleen het sorteermenu over. */}
+        <Reveal
+          delay={0.1}
+          className="mt-[2.361vw] hidden pl-[2.5vw] pr-[2.847vw] lg:block"
+        >
+          {woningen.length ? (
+            <WoningFilters
+              inline
+              filters={filters}
+              onChange={setFilters}
+              aantallen={aantallen}
+              huurBereik={huurBereik}
+              slaapkamerOpties={slaapkamerOpties}
+              resultaatAantal={gefilterd.length}
+              totaalAantal={woningen.length}
+              sortering={sorteerMenu}
+            />
+          ) : (
+            <div className="flex justify-end">
+              <SorteerVeld sortering={sorteerMenu} className="w-[15.278vw]" />
+            </div>
+          )}
         </Reveal>
 
         {/* Lijst + render */}
@@ -323,8 +322,8 @@ export default function WoningzoekerSection({
           }`}
         >
           <div>
-            {woningen.length ? (
-              <div className="mb-5 lg:hidden">
+            <div className="mb-5 lg:hidden">
+              {woningen.length ? (
                 <WoningFilters
                   kaal
                   filters={filters}
@@ -334,9 +333,12 @@ export default function WoningzoekerSection({
                   slaapkamerOpties={slaapkamerOpties}
                   resultaatAantal={gefilterd.length}
                   totaalAantal={woningen.length}
+                  sortering={sorteerMenu}
                 />
-              </div>
-            ) : null}
+              ) : (
+                <SorteerVeld sortering={sorteerMenu} />
+              )}
+            </div>
             {zichtbareTypes.map((type, i) => (
               <a
                 key={type.slug}

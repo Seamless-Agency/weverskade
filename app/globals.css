@@ -60,25 +60,55 @@ html {
   }
 }
 
-/* Pill-knoppen: lichte verdonkering + zachte scale op hover.
-   `scale` is een eigen CSS-property (geen transform), dus dit botst
-   nooit met translate-/rotate-utilities op hetzelfde element. */
-.pill-hover {
-  transition: filter 0.3s cubic-bezier(0.65, 0, 0.35, 1),
-    scale 0.35s cubic-bezier(0.65, 0, 0.35, 1);
-}
-
-.pill-hover:hover {
-  filter: brightness(0.94);
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .pill-hover:hover {
-    scale: 1.03;
+/* Pill-knoppen: een vulling in een contrasterende merkkleur schuift van
+   onder naar boven over de knop — dezelfde richting als de reveals — in
+   plaats van een scale. De laag zit in ::before zodat een inline
+   transition (bv. van een Reveal) op het element zelf de hover nooit
+   abrupt kan maken. In @layer components zodat positie-utilities
+   (absolute/fixed) op dezelfde knop gewoon voorrang houden.
+   Standaard vult off-black; op een off-black knop vult groen; een
+   off-white knop kleurt zijn tekst mee naar off-white. */
+@layer components {
+  .pill-hover {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    --pill-vulling: var(--color-off-black);
+    transition: color 0.45s cubic-bezier(0.16, 1, 0.3, 1);
   }
 
-  .pill-hover:active {
-    scale: 0.97;
+  .pill-hover.bg-off-black {
+    --pill-vulling: var(--color-green);
+  }
+
+  .pill-hover::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: inherit;
+    background: var(--pill-vulling);
+    transform: translateY(101%);
+    transition: transform 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+}
+
+/* Alleen op apparaten met een echte hover: op touch blijft :hover na een
+   tik hangen en zou de knop gevuld achterblijven. */
+@media (hover: hover) {
+  .pill-hover:hover:not(:disabled)::before {
+    transform: translateY(0);
+  }
+
+  .pill-hover.bg-off-white:hover:not(:disabled) {
+    color: var(--color-off-white);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pill-hover,
+  .pill-hover::before {
+    transition: none;
   }
 }
 

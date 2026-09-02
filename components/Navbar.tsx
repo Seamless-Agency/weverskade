@@ -21,7 +21,10 @@ function detectTheme(): NavTheme {
   let current: NavTheme = "dark";
   for (const section of sections) {
     if (section.getBoundingClientRect().top <= 60) {
-      current = (section.dataset.navTheme as NavTheme) || "dark";
+      // Alleen bekende thema's; de wonen-bij omgeving gebruikt dezelfde
+      // attributen met extra waarden (bv. "white") voor haar eigen kop.
+      const theme = section.dataset.navTheme;
+      if (theme && theme in themes) current = theme as NavTheme;
     }
   }
   return current;

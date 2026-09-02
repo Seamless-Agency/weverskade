@@ -116,7 +116,7 @@ export default function WoningTypePage({
     // Figma "Woningpagina / overlay" (frame 1:8): foto links op (34,194),
     // rechterkolom op x=818, plattegrondkaart 39 onder de foto, 153 wit
     // tussen de kaart en de planningband.
-    <section className="bg-off-white min-h-screen">
+    <section className="bg-off-white min-h-screen" data-nav-theme="light">
       <div className="relative pt-[13.472vw] pb-[10.625vw] max-lg:pt-[90px] max-lg:pb-12">
         <WonenBijHeader
           variant="donker"
@@ -374,9 +374,9 @@ export default function WoningTypePage({
           <button
             onClick={() => setLightboxOpen(false)}
             aria-label="Sluiten"
-            className="pill-hover fixed top-5 right-5 flex items-center justify-center size-[2.778vw] rounded-full bg-off-white border border-off-black/15 cursor-pointer max-lg:size-[44px] max-lg:top-4 max-lg:right-4"
+            className="pill-hover fixed top-5 right-5 flex items-center justify-center size-[2.778vw] rounded-full bg-off-white text-off-black border border-off-black/15 cursor-pointer max-lg:size-[44px] max-lg:top-4 max-lg:right-4"
           >
-            <span className="font-body font-medium text-[1.111vw] leading-none text-off-black max-lg:text-[18px]">
+            <span className="font-body font-medium text-[1.111vw] leading-none max-lg:text-[18px]">
               ✕
             </span>
           </button>
@@ -451,9 +451,9 @@ function CarouselPijlen({
         delay={0.9}
         onClick={() => onStap(-1)}
         aria-label="Vorige"
-        className="pill-hover absolute left-[1.319vw] top-1/2 -translate-y-1/2 flex items-center justify-center size-[2.778vw] rounded-full bg-off-white cursor-pointer border-none max-lg:size-[44px] max-lg:left-3"
+        className="pill-hover absolute left-[1.319vw] top-1/2 -translate-y-1/2 flex items-center justify-center size-[2.778vw] rounded-full bg-off-white text-off-black cursor-pointer border-none max-lg:size-[44px] max-lg:left-3"
       >
-        <PijlIcon className="w-[1.389vw] h-auto rotate-180 text-off-black max-lg:w-[16px]" />
+        <PijlIcon className="w-[1.389vw] h-auto rotate-180 max-lg:w-[16px]" />
       </Reveal>
       <Reveal
         as="button"
@@ -462,9 +462,9 @@ function CarouselPijlen({
         delay={0.9}
         onClick={() => onStap(1)}
         aria-label="Volgende"
-        className="pill-hover absolute right-[1.528vw] top-1/2 -translate-y-1/2 flex items-center justify-center size-[2.778vw] rounded-full bg-off-white cursor-pointer border-none max-lg:size-[44px] max-lg:right-3"
+        className="pill-hover absolute right-[1.528vw] top-1/2 -translate-y-1/2 flex items-center justify-center size-[2.778vw] rounded-full bg-off-white text-off-black cursor-pointer border-none max-lg:size-[44px] max-lg:right-3"
       >
-        <PijlIcon className="w-[1.389vw] h-auto text-off-black max-lg:w-[16px]" />
+        <PijlIcon className="w-[1.389vw] h-auto max-lg:w-[16px]" />
       </Reveal>
       {/* Positie-dots, alleen mobiel (desktop blijft exact Figma). */}
       <div

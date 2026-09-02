@@ -22,7 +22,10 @@ import { useInView } from "@/hooks/useInView";
 
    Alles is transform/opacity/clip-path: layout (en dus pixel perfect)
    blijft onaangetast, en `prefers-reduced-motion` schakelt alles uit via
-   useInView / de checks hieronder. */
+   useInView / de checks hieronder.
+
+   Ritme: niet elke sectie animeert in. Secties binnen <Statisch> staan
+   direct in hun eindstand, zodat de reveals eromheen weer opvallen. */
 
 export const EASE = "cubic-bezier(0.16, 1, 0.3, 1)";
 /** Standaard stagger tussen woorden/regels/kaarten (Waterloo: 75ms). */
@@ -68,6 +71,19 @@ export function useHeroIntro(): boolean {
   return animate || reduced;
 }
 
+/* ─── Statisch: een sectie zonder scroll-reveal ──────────────────────────
+   Alle Reveal-varianten binnen deze wrapper staan vanaf de eerste render
+   in hun eindstand, zonder observer en zonder transitie. Bewust ingezet
+   op een paar secties per pagina zodat de pagina niet overal "in-fadet"
+   en er rust en variatie ontstaat. */
+const StatischContext = createContext(false);
+
+export function Statisch({ children }: { children: ReactNode }) {
+  return (
+    <StatischContext.Provider value={true}>{children}</StatischContext.Provider>
+  );
+}
+
 /* ─── Groepscontext voor gestaffelde reveals ─────────────────────────────
    Eén observer op de container; kinderen lezen `inView` + hun eigen delay,
    zodat een grid of rij als één choreografie binnenkomt. */
@@ -87,9 +103,10 @@ export function RevealGroup({
   children: ReactNode;
   as?: ElementType;
 } & Omit<AllHTMLAttributes<HTMLElement>, "as" | "children" | "className">) {
-  const [ref, inView] = useInView<HTMLDivElement>();
+  const statisch = useContext(StatischContext);
+  const [ref, inView] = useInView<HTMLDivElement>({ startWhen: !statisch });
   return (
-    <RevealGroupContext.Provider value={inView}>
+    <RevealGroupContext.Provider value={statisch || inView}>
       <Tag ref={ref} className={className} {...rest}>
         {children}
       </Tag>
@@ -121,11 +138,26 @@ export function Reveal({
   when?: boolean;
 } & Omit<AllHTMLAttributes<HTMLElement>, "as" | "children" | "className" | "style">) {
   const group = useContext(RevealGroupContext);
+  const statisch = useContext(StatischContext);
   const reduced = useReducedMotion();
   const [ref, ownInView] = useInView<HTMLDivElement>({
-    startWhen: when === undefined && group === null,
+    startWhen: when === undefined && group === null && !statisch,
   });
-  const on = reduced || (when ?? group ?? ownInView);
+  const on = reduced || statisch || (when ?? group ?? ownInView);
+  const animeert = on && !reduced && !statisch;
+
+  // Na de reveal verdwijnt de inline transition weer: een blijvende inline
+  // `transition` zou de hover-transities uit CSS (bv. de pill-knoppen) op
+  // hetzelfde element overschrijven en die hovers abrupt maken.
+  const [settled, setSettled] = useState(false);
+  useEffect(() => {
+    if (!animeert) return;
+    const timer = setTimeout(
+      () => setSettled(true),
+      (delay + duration) * 1000 + 80
+    );
+    return () => clearTimeout(timer);
+  }, [animeert, delay, duration]);
 
   return (
     <Tag
@@ -141,9 +173,9 @@ export function Reveal({
         // meer plakt. De overgang animeert identiek (none == identity).
         transform: on ? "none" : `translateY(${y}px)`,
         transition:
-          on && !reduced
+          animeert && !settled
             ? `opacity ${duration}s ${EASE} ${delay}s, transform ${duration}s ${EASE} ${delay}s`
-            : "none",
+            : undefined,
         willChange: on ? undefined : "opacity, transform",
       }}
     >
@@ -171,11 +203,13 @@ export function RevealWords({
   duration?: number;
 }) {
   const group = useContext(RevealGroupContext);
+  const statisch = useContext(StatischContext);
   const reduced = useReducedMotion();
   const [ref, ownInView] = useInView<HTMLSpanElement>({
-    startWhen: when === undefined && group === null,
+    startWhen: when === undefined && group === null && !statisch,
   });
-  const on = reduced || (when ?? group ?? ownInView);
+  const on = reduced || statisch || (when ?? group ?? ownInView);
+  const animeert = on && !reduced && !statisch;
 
   let wordIndex = 0;
   const lines = text.split("\n");
@@ -200,10 +234,9 @@ export function RevealWords({
                       className="inline-block will-change-transform"
                       style={{
                         transform: on ? "translateY(0)" : "translateY(115%)",
-                        transition:
-                          on && !reduced
-                            ? `transform ${duration}s ${EASE} ${delay + i * stagger}s`
-                            : "none",
+                        transition: animeert
+                          ? `transform ${duration}s ${EASE} ${delay + i * stagger}s`
+                          : "none",
                       }}
                     >
                       {word}
@@ -243,11 +276,13 @@ export function RevealMedia({
   when?: boolean;
 } & Omit<AllHTMLAttributes<HTMLDivElement>, "as" | "children" | "className" | "style">) {
   const group = useContext(RevealGroupContext);
+  const statisch = useContext(StatischContext);
   const reduced = useReducedMotion();
   const [ref, ownInView] = useInView<HTMLDivElement>({
-    startWhen: when === undefined && group === null,
+    startWhen: when === undefined && group === null && !statisch,
   });
-  const on = reduced || (when ?? group ?? ownInView);
+  const on = reduced || statisch || (when ?? group ?? ownInView);
+  const animeert = on && !reduced && !statisch;
 
   // De clip zit op een binnenlaag, niet op de geobserveerde container:
   // Chrome telt clip-path mee in IntersectionObserver, dus een volledig
@@ -258,8 +293,7 @@ export function RevealMedia({
         className="absolute inset-0"
         style={{
           clipPath: on ? "inset(0 0 0 0)" : "inset(100% 0 0 0)",
-          transition:
-            on && !reduced ? `clip-path ${duration}s ${EASE} ${delay}s` : "none",
+          transition: animeert ? `clip-path ${duration}s ${EASE} ${delay}s` : "none",
           willChange: on ? undefined : "clip-path",
         }}
       >
@@ -267,10 +301,9 @@ export function RevealMedia({
           className="absolute inset-0"
           style={{
             transform: on ? "scale(1)" : "scale(1.15)",
-            transition:
-              on && !reduced
-                ? `transform ${duration + 0.7}s ${EASE} ${delay}s`
-                : "none",
+            transition: animeert
+              ? `transform ${duration + 0.7}s ${EASE} ${delay}s`
+              : "none",
             willChange: on ? undefined : "transform",
           }}
         >
@@ -298,11 +331,13 @@ export function RevealLine({
   duration?: number;
 }) {
   const group = useContext(RevealGroupContext);
+  const statisch = useContext(StatischContext);
   const reduced = useReducedMotion();
   const [ref, ownInView] = useInView<HTMLSpanElement>({
-    startWhen: group === null,
+    startWhen: group === null && !statisch,
   });
-  const on = reduced || (group ?? ownInView);
+  const on = reduced || statisch || (group ?? ownInView);
+  const animeert = on && !reduced && !statisch;
 
   return (
     <span
@@ -311,8 +346,7 @@ export function RevealLine({
       className={`${axis === "x" ? "origin-left" : "origin-top"} ${className}`}
       style={{
         transform: on ? "scale(1)" : axis === "x" ? "scaleX(0)" : "scaleY(0)",
-        transition:
-          on && !reduced ? `transform ${duration}s ${EASE} ${delay}s` : "none",
+        transition: animeert ? `transform ${duration}s ${EASE} ${delay}s` : "none",
       }}
     />
   );
@@ -372,6 +406,53 @@ export function Parallax({
       >
         {children}
       </div>
+    </div>
+  );
+}
+
+/* ─── HeroParallax: de herofoto zakt mee tijdens het scrollen ────────────
+   De foto schuift met `strength` × de scrollafstand omlaag, zodat de
+   pagina sneller omhoog beweegt dan het beeld en de hero diepte krijgt
+   onder de sectie die eroverheen schuift. Alleen transform, één rAF per
+   frame, stopt zodra de hero uit beeld is en staat uit bij reduced motion.
+   Plaats 'm als laag ín de hero (binnen de zoom-out laag). */
+export function HeroParallax({
+  children,
+  strength = 0.3,
+}: {
+  children: ReactNode;
+  strength?: number;
+}) {
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || prefersReducedMotion()) return;
+
+    let raf = 0;
+    const update = () => {
+      raf = 0;
+      // Math.max: iOS rubber-band geeft een negatieve scrollY.
+      const y = Math.max(0, window.scrollY);
+      if (y > window.innerHeight * 1.2) return;
+      el.style.transform = `translate3d(0, ${(y * strength).toFixed(1)}px, 0)`;
+    };
+    const onScroll = () => {
+      if (!raf) raf = requestAnimationFrame(update);
+    };
+    update();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+    };
+  }, [strength]);
+
+  return (
+    <div ref={ref} className="absolute inset-0 will-change-transform">
+      {children}
     </div>
   );
 }

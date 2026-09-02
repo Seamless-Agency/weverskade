@@ -23,7 +23,7 @@ export default function WonenBijNieuwsPage({ data }: { data: WonenBijNieuwsData 
   const terugHref = data.terugHref ?? "/wonenbij";
 
   return (
-    <section className="bg-white min-h-screen">
+    <section className="bg-white min-h-screen" data-nav-theme="white">
       <div className="relative pt-[13.194vw] max-lg:pt-[110px]">
         <WonenBijHeader
           variant="donker"

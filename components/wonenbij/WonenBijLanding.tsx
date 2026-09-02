@@ -11,11 +11,13 @@ import { submitFormSubmission } from "@/lib/formSubmissionClient";
 import WonenBijHeader from "@/components/wonenbij/WonenBijHeader";
 import {
   EASE,
+  HeroParallax,
   Parallax,
   Reveal,
   RevealGroup,
   RevealMedia,
   RevealWords,
+  Statisch,
   useHeroIntro,
   useReducedMotion,
 } from "@/components/wonenbij/motion";
@@ -76,7 +78,8 @@ export default function WonenBijLanding({ data }: { data?: WonenBijLandingData }
       {/* Hero — net als de projectpagina altijd exact één viewport hoog
           (bewuste afwijking van het 893px-Figma-frame) */}
       <div className="relative h-svh overflow-hidden" data-nav-theme="dark">
-        {/* Zoom-out entrance, zelfde geste als de hero van de hoofdsite */}
+        {/* Zoom-out entrance, zelfde geste als de hero van de hoofdsite;
+            daarbinnen zakt de foto mee tijdens het scrollen (parallax). */}
         <div
           className="absolute inset-0 will-change-transform"
           style={{
@@ -84,14 +87,16 @@ export default function WonenBijLanding({ data }: { data?: WonenBijLandingData }
             transition: intro && !reduced ? `transform 2.4s ${EASE}` : "none",
           }}
         >
-          <Image
-            src={heroImage}
-            alt="Wonen bij Weverskade"
-            fill
-            priority
-            sizes="100vw"
-            className="object-cover"
-          />
+          <HeroParallax>
+            <Image
+              src={heroImage}
+              alt="Wonen bij Weverskade"
+              fill
+              priority
+              sizes="100vw"
+              className="object-cover"
+            />
+          </HeroParallax>
         </div>
         <div className="absolute inset-0 bg-off-black/30" />
         <WonenBijHeader
@@ -106,7 +111,7 @@ export default function WonenBijLanding({ data }: { data?: WonenBijLandingData }
 
       {/* Statement — de knop staat inline achter de laatste regel; vaste paddings
           (geen hoogte) zodat langere CMS-tekst de sectie laat meegroeien */}
-      <RevealGroup className="pt-[6.181vw] pb-[16.667vw] px-[2.569vw] max-lg:pt-12 max-lg:px-5 max-lg:pb-12">
+      <RevealGroup className="pt-[6.181vw] pb-[16.667vw] px-[2.569vw] max-lg:pt-12 max-lg:px-5 max-lg:pb-12" data-nav-theme="white">
         <p className="font-body font-medium text-[4.028vw] leading-[4.097vw] text-off-black indent-[10.278vw] max-w-[83.264vw] max-lg:indent-10 max-lg:text-[28px] max-lg:leading-[33px] max-lg:max-w-none">
           <RevealWords text={introStatement} stagger={0.04} duration={1} />
           <Reveal
@@ -126,7 +131,7 @@ export default function WonenBijLanding({ data }: { data?: WonenBijLandingData }
           vaste hoogte: de Figma-witruimtes (252 boven, 285 tussen de blokken,
           248 onder) blijven exact, maar langere CMS-tekst laat de band groeien
           in plaats van over de foto's heen te lopen */}
-      <div className="bg-off-white pt-[17.5vw] pb-[17.222vw] max-lg:py-14 max-lg:px-5">
+      <div className="bg-off-white pt-[17.5vw] pb-[17.222vw] max-lg:py-14 max-lg:px-5" data-nav-theme="light">
         <div className="px-[2.778vw] max-lg:px-0">
           {/* Blok 1: titel + foto rechts; tekst links onder-verankerd 22 boven de foto-onderkant */}
           <div className="relative min-h-[43.889vw] max-lg:min-h-0">
@@ -217,7 +222,7 @@ export default function WonenBijLanding({ data }: { data?: WonenBijLandingData }
 
       {/* Beschikbare woningen - geaggregeerd aanbod van alle projecten */}
       {aanbod.length > 0 ? (
-        <div id="aanbod" className="pt-[6.875vw] px-[2.431vw] max-lg:pt-12 max-lg:px-5 scroll-mt-[2vw]">
+        <div id="aanbod" className="pt-[6.875vw] px-[2.431vw] max-lg:pt-12 max-lg:px-5 scroll-mt-[2vw]" data-nav-theme="white">
           {/* koppen staan in Figma op x=40, de kaarten op x=35 */}
           <h2 className="ml-[0.347vw] font-heading font-normal text-[4.931vw] leading-[6.076vw] tracking-[-0.099vw] text-off-black max-lg:ml-0 max-lg:text-[36px] max-lg:leading-[1.1] max-lg:tracking-[-0.72px]">
             <RevealWords text={d.aanbodTitel} />
@@ -370,7 +375,10 @@ export default function WonenBijLanding({ data }: { data?: WonenBijLandingData }
         </div>
       ) : null}
 
-      <ContactSectie tekst={contactTekst} />
+      {/* Bewust statisch (geen scroll-reveal) voor ritme tussen de secties. */}
+      <Statisch>
+        <ContactSectie tekst={contactTekst} />
+      </Statisch>
     </section>
   );
 }
@@ -439,7 +447,7 @@ function ContactSectie({ tekst }: { tekst: string }) {
   };
 
   return (
-    <div className="px-[2.431vw] mt-[14.583vw] pb-[15.833vw] max-lg:px-5 max-lg:mt-16 max-lg:pb-16">
+    <div className="px-[2.431vw] mt-[14.583vw] pb-[15.833vw] max-lg:px-5 max-lg:mt-16 max-lg:pb-16" data-nav-theme="white">
       <div className="flex items-start max-lg:flex-col max-lg:gap-4">
         <Reveal
           as="p"
