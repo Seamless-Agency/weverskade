@@ -44,6 +44,10 @@ function detecteerThema(grens: number, fallback: Thema): Thema {
   const secties = document.querySelectorAll<HTMLElement>("[data-nav-theme]");
   let huidig = fallback;
   for (const sectie of secties) {
+    // Tijdens een page transition staat er een DOM-kloon van de vertrekkende
+    // pagina in <body>; zijn secties zouden hier anders het thema van de
+    // oude pagina opdringen (witte balk over de hero na een projectklik).
+    if (sectie.closest("[data-page-snapshot]")) continue;
     if (sectie.getBoundingClientRect().top <= grens) {
       const thema = sectie.dataset.navTheme;
       if (isThema(thema)) huidig = thema;
@@ -114,9 +118,13 @@ export default function WonenBijHeader({
     update();
     window.addEventListener("scroll", update, { passive: true });
     window.addEventListener("resize", update);
+    // Na afloop van een page transition (snapshot weg, scroll op 0) vuurt er
+    // geen scroll-event meer — zonder herijking blijft de mount-stand staan.
+    window.addEventListener("page-transition-end", update);
     return () => {
       window.removeEventListener("scroll", update);
       window.removeEventListener("resize", update);
+      window.removeEventListener("page-transition-end", update);
     };
   }, [startThema]);
 

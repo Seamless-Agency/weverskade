@@ -20,6 +20,8 @@ function detectTheme(): NavTheme {
     document.querySelectorAll<HTMLElement>("[data-nav-theme]");
   let current: NavTheme = "dark";
   for (const section of sections) {
+    // De snapshot-kloon van een lopende page transition telt niet mee.
+    if (section.closest("[data-page-snapshot]")) continue;
     if (section.getBoundingClientRect().top <= 60) {
       // Alleen bekende thema's; de wonen-bij omgeving gebruikt dezelfde
       // attributen met extra waarden (bv. "white") voor haar eigen kop.
