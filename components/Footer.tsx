@@ -40,7 +40,22 @@ function telHref(phone: string) {
   return `tel:${phone.replace(/[^\d+]/g, "")}`;
 }
 
-export default function Footer({ bg = "bg-blue", data }: { bg?: string; data?: FooterData } = {}) {
+export default function Footer({
+  bg = "bg-blue",
+  data,
+  mobielTot = "md",
+}: {
+  bg?: string;
+  data?: FooterData;
+  /**
+   * Breakpoint waaronder de mobiele footer toont. De hoofdsite wisselt op
+   * max-md; de wonen-bij omgeving zit op max-lg en geeft "lg" mee, anders
+   * krijgen tablets (768-1023) daar de desktop-footer als microtekst in een
+   * schermhoge band.
+   */
+  mobielTot?: "md" | "lg";
+} = {}) {
+  const totLg = mobielTot === "lg";
   const pathname = usePathname();
   const navigate = usePageNavigation();
   const dotRef = useRef<HTMLSpanElement>(null);
@@ -90,9 +105,15 @@ export default function Footer({ bg = "bg-blue", data }: { bg?: string; data?: F
   }, [positionDotAt]);
 
   return (
-    <footer className={`${bg} h-dvh flex flex-col justify-between pt-[4.028vw] pb-[3.333vw] pl-[2.639vw] pr-[2.431vw] max-md:h-auto max-md:pt-5 max-md:pb-5 max-md:px-5`}>
+    <footer
+      className={`${bg} h-dvh flex flex-col justify-between pt-[4.028vw] pb-[3.333vw] pl-[2.639vw] pr-[2.431vw] ${
+        totLg
+          ? "max-lg:h-auto max-lg:pt-5 max-lg:pb-5 max-lg:px-5"
+          : "max-md:h-auto max-md:pt-5 max-md:pb-5 max-md:px-5"
+      }`}
+    >
       {/* Desktop top content columns */}
-      <div className="flex max-md:hidden">
+      <div className={`flex ${totLg ? "max-lg:hidden" : "max-md:hidden"}`}>
         {/* Copyright column */}
         <div className="shrink-0 w-[31.944vw]">
           <p className="font-body font-medium text-[1.111vw] leading-[1.25vw] text-off-white">
@@ -207,7 +228,7 @@ export default function Footer({ bg = "bg-blue", data }: { bg?: string; data?: F
       </div>
 
       {/* Mobile top content */}
-      <div className="hidden max-md:block">
+      <div className={`hidden ${totLg ? "max-lg:block" : "max-md:block"}`}>
         {/* Copyright */}
         <p className="font-body font-medium text-[13px] leading-[18px] text-off-white">
           © {new Date().getFullYear()} | {data?.companyName ?? "Weverskade B.V."} |{" "}
@@ -295,7 +316,9 @@ export default function Footer({ bg = "bg-blue", data }: { bg?: string; data?: F
         viewBox="0 0 340 44"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
-        className="w-[95.139vw] h-auto text-off-white max-md:w-full max-md:mt-16"
+        className={`w-[95.139vw] h-auto text-off-white ${
+          totLg ? "max-lg:w-full max-lg:mt-16" : "max-md:w-full max-md:mt-16"
+        }`}
       >
         <g transform="translate(0,0)">
           <path

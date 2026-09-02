@@ -85,7 +85,7 @@ export default async function WonenBijHome() {
     <>
       <WonenBijLanding data={{ projecten, aanbod }} />
       <FooterReveal>
-        <Footer bg="bg-green" data={footerProps} />
+        <Footer bg="bg-green" data={footerProps} mobielTot="lg" />
       </FooterReveal>
     </>
   );

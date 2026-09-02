@@ -94,7 +94,7 @@ export default async function WoningType({
         volgendeTypeSlug={volgendeType?.slug}
       />
       <FooterReveal>
-        <Footer bg="bg-green" data={footerProps} />
+        <Footer bg="bg-green" data={footerProps} mobielTot="lg" />
       </FooterReveal>
     </>
   );

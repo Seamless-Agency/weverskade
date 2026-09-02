@@ -106,7 +106,7 @@ export default async function WonenBijProject({
     <>
       <WonenBijProjectPage project={project} nieuws={nieuws} />
       <FooterReveal>
-        <Footer bg="bg-green" data={footerProps} />
+        <Footer bg="bg-green" data={footerProps} mobielTot="lg" />
       </FooterReveal>
     </>
   );

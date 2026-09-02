@@ -128,7 +128,7 @@ export default async function WonenBijNieuws({
     <>
       <WonenBijNieuwsPage data={data} />
       <FooterReveal>
-        <Footer bg="bg-green" data={footerProps} />
+        <Footer bg="bg-green" data={footerProps} mobielTot="lg" />
       </FooterReveal>
     </>
   );
