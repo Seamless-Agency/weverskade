@@ -41,7 +41,7 @@ export async function generateStaticParams() {
 // Demo-artikel uit het Figma-frame "Nieuws" - fallback zonder CMS-content.
 const demoArtikel: WonenBijNieuwsData = {
   titel: "Weverskade viert start bouw project Taanschuurkade.",
-  datum: "30 januari, 2026",
+  datum: "30 januari 2026",
   categorie: "Nieuws",
   image: "/images/wonenbij/nieuws-thumb.png",
   body: [

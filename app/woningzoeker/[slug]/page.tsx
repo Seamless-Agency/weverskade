@@ -9,8 +9,6 @@ import {
   FOOTER_QUERY,
 } from "@/sanity/lib/queries";
 import {
-  getAllDemoSlugs,
-  getDemoProjectBySlug,
   type ProjectFase,
   type Woning,
   type WoningStatus,
@@ -120,9 +118,14 @@ async function getProject(slug: string): Promise<WoningzoekerProject | null> {
     tags: ["project"],
   });
 
-  // Sanity is leidend zodra het project daar staat; de demodata houdt de
-  // proof of concept draaiend zolang het CMS nog niet gevuld is.
-  return (doc ? fromSanity(doc, slug) : null) ?? getDemoProjectBySlug(slug) ?? null;
+  // Uitsluitend Sanity. De demodata (data/woningzoeker.ts) is de proof of
+  // concept met fictieve nummers en prijzen; die stond hier als fallback en
+  // serveerde daardoor verzonnen woningen ónder een echte projectnaam
+  // (/woningzoeker/taanschuurkade toonde 15 fictieve woningen van €1.495-2.290
+  // terwijl /wonenbij/taanschuurkade de 40 echte woningen toont). De echte
+  // woningzoeker leeft in de wonen-bij omgeving; deze route wordt vanzelf weer
+  // actief zodra er een woningzoeker-project in het CMS staat.
+  return doc ? fromSanity(doc, slug) : null;
 }
 
 export async function generateStaticParams() {
@@ -130,8 +133,7 @@ export async function generateStaticParams() {
     query: WONINGZOEKER_SLUGS_QUERY,
     tags: ["project"],
   });
-  const alle = [...new Set([...(sanitySlugs ?? []), ...getAllDemoSlugs()])];
-  return alle.map((slug) => ({ slug }));
+  return (sanitySlugs ?? []).map((slug) => ({ slug }));
 }
 
 export async function generateMetadata({ params }: PageProps) {

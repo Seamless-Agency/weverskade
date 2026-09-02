@@ -1397,7 +1397,7 @@ export const landingDefaults = {
   introStatement:
     "Van stedelijke appartementen tot woonconcepten met extra service: kwaliteit, gebruiksgemak en een prettige leefomgeving staan centraal binnen de projecten van Weverskade.",
   introKnop: "Bekijk het aanbod",
-  overKnop: "Actuele aanbod",
+  overKnop: "Actueel aanbod",
   overTitel: "Wonen bij\nWeverskade",
   overFoto: "/images/wonenbij/picture-1.jpg",
   overTekst:

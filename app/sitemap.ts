@@ -7,7 +7,6 @@ import {
   WONINGZOEKER_SLUGS_QUERY,
 } from "@/sanity/lib/queries";
 import { getWonenBijProject, getWonenBijProjectByAlias } from "@/data/wonenbij";
-import { getAllDemoSlugs } from "@/data/woningzoeker";
 import { SITE_URL, wonenbijUrl } from "@/lib/siteConfig";
 
 // Statische hoofdsite-routes; /studio en /api blijven bewust buiten de sitemap.
@@ -44,9 +43,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     .filter((s) => !getWonenBijProjectByAlias(s))
     .forEach((s) => paden.push(`/gebouw/${s}`));
   vacatures.forEach((s) => paden.push(`/werken-bij/${s}`));
-  [...new Set([...woningzoekers, ...getAllDemoSlugs()])].forEach((s) =>
-    paden.push(`/woningzoeker/${s}`)
-  );
+  // Alleen woningzoekers die écht in Sanity staan. De demo-slugs stonden hier
+  // ook in en boden daarmee een pagina met fictieve woningen onder een echte
+  // projectnaam actief aan crawlers aan; die fallback is uit de route gehaald.
+  woningzoekers.forEach((s) => paden.push(`/woningzoeker/${s}`));
 
   // Wonen-bij: op de leidende subdomein-host, en bewust alleen de projecten
   // die volwaardig in de code-omgeving bestaan (met woningtypes). De

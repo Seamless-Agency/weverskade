@@ -41,7 +41,7 @@ const demoNieuws: NieuwsKaart[] = [
   {
     slug: "start-bouw-taanschuurkade",
     titel: "Weverskade viert start bouw project Taanschuurkade",
-    datum: "22 januari, 2026",
+    datum: "22 januari 2026",
     image: "/images/wonenbij/nieuws-thumb.png",
   },
 ];
