@@ -9,7 +9,12 @@ import ProjectPlanning from "@/components/wonenbij/ProjectPlanning";
 import DownloadsSection from "@/components/wonenbij/DownloadsSection";
 import FaqSection from "@/components/wonenbij/FaqSection";
 import InschrijfForm from "@/components/wonenbij/InschrijfForm";
-import { PijlIcon } from "@/components/wonenbij/icons";
+import {
+  FacebookIcon,
+  InstagramIcon,
+  LinkedInIcon,
+  PijlIcon,
+} from "@/components/wonenbij/icons";
 import { usePageNavigation } from "@/hooks/usePageNavigation";
 import { useInView } from "@/hooks/useInView";
 import GebouwMap from "@/components/GebouwMap";
@@ -35,6 +40,13 @@ export interface NieuwsKaart {
   image?: string;
 }
 
+/** Social-kanalen onder het nieuws; alleen ingevulde kanalen worden getoond. */
+export interface SocialLinks {
+  linkedIn?: string;
+  instagram?: string;
+  facebook?: string;
+}
+
 const ANCHORS = [
   { label: "Over", href: "#over" },
   { label: "Aanbod", href: "#aanbod" },
@@ -52,10 +64,17 @@ const ANCHORS = [
 export default function WonenBijProjectPage({
   project,
   nieuws,
+  socials,
 }: {
   project: WonenBijProject;
   nieuws: NieuwsKaart[];
+  socials?: SocialLinks;
 }) {
+  const socialKanalen = [
+    { label: "LinkedIn", href: socials?.linkedIn, Icoon: LinkedInIcon },
+    { label: "Instagram", href: socials?.instagram, Icoon: InstagramIcon },
+    { label: "Facebook", href: socials?.facebook, Icoon: FacebookIcon },
+  ].filter((k): k is typeof k & { href: string } => Boolean(k.href));
   const navigate = usePageNavigation();
   const intro = useHeroIntro();
   const reduced = useReducedMotion();
@@ -175,7 +194,7 @@ export default function WonenBijProjectPage({
             <Reveal
               as="p"
               delay={0.1}
-              className="max-w-[57.847vw] font-heading font-normal text-[2.014vw] leading-[2.569vw] text-off-black max-lg:max-w-none max-lg:text-[19px] max-lg:leading-[26px]"
+              className="max-w-[57.847vw] whitespace-pre-line font-heading font-normal text-[2.014vw] leading-[2.569vw] text-off-black max-lg:max-w-none max-lg:text-[19px] max-lg:leading-[26px]"
             >
               {project.intro}
             </Reveal>
@@ -247,7 +266,11 @@ export default function WonenBijProjectPage({
 
       {/* Huren in - fotocarrousel */}
       {project.hurenFotos?.length ? (
-        <HurenCarousel naam={project.naam} fotos={project.hurenFotos} />
+        <HurenCarousel
+          titel={project.hurenTitel ?? `Huren in ${project.naam}`}
+          naam={project.naam}
+          fotos={project.hurenFotos}
+        />
       ) : null}
 
       {/* Woningzoeker — exclusief voor projecten met eigen woningtypes */}
@@ -598,6 +621,34 @@ export default function WonenBijProjectPage({
                 </RevealGroup>
               ))}
             </div>
+            {/* Verwijzing naar de social-kanalen (feedback Wikke, 3 sep 2026):
+                tekst met logo-links, alleen voor kanalen met een URL in de
+                site-instellingen. */}
+            {socialKanalen.length ? (
+              <Reveal
+                delay={0.1}
+                className="mt-[2.917vw] flex flex-wrap items-center gap-x-[1.111vw] gap-y-[0.833vw] max-lg:mt-8 max-lg:gap-x-4 max-lg:gap-y-3"
+              >
+                <p className="font-body font-medium text-[1.111vw] leading-[1.667vw] tracking-[-0.022vw] text-off-black max-lg:text-[15px] max-lg:leading-[22px]">
+                  Blijf op de hoogte van de laatste ontwikkelingen via
+                </p>
+                <ul className="flex items-center gap-[0.833vw] list-none m-0 p-0 max-lg:gap-3">
+                  {socialKanalen.map(({ label, href, Icoon }) => (
+                    <li key={label}>
+                      <a
+                        href={href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label={`${label} van Weverskade (opent in een nieuw venster)`}
+                        className="flex items-center justify-center size-[2.222vw] text-off-black transition-opacity duration-300 hover:opacity-60 max-lg:size-[36px]"
+                      >
+                        <Icoon className="size-[1.528vw] max-lg:size-[22px]" />
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </Reveal>
+            ) : null}
           </div>
         </div>
       ) : null}
@@ -609,11 +660,7 @@ export default function WonenBijProjectPage({
       <InschrijfForm
         label="Beschikbaarheid"
         heading="Interesse in dit project?"
-        intro={
-          heeftAanbod
-            ? `Schrijf u vrijblijvend in als geïnteresseerde voor ${project.naam}. Geef aan welk woningtype of welke specifieke woning uw voorkeur heeft en vul uw gegevens in. Zo kunnen wij u gericht informeren over het actuele aanbod en toekomstige beschikbaarheid.`
-            : `Schrijf u vrijblijvend in als geïnteresseerde voor ${project.naam}. Vul uw gegevens in, dan informeren wij u over het actuele aanbod en toekomstige beschikbaarheid.`
-        }
+        intro="Schrijf je vrijblijvend in en laat je gegevens achter. We houden je op de hoogte van de beschikbaarheid en de vervolgstappen."
         projectName={project.naam}
         projectSlug={project.slug}
         voorkeurOpties={project.woningTypes.map((t) => t.naam)}
@@ -637,7 +684,15 @@ const ICONEN: Record<string, string> = {
 
 /* ─── Fotocarrousel "Huren in …" met cirkelpijlen ───────────────────── */
 
-function HurenCarousel({ naam, fotos }: { naam: string; fotos: string[] }) {
+function HurenCarousel({
+  titel,
+  naam,
+  fotos,
+}: {
+  titel: string;
+  naam: string;
+  fotos: string[];
+}) {
   const [index, setIndex] = useState(0);
   const touchStartX = useRef<number | null>(null);
 
@@ -648,7 +703,7 @@ function HurenCarousel({ naam, fotos }: { naam: string; fotos: string[] }) {
     // Figma: titel 139 onder de groene band (x=32), foto 1368×810 op x=35, 34 onder de titel
     <div className="pt-[9.653vw] max-lg:py-10" data-nav-theme="white">
       <h2 className="px-[2.222vw] font-heading font-normal text-[4.653vw] leading-[5.736vw] tracking-[-0.093vw] text-off-black max-lg:px-5 max-lg:text-[30px] max-lg:leading-[1.1] max-lg:tracking-[-0.6px]">
-        <RevealWords text={`Huren in ${naam}`} />
+        <RevealWords text={titel} />
       </h2>
       <RevealGroup className="relative mt-[2.361vw] mx-[2.431vw] max-lg:mt-5 max-lg:mx-5">
         <RevealMedia

@@ -252,6 +252,7 @@ function fromSanity(raw: any): WonenBijProject | null {
     hurenFotos: raw.hurenFotos?.length
       ? raw.hurenFotos.map((foto: any) => sanityImageUrl(foto, ""))
       : fallback.hurenFotos,
+    hurenTitel: fallback.hurenTitel,
     // De begeleidingssectie is generieke Weverskade-tekst en kan overal mee.
     begeleiding: demoBegeleiding,
     welkomLabel: "Welkom bij",

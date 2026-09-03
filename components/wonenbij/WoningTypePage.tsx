@@ -328,7 +328,7 @@ export default function WoningTypePage({
       <InschrijfForm
         variant="woning"
         heading="Interesse in deze woning?"
-        intro="Schrijf u vrijblijvend in als geïnteresseerde voor dit project. Geef aan welk woningtype of welke specifieke woning uw voorkeur heeft en vul uw gegevens in. Zo kunnen wij u gericht informeren over het actuele aanbod en toekomstige beschikbaarheid."
+        intro="Schrijf je vrijblijvend in en laat je gegevens achter. We houden je op de hoogte van de beschikbaarheid en de vervolgstappen."
         projectName={project.naam}
         projectSlug={project.slug}
         voorkeurOpties={inschrijfOpties}

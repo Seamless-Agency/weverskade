@@ -431,7 +431,7 @@ function ContactSectie({ tekst }: { tekst: string }) {
         agreed: false,
       });
       setSubmitState("success");
-      setSubmitMessage("Bedankt, uw formulier is verstuurd.");
+      setSubmitMessage("Bedankt, je formulier is verstuurd.");
     } catch (error) {
       setSubmitState("error");
       setSubmitMessage(
@@ -498,8 +498,8 @@ function ContactSectie({ tekst }: { tekst: string }) {
               <input
                 type="text"
                 name="interestedProject"
-                placeholder="In welk project heeft u interesse?"
-                aria-label="In welk project heeft u interesse?"
+                placeholder="In welk project heb je interesse?"
+                aria-label="In welk project heb je interesse?"
                 value={form.interestedProject}
                 onChange={(e) =>
                   setForm((p) => ({ ...p, interestedProject: e.target.value }))

@@ -134,7 +134,7 @@ export default function InschrijfForm({
         agreed: false,
       });
       setSubmitState("success");
-      setSubmitMessage("Bedankt, uw inschrijving is verstuurd.");
+      setSubmitMessage("Bedankt, je inschrijving is verstuurd.");
     } catch (error) {
       setSubmitState("error");
       setSubmitMessage(

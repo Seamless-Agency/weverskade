@@ -2,11 +2,16 @@ import { notFound, redirect } from "next/navigation";
 import { getWonenBijProjectByAlias } from "@/data/wonenbij";
 import WonenBijProjectPage, {
   type NieuwsKaart,
+  type SocialLinks,
 } from "@/components/wonenbij/WonenBijProjectPage";
 import Footer from "@/components/Footer";
 import FooterReveal from "@/components/FooterReveal";
 import { sanityFetch } from "@/sanity/lib/fetch";
-import { ALL_NIEUWS_QUERY, FOOTER_QUERY } from "@/sanity/lib/queries";
+import {
+  ALL_NIEUWS_QUERY,
+  FOOTER_QUERY,
+  SITE_SETTINGS_QUERY,
+} from "@/sanity/lib/queries";
 import { formatSanityDate, sanityImageUrl } from "@/sanity/lib/helpers";
 import { wonenbijUrl } from "@/lib/siteConfig";
 import {
@@ -30,7 +35,7 @@ export async function generateMetadata({
   return {
     title: `${project.naam} | Wonen bij Weverskade`,
     description:
-      project.intro?.slice(0, 160) ??
+      project.intro?.replace(/\s+/g, " ").slice(0, 160) ??
       `${project.naam}: wonen bij Weverskade in ${project.plaats}.`,
     alternates: { canonical: wonenbijUrl(`/${project.slug}`) },
     openGraph: { images: [project.heroImage] },
@@ -58,11 +63,25 @@ export default async function WonenBijProject({
   const aliasDoel = getWonenBijProjectByAlias(slug);
   if (aliasDoel) redirect(`/wonenbij/${aliasDoel.slug}`);
 
-  const [project, nieuwsData, footerData] = await Promise.all([
+  const [project, nieuwsData, footerData, settings] = await Promise.all([
     getWonenBijProjectData(slug),
     sanityFetch<any[]>({ query: ALL_NIEUWS_QUERY, tags: ["nieuwsArtikel"] }),
     sanityFetch<any>({ query: FOOTER_QUERY, tags: ["footer"] }),
+    sanityFetch<{
+      linkedIn?: string;
+      instagram?: string;
+      facebook?: string;
+    } | null>({ query: SITE_SETTINGS_QUERY, tags: ["siteSettings"] }),
   ]);
+
+  // Social-kanalen uit de site-instellingen; LinkedIn heeft dezelfde
+  // fallback als de footer zodat de verwijzing nooit leeg is.
+  const socials: SocialLinks = {
+    linkedIn:
+      settings?.linkedIn ?? "https://www.linkedin.com/company/weverskade",
+    instagram: settings?.instagram ?? undefined,
+    facebook: settings?.facebook ?? undefined,
+  };
 
   if (!project) notFound();
 
@@ -104,7 +123,7 @@ export default async function WonenBijProject({
 
   return (
     <>
-      <WonenBijProjectPage project={project} nieuws={nieuws} />
+      <WonenBijProjectPage project={project} nieuws={nieuws} socials={socials} />
       {/* Nav-thema voor de wonen-bij kop: groen zodra de footer bovenin komt */}
       <div data-nav-theme="green">
         <FooterReveal>

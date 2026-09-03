@@ -269,6 +269,7 @@ Hier beheer je bedrijfsgegevens die op meerdere plekken gebruikt worden:
 - **Adres, Postcode, Land**
 - **Telefoon, E-mail**
 - **LinkedIn URL**
+- **Instagram URL en Facebook URL.** Optioneel; worden als logo-links getoond bij "Nieuws en updates" op de wonen-bij projectpagina's. Leeg laten = niet tonen.
 - **Browser titel (SEO).** Verschijnt in Google en op het browser-tabblad.
 - **Beschrijving (SEO).** Korte Google-beschrijving (max 160 tekens).
 - **Privacy Policy URL.** Link naar privacyverklaring.
