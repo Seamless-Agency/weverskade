@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useRef, useState, type CSSProperties } from "react";
+import { useCallback, useEffect, useRef, useState, type CSSProperties } from "react";
 import { usePageNavigation } from "@/hooks/usePageNavigation";
-import { useFocusTrap } from "@/hooks/useFocusTrap";
+import WonenBijMenu from "@/components/wonenbij/WonenBijMenu";
 import { MenuMerkIcon, PijlIcon } from "@/components/wonenbij/icons";
 import { EASE, useHeroIntro, useReducedMotion } from "@/components/wonenbij/motion";
 
@@ -128,24 +128,9 @@ export default function WonenBijHeader({
     };
   }, [startThema]);
 
-  // Open menu: pagina-scroll bevriezen; Escape, focus-trap en focus-restore
-  // komen uit useFocusTrap.
-  const menuRef = useFocusTrap<HTMLDivElement>(menuOpen, () =>
-    setMenuOpen(false)
-  );
-  useEffect(() => {
-    if (!menuOpen) return;
-    const vorige = document.documentElement.style.overflow;
-    document.documentElement.style.overflow = "hidden";
-    return () => {
-      document.documentElement.style.overflow = vorige;
-    };
-  }, [menuOpen]);
-
   const handleAnchor = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
     if (href.startsWith("#")) {
       e.preventDefault();
-      setMenuOpen(false);
       document
         .getElementById(href.slice(1))
         ?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -153,6 +138,21 @@ export default function WonenBijHeader({
     }
     navigate(e, href);
   };
+
+  // Vanuit het menu (na het sluiten): ankers scrollen, routes navigeren.
+  const closeMenu = useCallback(() => setMenuOpen(false), []);
+  const menuNavigate = useCallback(
+    (href: string) => {
+      if (href.startsWith("#")) {
+        document
+          .getElementById(href.slice(1))
+          ?.scrollIntoView({ behavior: "smooth", block: "start" });
+      } else {
+        navigate.to(href);
+      }
+    },
+    [navigate]
+  );
 
   // Met ankerlinks (projectpagina) staat de kop hoger (wordmark op 35px, rij op
   // 40px) en hangen de links rechts vóór de pill met vaste 50px-tussenruimtes.
@@ -166,6 +166,9 @@ export default function WonenBijHeader({
 
   const { bg, tekst } = THEMAS[thema];
   const isVisible = zichtbaar || menuOpen;
+  // Met open menu staat de kop (zoals de hoofdnav) boven het blauwe paneel:
+  // witte tekst, geen eigen achtergrond.
+  const activeTekst = menuOpen ? "#F7F5F0" : tekst;
   // Op de groene band zou een groene pill wegvallen: daar wordt hij off-white.
   const pillLicht = thema === "green";
   const pillKleur = pillLicht
@@ -176,9 +179,9 @@ export default function WonenBijHeader({
     <>
       <header
         ref={kopRef}
-        className="fixed top-0 left-0 right-0 z-20"
+        className="fixed top-0 left-0 right-0 z-40"
         style={{
-          color: tekst,
+          color: activeTekst,
           transform: isVisible ? "none" : "translateY(-100%)",
           transition: `transform 0.5s ${EASE}, color 0.3s ease`,
         }}
@@ -189,7 +192,7 @@ export default function WonenBijHeader({
           className="absolute inset-0"
           style={{
             backgroundColor: bg,
-            opacity: thema === "dark" ? 0 : 1,
+            opacity: thema === "dark" || menuOpen ? 0 : 1,
             transition: "opacity 0.3s ease, background-color 0.3s ease",
           }}
         />
@@ -271,8 +274,8 @@ export default function WonenBijHeader({
                 beeldmerk als de menuknop van de hoofdnavigatie */}
             {metNav ? (
               <button
-                onClick={() => setMenuOpen(true)}
-                aria-label="Menu openen"
+                onClick={() => setMenuOpen((open) => !open)}
+                aria-label={menuOpen ? "Menu sluiten" : "Menu openen"}
                 aria-expanded={menuOpen}
                 style={introStyle(0.25)}
                 className="hidden max-lg:flex items-center h-11 p-0 border-none cursor-pointer bg-transparent text-current transition-opacity duration-200 ease-in-out hover:opacity-70"
@@ -284,57 +287,19 @@ export default function WonenBijHeader({
         </div>
       </header>
 
-      {/* Fullscreen ankermenu (tablet/mobiel). Buiten de <header>: die heeft
-          een transform en zou anders het containing block van deze
-          fixed overlay worden. */}
-      {metNav && menuOpen ? (
-        <div
-          ref={menuRef}
-          role="dialog"
-          aria-modal="true"
-          aria-label="Menu"
-          className="fixed inset-0 z-50 bg-off-black text-off-white overflow-y-auto lg:hidden menu-overlay-in"
-        >
-          <div className="flex items-center justify-between px-5 pt-5">
-            <span className="font-body font-medium text-[17px] leading-none">
-              Wonen bij Weverskade
-            </span>
-            <button
-              onClick={() => setMenuOpen(false)}
-              aria-label="Menu sluiten"
-              className="flex items-center h-11 p-0 border-none cursor-pointer bg-transparent text-off-white transition-opacity duration-200 ease-in-out hover:opacity-70"
-            >
-              <MenuMerkIcon className="w-[34px] h-auto" />
-            </button>
-          </div>
-          <nav className="flex flex-col gap-1 px-5 pt-12 pb-8">
-            {anchors!.map((anchor, i) => (
-              <a
-                key={anchor.label}
-                href={anchor.href}
-                onClick={(e) => handleAnchor(e, anchor.href)}
-                style={{ "--menu-delay": `${0.1 + i * 0.05}s` } as CSSProperties}
-                className="py-3 font-heading font-normal text-[28px] leading-[34px] tracking-[-0.56px] text-off-white no-underline border-b border-off-white/15 menu-item-in"
-              >
-                {anchor.label}
-              </a>
-            ))}
-            {ctaLabel && ctaHref ? (
-              <a
-                href={ctaHref}
-                onClick={(e) => handleAnchor(e, ctaHref)}
-                style={
-                  {
-                    "--menu-delay": `${0.1 + anchors!.length * 0.05 + 0.1}s`,
-                  } as CSSProperties
-                }
-                className="mt-8 inline-flex items-center justify-center self-start h-11 px-6 bg-green text-off-white rounded-full font-body font-medium text-[15px] no-underline menu-item-in"
-              >
-                {ctaLabel}
-              </a>
-            ) : null}
-          </nav>
-        </div>
+      {/* Menu (tablet/mobiel), één-op-één als het menu van de hoofdsite.
+          Buiten de <header>: die heeft een transform en zou anders het
+          containing block van dit fixed paneel worden. */}
+      {metNav ? (
+        <WonenBijMenu
+          isOpen={menuOpen}
+          onClose={closeMenu}
+          items={[
+            ...anchors!,
+            ...(ctaLabel && ctaHref ? [{ label: ctaLabel, href: ctaHref }] : []),
+          ]}
+          onNavigate={menuNavigate}
+        />
       ) : null}
     </>
   );
