@@ -198,6 +198,16 @@ export default function WoningzoekerSection({
     return new Set(zichtbaar.map((w) => w.id));
   }, [actiefAanzicht, hoveredType, filters]);
 
+  /** Andersom-koppeling (wens Vivianne, call 05-09): hover op een gevelvlak
+   *  licht ook de bijbehorende typekaart in de lijst op. */
+  const gevelHoverType = useMemo(() => {
+    if (!hoveredWoningId) return null;
+    return (
+      (actiefAanzicht?.woningen ?? []).find((w) => w.id === hoveredWoningId)
+        ?.woningType ?? null
+    );
+  }, [actiefAanzicht, hoveredWoningId]);
+
   /** Typen waarvan minimaal één woning door het filter komt. Typen zonder
    *  gekoppelde woningen blijven altijd zichtbaar. */
   const zichtbareTypes = useMemo(() => {
@@ -362,7 +372,7 @@ export default function WoningzoekerSection({
                 onMouseLeave={() => setHoveredType(null)}
                 className={`grid grid-cols-[14.722vw_1fr] gap-x-[1.181vw] items-start border-t border-off-black/40 pt-[2.014vw] pb-[2.292vw] no-underline group transition-colors duration-200 hover:bg-off-white max-lg:grid-cols-[100px_1fr] max-lg:gap-x-4 max-lg:py-4 ${
                   i === zichtbareTypes.length - 1 ? "border-b" : ""
-                }`}
+                } ${gevelHoverType === type.naam ? "bg-off-white" : ""}`}
               >
                 <div className="relative w-full mt-[0.208vw] aspect-[212/138] overflow-hidden max-lg:mt-0">
                   <Image
@@ -370,7 +380,9 @@ export default function WoningzoekerSection({
                     alt={type.naam}
                     fill
                     sizes="(max-width: 768px) 100px, 15vw"
-                    className="object-cover transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-105"
+                    className={`object-cover transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-105 ${
+                      gevelHoverType === type.naam ? "scale-105" : ""
+                    }`}
                   />
                 </div>
                 <div className="relative">

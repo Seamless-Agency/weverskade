@@ -19,6 +19,7 @@ type IncomingSubmission = {
   email?: string;
   phone?: string;
   interestedProject?: string;
+  secondChoice?: string;
   age?: string;
   occupation?: string;
   householdIncome?: string;
@@ -92,6 +93,7 @@ function buildEmail(submission: Required<Pick<IncomingSubmission, "formType" | "
     Emailadres: submission.email,
     Telefoonnummer: submission.phone,
     "Interesse in project": submission.interestedProject,
+    "Tweede voorkeur": submission.secondChoice,
     Leeftijd: submission.age,
     "Werkgever / beroep": submission.occupation,
     "Bruto huishoudinkomen": submission.householdIncome,
@@ -249,6 +251,7 @@ export async function POST(request: Request) {
     const email = clean(body.email);
     const phone = clean(body.phone);
     const interestedProject = clean(body.interestedProject);
+    const secondChoice = clean(body.secondChoice);
     const age = clean(body.age);
     const occupation = clean(body.occupation);
     const householdIncome = clean(body.householdIncome);
@@ -309,6 +312,7 @@ export async function POST(request: Request) {
       email,
       phone,
       interestedProject,
+      secondChoice,
       age,
       occupation,
       householdIncome,

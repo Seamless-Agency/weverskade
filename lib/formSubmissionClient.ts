@@ -10,6 +10,7 @@ export type FormSubmissionPayload = {
   email: string;
   phone?: string;
   interestedProject?: string;
+  secondChoice?: string;
   age?: string;
   occupation?: string;
   householdIncome?: string;

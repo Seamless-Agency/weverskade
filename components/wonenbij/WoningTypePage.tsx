@@ -94,16 +94,32 @@ export default function WoningTypePage({
     ? `${formatPrijs(type.prijsVan)} - ${formatPrijs(type.prijsTot)} /maand`
     : `${formatPrijs(type.prijsVan)} /maand`;
 
-  const inschrijfOpties = [
-    type.naam,
-    ...project.woningen
-      .filter((w) => w.woningType === type.naam)
-      .map((w) => `${w.nummer} - ${type.naam}`),
-  ];
+  // Volledig adres bij elk huisnummer (wens Vivianne, call 05-09): aan de
+  // telefoon is "Taanschuurkade 160" eenduidig, "160" niet. Binnen deze
+  // typepagina volstaat het adres; het type staat al in de kop.
+  const straat = project.straatnaam ?? project.naam;
+  const woningOptie = (w: { nummer: string }) => `${straat} ${w.nummer}`;
 
-  const voorkeurPreselect = voorgeselecteerdeWoning
-    ? inschrijfOpties.find((o) => o.startsWith(voorgeselecteerdeWoning)) ?? type.naam
-    : type.naam;
+  const typeWoningen = project.woningen.filter(
+    (w) => w.woningType === type.naam
+  );
+
+  const inschrijfOpties = [type.naam, ...typeWoningen.map(woningOptie)];
+
+  // Tweede voorkeur mag élke woning van het project zijn, ook een ander type;
+  // daar hoort het type er dus wél bij — in korte vorm ("Type 2"), anders
+  // stapelen de streepjes ("Taanschuurkade 158 - Type 2 - 3-kamerappartement").
+  const korteTypeNaam = (naam: string) => naam.split(" - ")[0];
+  const tweedeVoorkeurOpties = project.woningen.map(
+    (w) => `${woningOptie(w)} - ${korteTypeNaam(w.woningType)}`
+  );
+
+  // De via de gevelkiezer gekozen woning (?woning=), als die bij dit type hoort.
+  const gekozenWoning = voorgeselecteerdeWoning
+    ? typeWoningen.find((w) => w.nummer === voorgeselecteerdeWoning)
+    : undefined;
+
+  const voorkeurPreselect = gekozenWoning ? woningOptie(gekozenWoning) : type.naam;
 
   const scrollNaarInschrijven = (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
@@ -259,6 +275,34 @@ export default function WoningTypePage({
               <Spec icoon="inschrijven.svg" tekst="Inschrijven mogelijk" />
             </Reveal>
 
+            {/* Adresregel (wens Vivianne, call 05-09): via de gevelkiezer op
+                een specifieke woning geklikt → dat volledige adres; anders
+                alle huisnummers van dit type. Eigen regel onder het specgrid,
+                links uitgelijnd op de contentkolom. */}
+            {typeWoningen.length ? (
+              <Reveal
+                when={intro}
+                delay={0.4}
+                y={16}
+                className="mt-[1.25vw] max-lg:mt-4"
+              >
+                <p className="font-body font-medium text-[0.972vw] leading-[1.458vw] text-off-black max-lg:text-[14px] max-lg:leading-normal">
+                  {gekozenWoning ? (
+                    <>
+                      Gekozen woning:{" "}
+                      <span className="font-semibold">
+                        {woningOptie(gekozenWoning)}
+                      </span>
+                    </>
+                  ) : (
+                    `Huisnummers: ${typeWoningen
+                      .map((w) => w.nummer)
+                      .join(", ")}`
+                  )}
+                </p>
+              </Reveal>
+            ) : null}
+
             {/* Omschrijving */}
             <Reveal
               when={intro}
@@ -334,6 +378,7 @@ export default function WoningTypePage({
         voorkeurOpties={inschrijfOpties}
         voorkeurLabel="Woning voorgeselecteerd"
         voorkeurPreselect={voorkeurPreselect}
+        tweedeVoorkeurOpties={tweedeVoorkeurOpties}
       />
 
       {/* Figma: groene terugknop 242×46 op x=36, 147 boven de footer */}

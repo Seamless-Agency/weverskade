@@ -40,6 +40,19 @@ interface InschrijfFormProps {
   voorkeurLabel?: string;
   /** Vooraf geselecteerde voorkeur (vanaf de woningpagina of render). */
   voorkeurPreselect?: string;
+  /**
+   * Optioneel tweede-voorkeursveld (wens Vivianne, call 05-09): dropdown met
+   * álle woningen van het project, zodat een inschrijver bij grote drukte een
+   * alternatief kan opgeven.
+   */
+  tweedeVoorkeurOpties?: string[];
+  /**
+   * Launchmodus: toon geen formulier maar een wegwijzer naar het aanbod —
+   * inschrijven kan dan alleen op een specifieke woning via de woningzoeker.
+   * De sectie, kop en intro blijven identiek zodat de #inschrijven-ankers en
+   * knoppen gewoon blijven werken.
+   */
+  wegwijzer?: boolean;
 }
 
 /**
@@ -56,6 +69,8 @@ export default function InschrijfForm({
   voorkeurOpties,
   voorkeurLabel = "Selecteer voorkeurstype woning",
   voorkeurPreselect,
+  tweedeVoorkeurOpties,
+  wegwijzer = false,
 }: InschrijfFormProps) {
   const [form, setForm] = useState({
     voornaam: "",
@@ -67,6 +82,7 @@ export default function InschrijfForm({
     inkomen: "",
     gezin: "",
     voorkeur: voorkeurPreselect ?? "",
+    tweedeVoorkeur: "",
     message: "",
     agreed: false,
   });
@@ -109,6 +125,7 @@ export default function InschrijfForm({
         email: form.email,
         phone: form.telefoon,
         interestedProject: form.voorkeur,
+        secondChoice: form.tweedeVoorkeur,
         age: form.leeftijd,
         occupation: form.beroep,
         householdIncome: form.inkomen,
@@ -130,6 +147,7 @@ export default function InschrijfForm({
         inkomen: "",
         gezin: "",
         voorkeur: voorkeurPreselect ?? "",
+        tweedeVoorkeur: "",
         message: "",
         agreed: false,
       });
@@ -186,6 +204,31 @@ export default function InschrijfForm({
             {intro}
           </Reveal>
 
+          {wegwijzer ? (
+            /* Launchmodus: zelfde sectie en witruimteritme, maar in plaats
+               van het formulier één duidelijke route naar de woningzoeker. */
+            <Reveal delay={0.25}>
+              <a
+                href="#aanbod"
+                onClick={(e) => {
+                  e.preventDefault();
+                  document
+                    .getElementById("aanbod")
+                    ?.scrollIntoView({ behavior: "smooth", block: "start" });
+                }}
+                /* ml volgt de optische inspringing van de introtekst erboven
+                   (het formulier begon op de kolomrand omdat zijn veldlijnen
+                   daar lopen; een losse pill moet op de tekstkantlijn staan).
+                   mt = de 32px die het design overal tussen een tekst en een
+                   direct volgende pill hanteert (statement → "Bekijk het
+                   aanbod", begeleiding → "Contact opnemen"), niet de 74px
+                   die het formulier tot zijn eerste veldlijn had. */
+                className="pill-hover mt-[2.222vw] ml-[0.625vw] inline-flex items-center h-[2.5vw] bg-green text-off-white no-underline rounded-full px-[1.319vw] font-heading font-normal text-[0.972vw] leading-[1.201vw] tracking-[-0.019vw] max-lg:mt-8 max-lg:ml-0 max-lg:h-[44px] max-lg:px-5 max-lg:text-[14px] max-lg:leading-normal"
+              >
+                Bekijk de beschikbare woningen
+              </a>
+            </Reveal>
+          ) : (
           <Reveal delay={0.25}>
           <form onSubmit={handleSubmit} className="mt-[5.139vw] max-w-[46.944vw] max-lg:mt-8 max-lg:max-w-none">
             {/* Voorkeursveld tussen twee lijnen, zoals in het design; alleen
@@ -204,6 +247,30 @@ export default function InschrijfForm({
               >
                 <option value="">{voorkeurLabel}</option>
                 {voorkeurOpties.map((optie) => (
+                  <option key={optie} value={optie}>
+                    {optie}
+                  </option>
+                ))}
+              </select>
+              <ChevronIcon className="pointer-events-none absolute right-0 top-1/2 -translate-y-1/2 w-[1.528vw] h-auto text-off-black max-lg:w-[13px]" />
+            </div>
+            ) : null}
+
+            {/* Tweede voorkeur (optioneel): alle woningen van het project,
+                zodat een alternatief opgegeven kan worden als de eerste keuze
+                vergeven is. Alleen border-b: de bovenlijn is de onderlijn van
+                het voorkeursveld erboven. */}
+            {tweedeVoorkeurOpties?.length ? (
+            <div className="relative border-b border-off-black pt-[1.736vw] pb-[1.847vw] max-lg:py-3">
+              <select
+                name="tweedeVoorkeur"
+                aria-label="Tweede voorkeur (optioneel)"
+                value={form.tweedeVoorkeur}
+                onChange={(e) => set("tweedeVoorkeur", e.target.value)}
+                className="block w-full h-[1.208vw] appearance-none bg-transparent font-body font-medium text-[1.042vw] leading-[1.208vw] text-off-black outline-none focus-visible:shadow-[0_1px_0_0_currentColor] cursor-pointer max-lg:h-11 max-lg:text-[16px] max-lg:leading-normal"
+              >
+                <option value="">Tweede voorkeur (optioneel)</option>
+                {tweedeVoorkeurOpties.map((optie) => (
                   <option key={optie} value={optie}>
                     {optie}
                   </option>
@@ -375,6 +442,7 @@ export default function InschrijfForm({
             ) : null}
           </form>
           </Reveal>
+          )}
         </div>
       </div>
     </section>

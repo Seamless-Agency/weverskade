@@ -69,6 +69,12 @@ export const formSubmission = defineType({
       type: 'string',
     }),
     defineField({
+      name: 'secondChoice',
+      title: 'Tweede voorkeur',
+      type: 'string',
+      readOnly: true,
+    }),
+    defineField({
       name: 'projectName',
       title: 'Projectnaam',
       type: 'string',

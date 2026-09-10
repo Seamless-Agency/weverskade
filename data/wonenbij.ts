@@ -118,6 +118,12 @@ export interface WonenBijProject {
    */
   aliasSlugs?: string[];
   naam: string;
+  /**
+   * Straatnaam voor volledige adressen bij huisnummers ("Taanschuurkade 160").
+   * Valt terug op de projectnaam; apart veld omdat de straat bij toekomstige
+   * projecten (The New Citizen) niet gelijk is aan de projectnaam.
+   */
+  straatnaam?: string;
   plaats: string;
   heroImage: string;
   // Sectie-content is optioneel: een project zonder eigen data voor een
@@ -1257,6 +1263,15 @@ const taanschuurkadePlanning: PlanningFase[] = [
   },
 ];
 
+/**
+ * Launchmodus (besluit Vivianne, call 05-09): inschrijven kan alleen op een
+ * specifieke woning via de woningzoeker ("tweestapsraket"). Het algemene
+ * inschrijfformulier op de projectpagina maakt dan plaats voor een wegwijzer
+ * naar het aanbod. Alleen van kracht bij projecten mét woningzoeker; het
+ * formulier zelf blijft als draft in de code — vlag op false en het is terug.
+ */
+export const inschrijvenViaWoning = true;
+
 export const demoWonenBijProjecten: WonenBijProject[] = [
   {
     slug: "taanschuurkade",
@@ -1265,6 +1280,7 @@ export const demoWonenBijProjecten: WonenBijProject[] = [
     // altijd op de volledige woningzoeker uitkomen.
     aliasSlugs: ["taanschuur-appartementen-maasluis"],
     naam: "Taanschuurkade",
+    straatnaam: "Taanschuurkade",
     plaats: "Maassluis",
     // Sfeerbeeld van de entree (Higgsfield). Het brede voorgevelbeeld toont
     // ook torens 1/2 (geen Taanschuurkade); Vivianne wil dat beeld ingezoomd

@@ -18,7 +18,7 @@ import {
 import { usePageNavigation } from "@/hooks/usePageNavigation";
 import { useInView } from "@/hooks/useInView";
 import GebouwMap from "@/components/GebouwMap";
-import type { WonenBijProject } from "@/data/wonenbij";
+import { inschrijvenViaWoning, type WonenBijProject } from "@/data/wonenbij";
 import {
   EASE,
   HeroParallax,
@@ -655,17 +655,32 @@ export default function WonenBijProjectPage({
 
       {project.faq?.length ? <FaqSection items={project.faq} /> : null}
 
-      {/* Bewust statisch (geen scroll-reveal) voor ritme tussen de secties. */}
+      {/* Bewust statisch (geen scroll-reveal) voor ritme tussen de secties.
+          Launchmodus (inschrijvenViaWoning) bij projecten mét woningzoeker:
+          wegwijzer naar het aanbod i.p.v. het algemene formulier, zodat
+          inschrijven altijd op een specifieke woning gebeurt. */}
       <Statisch>
-      <InschrijfForm
-        label="Beschikbaarheid"
-        heading="Interesse in dit project?"
-        intro="Schrijf je vrijblijvend in en laat je gegevens achter. We houden je op de hoogte van de beschikbaarheid en de vervolgstappen."
-        projectName={project.naam}
-        projectSlug={project.slug}
-        voorkeurOpties={project.woningTypes.map((t) => t.naam)}
-        voorkeurLabel="Selecteer voorkeurstype woning"
-      />
+      {inschrijvenViaWoning && project.woningTypes.length ? (
+        <InschrijfForm
+          wegwijzer
+          label="Beschikbaarheid"
+          heading="Interesse in dit project?"
+          intro="Inschrijven doe je op een specifieke woning. Bekijk het actuele aanbod, kies de woning die bij je past en schrijf je daar vrijblijvend op in."
+          projectName={project.naam}
+          projectSlug={project.slug}
+          voorkeurOpties={[]}
+        />
+      ) : (
+        <InschrijfForm
+          label="Beschikbaarheid"
+          heading="Interesse in dit project?"
+          intro="Schrijf je vrijblijvend in en laat je gegevens achter. We houden je op de hoogte van de beschikbaarheid en de vervolgstappen."
+          projectName={project.naam}
+          projectSlug={project.slug}
+          voorkeurOpties={project.woningTypes.map((t) => t.naam)}
+          voorkeurLabel="Selecteer voorkeurstype woning"
+        />
+      )}
       </Statisch>
     </section>
   );
