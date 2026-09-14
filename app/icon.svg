@@ -1,6 +1,9 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
   <rect width="512" height="512" fill="#848F71"/>
-  <g transform="translate(118.5 159) scale(4.5)">
-    <path fill="#F7F5F0" d="M53.8613 0L46.56 25.6671L44.3119 33.7945L41.8162 25.6671L34.0763 0H27.0244L19.2844 25.6671L16.7888 33.7945L14.5425 25.6671L7.23939 0H0L13.2319 43.0839H20.2219L27.8362 18.1493L30.5813 9.22704L33.2662 18.2117L40.8806 43.0839H47.8706L61.1025 0H53.8613Z"/>
-  </g>
+  <!-- Weverskade-beeldmerk (zelfde glyph als de menuknop), gecentreerd via een
+       geneste viewBox die precies om de twee balken sluit. -->
+  <svg x="88" y="88" width="336" height="336" viewBox="8.0437 5.81535 43.247 37.80975" fill="#F7F5F0">
+    <path d="M8.0437 28.4972L24.78 43.6251H51.2907V36.0911H24.78L8.0437 20.9632V28.4972Z"/>
+    <path d="M8.0437 5.81535V13.3493H34.5544L51.2907 28.4972V20.9432L34.5544 5.81535H8.0437Z"/>
+  </svg>
 </svg>
