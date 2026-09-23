@@ -272,6 +272,15 @@ export const project = defineType({
       initialValue: false,
     }),
     defineField({
+      name: 'wonenBijHero',
+      title: 'Hero afbeelding (wonen bij)',
+      type: 'image',
+      group: 'wonenbij',
+      options: { hotspot: true },
+      description:
+        'Eigen herobeeld voor de wonen-bij pagina. Leeg gelaten? Dan gebruikt de pagina de algemene "Hero afbeelding" onder Media, die ook op de gebouwpagina van weverskade.com staat.',
+    }),
+    defineField({
       name: 'wonenBijIntro',
       title: 'Introtekst ("Over het project")',
       type: 'text',
@@ -468,7 +477,8 @@ export const project = defineType({
       type: 'image',
       group: 'media',
       options: { hotspot: true },
-      description: 'Wordt gebruikt als er geen Hero video URL is ingevuld.',
+      description:
+        'Wordt gebruikt als er geen Hero video URL is ingevuld. Let op: staat op de gebouwpagina van weverskade.com; de wonen-bij pagina heeft onder "Wonen bij pagina" een eigen hero-veld.',
     }),
     defineField({
       name: 'heroVideoUrl',

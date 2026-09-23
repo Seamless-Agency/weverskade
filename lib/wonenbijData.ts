@@ -238,7 +238,14 @@ function fromSanity(raw: any): WonenBijProject | null {
     slug: raw.slug,
     naam,
     plaats: raw.location ?? fallback.plaats ?? "",
-    heroImage: sanityImageUrl(raw.heroImage, fallback.heroImage ?? ""),
+    // Eigen wonen-bij hero gaat vóór; daarna de code-hero van het project;
+    // pas daarna de gedeelde `heroImage` (die ook de gebouwpagina van de
+    // hoofdsite voedt). Zo verandert een hero-upload voor wonen-bij nooit
+    // ongemerkt de live gebouwpagina, en andersom.
+    heroImage: sanityImageUrl(
+      raw.wonenBijHero,
+      fallback.heroImage ?? sanityImageUrl(raw.heroImage, "")
+    ),
     intro:
       raw.wonenBijIntro ??
       fallback.intro ??
@@ -327,8 +334,27 @@ export async function getWonenBijProjectData(
     params: { slug },
     tags: ["project"],
   });
+  if (raw) return fromSanity(raw) ?? getWonenBijProject(slug) ?? null;
 
-  return fromSanity(raw) ?? getWonenBijProject(slug) ?? null;
+  // Niet gevonden onder deze slug: het Sanity-document kan nog onder een
+  // alias-slug staan (Taanschuurkade heet in het CMS
+  // "taanschuur-appartementen-maasluis"). Zoek dan via de aliassen van het
+  // code-project, maar houd de canonieke slug aan zodat alle URL's op de
+  // pagina (typepagina's, canonicals) ongewijzigd blijven.
+  const codeProject = getWonenBijProject(slug);
+  for (const alias of codeProject?.aliasSlugs ?? []) {
+    const viaAlias = await sanityFetch<any>({
+      query: WONENBIJ_PROJECT_BY_SLUG_QUERY,
+      params: { slug: alias },
+      tags: ["project"],
+    });
+    if (viaAlias) {
+      const gemapt = fromSanity({ ...viaAlias, slug });
+      if (gemapt) return gemapt;
+    }
+  }
+
+  return codeProject ?? null;
 }
 
 export async function getWonenBijProjectSlugs(): Promise<string[]> {
