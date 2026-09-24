@@ -190,17 +190,19 @@ export default function WonenBijProjectPage({
           when={intro}
           delay={0.55}
           y={14}
-          className="absolute right-[2.361vw] bottom-[2.292vw] font-heading font-normal text-[2.778vw] leading-[3.424vw] tracking-[-0.056vw] text-off-white max-lg:hidden"
+          className="absolute right-[2.361vw] bottom-[3.958vw] font-heading font-normal text-[2.778vw] leading-[3.424vw] tracking-[-0.056vw] text-off-white max-lg:hidden"
         >
           {project.plaats}
         </Reveal>
-        {/* Disclaimer (comment 41): klein, rechtsonder onder de plaats. */}
+        {/* Disclaimer (comment 41): klein, rechtsonder op de onderrand van de
+            plaats (Figma 33px); de plaats schuift 24px omhoog zodat de groep
+            dezelfde onderrand houdt als de titel. */}
         <Reveal
           as="p"
           when={intro}
           delay={0.7}
           y={10}
-          className="absolute right-[2.361vw] bottom-[0.833vw] font-body font-medium text-[0.764vw] leading-[1vw] tracking-[-0.015vw] text-off-white/70 max-lg:hidden"
+          className="absolute right-[2.361vw] bottom-[2.292vw] max-w-[34.722vw] text-right font-body font-medium text-[0.833vw] leading-[1.111vw] tracking-[-0.017vw] text-off-white/75 max-lg:hidden"
         >
           {project.disclaimer || STANDAARD_DISCLAIMER}
         </Reveal>
@@ -651,27 +653,30 @@ export default function WonenBijProjectPage({
                 site-instellingen. */}
             {socialKanalen.length ? (
               <Reveal
+                as="p"
                 delay={0.1}
-                className="mt-[2.917vw] flex flex-wrap items-center gap-x-[1.111vw] gap-y-[0.833vw] max-lg:mt-8 max-lg:gap-x-4 max-lg:gap-y-3"
+                className="mt-[2.917vw] font-body font-medium text-[1.111vw] leading-[1.667vw] tracking-[-0.022vw] text-off-black max-lg:mt-8 max-lg:text-[15px] max-lg:leading-[22px]"
               >
-                <p className="font-body font-medium text-[1.111vw] leading-[1.667vw] tracking-[-0.022vw] text-off-black max-lg:text-[15px] max-lg:leading-[22px]">
-                  Blijf op de hoogte van de laatste ontwikkelingen via
-                </p>
-                <ul className="flex items-center gap-[0.833vw] list-none m-0 p-0 max-lg:gap-3">
+                {/* Harde spatie: "via" en de iconen blijven bij elkaar, ook
+                    als de regel op mobiel afbreekt. */}
+                Blijf op de hoogte van de laatste ontwikkelingen{" "}
+                <span className="whitespace-nowrap">
+                  via{" "}
+                  <span className="inline-flex items-center gap-[0.556vw] align-middle ml-[0.139vw] max-lg:gap-2 max-lg:ml-0.5">
                   {socialKanalen.map(({ label, href, Icoon }) => (
-                    <li key={label}>
-                      <a
-                        href={href}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        aria-label={`${label} van Weverskade (opent in een nieuw venster)`}
-                        className="flex items-center justify-center size-[2.222vw] text-off-black transition-opacity duration-300 hover:opacity-60 max-lg:size-[36px]"
-                      >
-                        <Icoon className="size-[1.528vw] max-lg:size-[22px]" />
-                      </a>
-                    </li>
+                    <a
+                      key={label}
+                      href={href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={`${label} van Weverskade (opent in een nieuw venster)`}
+                      className="inline-flex items-center justify-center text-off-black transition-opacity duration-300 hover:opacity-60"
+                    >
+                      <Icoon className="size-[1.528vw] max-lg:size-[22px]" />
+                    </a>
                   ))}
-                </ul>
+                  </span>
+                </span>
               </Reveal>
             ) : null}
           </div>

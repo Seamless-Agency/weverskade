@@ -312,7 +312,11 @@ export default function WonenBijHeader({
           items={[
             // Het paneel heeft onderin al "Home"; niet-ankerlinks dus niet dubbel.
             ...anchors!.filter((a) => a.href.startsWith("#")),
-            ...(ctaLabel && ctaHref ? [{ label: ctaLabel, href: ctaHref }] : []),
+            // De pill alleen als extra regel als er nog geen anker naar
+            // hetzelfde doel staat (landing: "Aanbod" is al #aanbod).
+            ...(ctaLabel && ctaHref && !anchors!.some((a) => a.href === ctaHref)
+              ? [{ label: ctaLabel, href: ctaHref }]
+              : []),
           ]}
           onNavigate={menuNavigate}
         />

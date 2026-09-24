@@ -199,14 +199,6 @@ export const wonenBijLanding = defineType({
         'Tekstblok onder de titel, bijvoorbeeld "Nu in de verhuur: ..." of later een algemene aanbodtekst. Gebruik een lege regel voor een nieuwe alinea.',
     }),
     defineField({
-      name: 'aanbodIntroFoto',
-      title: 'Foto bij de introtekst',
-      type: 'image',
-      group: 'overzichten',
-      options: { hotspot: true },
-      description: 'Optioneel, bijvoorbeeld een beeld van het complex.',
-    }),
-    defineField({
       name: 'projectenTitel',
       title: 'Titel projectoverzicht',
       type: 'string',
@@ -229,8 +221,15 @@ export const wonenBijLanding = defineType({
       group: 'contact',
     }),
     defineField({
+      name: 'contactTitel',
+      title: 'Kop boven het formulier',
+      type: 'string',
+      group: 'contact',
+      description: 'Kort houden, bijvoorbeeld "Heb je een algemene vraag?".',
+    }),
+    defineField({
       name: 'contactTekst',
-      title: 'Tekst boven het formulier',
+      title: 'Tekst onder de kop',
       type: 'text',
       rows: 3,
       group: 'contact',

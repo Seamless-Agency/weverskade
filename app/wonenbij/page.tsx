@@ -10,7 +10,7 @@ import {
   WONENBIJ_LANDING_QUERY,
   FOOTER_QUERY,
 } from "@/sanity/lib/queries";
-import { sanityImageUrl } from "@/sanity/lib/helpers";
+import { sanityImageUrl, sanityImageUrlSized } from "@/sanity/lib/helpers";
 import { wonenbijNaam } from "@/lib/wonenbijData";
 import { wonenbijUrl } from "@/lib/siteConfig";
 import {
@@ -43,8 +43,9 @@ const tekst = (v: unknown): string | undefined =>
 function landingUitSanity(raw: any): WonenBijLandingData {
   if (!raw) return {};
   return {
+    // Poster onder de video: op 1920 breed, niet het originele bestand.
     heroImage: raw.heroImage?.asset
-      ? sanityImageUrl(raw.heroImage, landingDefaults.heroImage)
+      ? sanityImageUrlSized(raw.heroImage, landingDefaults.heroImage, 1920)
       : undefined,
     // null/undefined = niet ingevuld → standaardvideo; lege string = geen video
     heroVideoUrl:
@@ -75,12 +76,10 @@ function landingUitSanity(raw: any): WonenBijLandingData {
       .map((k: any) => ({ label: k.label, waarde: tekst(k.waarde) ?? "" })),
     aanbodTitel: tekst(raw.aanbodTitel),
     aanbodIntro: tekst(raw.aanbodIntro),
-    aanbodIntroFoto: raw.aanbodIntroFoto?.asset
-      ? sanityImageUrl(raw.aanbodIntroFoto, landingDefaults.aanbodIntroFoto)
-      : undefined,
     projectenTitel: tekst(raw.projectenTitel),
     projectenIntro: tekst(raw.projectenIntro),
     contactLabel: tekst(raw.contactLabel),
+    contactTitel: tekst(raw.contactTitel),
     contactTekst: tekst(raw.contactTekst),
   };
 }

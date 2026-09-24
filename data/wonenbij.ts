@@ -1509,19 +1509,20 @@ export const landingDefaults = {
     },
   ] as KwaliteitItem[],
   aanbodTitel: "Beschikbare woningen",
-  // Comment 33: inleidend blok boven het aanbod, later om te zetten naar een
-  // algemene aanbodtekst; foto optioneel.
+  // Comment 33: inleidende tekst boven het aanbod, later om te zetten naar
+  // een algemene aanbodtekst.
   aanbodIntro:
     "Nu in de verhuur: appartementencomplex De Taanschuurkade in Maassluis. Bekijk het actuele aanbod en schrijf je in voor je favoriete woning.",
-  aanbodIntroFoto: "/images/wonenbij/vogelvlucht.jpg",
   projectenTitel: "Onze woonprojecten",
   // Comment 30
   projectenIntro:
     "Elk project heeft een eigen karakter, passend bij de locatie en de mensen die er wonen. Van binnenstedelijke ontwikkelingen tot woongebieden aan het water.\n\nBekijk onze projecten en ontdek de unieke kenmerken, de beschikbare woningen en de laatste ontwikkelingen.",
   contactLabel: "Neem contact op",
-  // Comment 31
+  // Comment 31: korte kop, de instructiezin als gewone tekst eronder
+  // (vier regels kop in 54px was te zwaar, design-review 24-09).
+  contactTitel: "Heb je een algemene vraag?",
   contactTekst:
-    "Heb je een algemene vraag? Vul onderstaand formulier in, dan nemen we zo snel mogelijk contact met je op.",
+    "Vul onderstaand formulier in, dan nemen we zo snel mogelijk contact met je op.",
 };
 
 export const demoLandingProjecten: LandingProjectKaart[] = [

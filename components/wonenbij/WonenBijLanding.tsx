@@ -60,10 +60,10 @@ export interface WonenBijLandingData {
   kwaliteitItems?: KwaliteitItem[];
   aanbodTitel?: string;
   aanbodIntro?: string;
-  aanbodIntroFoto?: string;
   projectenTitel?: string;
   projectenIntro?: string;
   contactLabel?: string;
+  contactTitel?: string;
   contactTekst?: string;
   aanbod?: AanbodKaart[];
   projecten?: LandingProjectKaart[];
@@ -103,9 +103,9 @@ export default function WonenBijLanding({ data }: { data?: WonenBijLandingData }
     : d.kwaliteitItems;
   const aanbodTitel = of(data?.aanbodTitel, d.aanbodTitel);
   const aanbodIntro = of(data?.aanbodIntro, d.aanbodIntro);
-  const aanbodIntroFoto = of(data?.aanbodIntroFoto, d.aanbodIntroFoto);
   const projectenTitel = of(data?.projectenTitel, d.projectenTitel);
   const projectenIntro = of(data?.projectenIntro, d.projectenIntro);
+  const contactTitel = of(data?.contactTitel, d.contactTitel);
   const contactTekst = of(data?.contactTekst, d.contactTekst);
   const contactLabel = of(data?.contactLabel, d.contactLabel);
   const aanbod = data?.aanbod ?? [];
@@ -190,7 +190,7 @@ export default function WonenBijLanding({ data }: { data?: WonenBijLandingData }
               <a
                 href={cta.href}
                 onClick={(e) => scrollNaar(e, cta.href)}
-                className="pill-hover mt-[2.222vw] inline-flex items-center justify-center h-[2.847vw] px-[1.944vw] bg-green text-off-white no-underline rounded-full font-heading font-normal text-[1.181vw] tracking-[-0.024vw] whitespace-nowrap max-lg:mt-4 max-lg:h-auto max-lg:px-6 max-lg:py-2.5 max-lg:text-[15px]"
+                className="pill-hover mt-[2.222vw] inline-flex items-center justify-center h-[2.847vw] px-[1.944vw] bg-green text-off-white no-underline rounded-full font-heading font-normal text-[1.181vw] tracking-[-0.024vw] lg:whitespace-nowrap max-lg:mt-5 max-lg:h-auto max-lg:px-6 max-lg:py-2.5 max-lg:text-[15px]"
               >
                 {cta.knop}
               </a>
@@ -320,29 +320,17 @@ export default function WonenBijLanding({ data }: { data?: WonenBijLandingData }
           <h2 className="ml-[0.347vw] font-heading font-normal text-[4.931vw] leading-[6.076vw] tracking-[-0.099vw] text-off-black max-lg:ml-0 max-lg:text-[36px] max-lg:leading-[1.1] max-lg:tracking-[-0.72px]">
             <RevealWords text={aanbodTitel} />
           </h2>
-          {/* Introblok (comment 33): tekst links in het projecten-intro-ritme,
-              optionele foto rechts, uitgelijnd op de derde kaartkolom. */}
+          {/* Introtekst (comment 33), in hetzelfde ritme als de intro onder
+              "Onze woonprojecten". Een foto erbij hing los van het grid en
+              werd bewust weggelaten (Robin 24-09). */}
           {aanbodIntro ? (
-            <div className="mt-[2.222vw] ml-[0.347vw] grid grid-cols-[47.153vw_1fr] gap-x-[4.167vw] items-start max-lg:mt-4 max-lg:ml-0 max-lg:grid-cols-1 max-lg:gap-y-6">
-              <Reveal
-                as="p"
-                delay={0.1}
-                className="whitespace-pre-line font-body font-medium text-[1.597vw] leading-[2.153vw] tracking-[-0.032vw] text-off-black max-lg:text-[17px] max-lg:leading-[24px]"
-              >
-                {aanbodIntro}
-              </Reveal>
-              {aanbodIntroFoto ? (
-                <RevealMedia className="relative justify-self-end w-[30.764vw] aspect-[443/280] overflow-hidden max-lg:w-full max-lg:aspect-[16/10]">
-                  <Image
-                    src={aanbodIntroFoto}
-                    alt=""
-                    fill
-                    sizes="(max-width: 1024px) 100vw, 44vw"
-                    className="object-cover"
-                  />
-                </RevealMedia>
-              ) : null}
-            </div>
+            <Reveal
+              as="p"
+              delay={0.1}
+              className="mt-[2.222vw] ml-[0.347vw] max-w-[47.153vw] whitespace-pre-line font-body font-medium text-[1.597vw] leading-[2.153vw] tracking-[-0.032vw] text-off-black max-lg:mt-4 max-lg:ml-0 max-lg:max-w-none max-lg:text-[17px] max-lg:leading-[24px]"
+            >
+              {aanbodIntro}
+            </Reveal>
           ) : null}
           <div className="mt-[2.431vw] grid grid-cols-3 gap-x-[1.389vw] gap-y-[1.389vw] max-lg:mt-6 max-lg:grid-cols-1 max-lg:gap-y-5">
             {aanbod.map((kaart, i) => {
@@ -504,7 +492,7 @@ export default function WonenBijLanding({ data }: { data?: WonenBijLandingData }
 
       {/* Bewust statisch (geen scroll-reveal) voor ritme tussen de secties. */}
       <Statisch>
-        <ContactSectie tekst={contactTekst} label={contactLabel} />
+        <ContactSectie titel={contactTitel} tekst={contactTekst} label={contactLabel} />
       </Statisch>
     </section>
   );
@@ -512,7 +500,15 @@ export default function WonenBijLanding({ data }: { data?: WonenBijLandingData }
 
 /* ─── Contactformulier (zelfde velden als het bestaande wonen_bij-formulier) ── */
 
-function ContactSectie({ tekst, label }: { tekst: string; label: string }) {
+function ContactSectie({
+  titel,
+  tekst,
+  label,
+}: {
+  titel: string;
+  tekst: string;
+  label: string;
+}) {
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -583,9 +579,22 @@ function ContactSectie({ tekst, label }: { tekst: string; label: string }) {
           {label}
         </Reveal>
         <div className="flex-1 max-lg:w-full">
-          <h2 className="font-body font-medium text-[3.75vw] leading-[3.681vw] text-off-black max-w-[62.569vw] mb-[4.653vw] max-lg:text-[28px] max-lg:leading-[32px] max-lg:max-w-none max-lg:mb-6">
-            <RevealWords text={tekst} stagger={0.04} />
+          <h2 className="font-body font-medium text-[3.75vw] leading-[3.681vw] text-off-black max-w-[62.569vw] max-lg:text-[28px] max-lg:leading-[32px] max-lg:max-w-none">
+            <RevealWords text={titel} stagger={0.04} />
           </h2>
+          {/* Instructiezin (comment 31) als gewone tekst; zonder tekst blijft
+              de oorspronkelijke kop→formulier-afstand staan. */}
+          {tekst ? (
+            <Reveal
+              as="p"
+              delay={0.1}
+              className="mt-[2.222vw] mb-[4.653vw] max-w-[47.153vw] whitespace-pre-line font-body font-medium text-[1.597vw] leading-[2.153vw] tracking-[-0.032vw] text-off-black max-lg:mt-4 max-lg:mb-6 max-lg:max-w-none max-lg:text-[17px] max-lg:leading-[24px]"
+            >
+              {tekst}
+            </Reveal>
+          ) : (
+            <div className="mb-[4.653vw] max-lg:mb-6" />
+          )}
 
           <Reveal delay={0.2}>
           <form onSubmit={handleSubmit} className="ml-[0.208vw] max-w-[46.944vw] max-lg:ml-0 max-lg:max-w-none">
