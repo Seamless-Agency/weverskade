@@ -18,7 +18,12 @@ import {
 import { usePageNavigation } from "@/hooks/usePageNavigation";
 import { useInView } from "@/hooks/useInView";
 import GebouwMap from "@/components/GebouwMap";
-import { inschrijvenViaWoning, type WonenBijProject } from "@/data/wonenbij";
+import {
+  STANDAARD_DISCLAIMER,
+  inschrijvenViaWoning,
+  type NieuwsKaart,
+  type WonenBijProject,
+} from "@/data/wonenbij";
 import {
   EASE,
   HeroParallax,
@@ -33,12 +38,7 @@ import {
   useReducedMotion,
 } from "@/components/wonenbij/motion";
 
-export interface NieuwsKaart {
-  slug: string;
-  titel: string;
-  datum: string;
-  image?: string;
-}
+export type { NieuwsKaart };
 
 /** Social-kanalen onder het nieuws; alleen ingevulde kanalen worden getoond. */
 export interface SocialLinks {
@@ -47,8 +47,11 @@ export interface SocialLinks {
   facebook?: string;
 }
 
+// "Home" (comment 39) brengt je terug naar de landingspagina; "Over het
+// project" (comment 26) i.p.v. "Over".
 const ANCHORS = [
-  { label: "Over", href: "#over" },
+  { label: "Home", href: "/wonenbij" },
+  { label: "Over het project", href: "#over" },
   { label: "Aanbod", href: "#aanbod" },
   { label: "Locatie", href: "#locatie" },
   { label: "Planning", href: "#planning" },
@@ -107,6 +110,8 @@ export default function WonenBijProjectPage({
         return Boolean(project.downloads?.length);
       case "#faq":
         return Boolean(project.faq?.length);
+      case "#nieuws":
+        return nieuws.length > 0;
       default:
         return true;
     }
@@ -169,6 +174,16 @@ export default function WonenBijProjectPage({
           <h1 className="font-body font-medium text-[7.361vw] leading-[8.542vw] tracking-[-0.147vw] text-off-white max-lg:text-[44px] max-lg:leading-[1.05] max-lg:tracking-[-0.88px]">
             <RevealWords text={project.naam} when={intro} delay={0.25} duration={1.1} />
           </h1>
+          {/* Disclaimer (comment 41), op mobiel onder de titel. */}
+          <Reveal
+            as="p"
+            when={intro}
+            delay={0.7}
+            y={10}
+            className="hidden max-lg:block max-lg:mt-3 font-body font-medium text-[11px] leading-[15px] text-off-white/70"
+          >
+            {project.disclaimer || STANDAARD_DISCLAIMER}
+          </Reveal>
         </div>
         <Reveal
           as="p"
@@ -178,6 +193,16 @@ export default function WonenBijProjectPage({
           className="absolute right-[2.361vw] bottom-[2.292vw] font-heading font-normal text-[2.778vw] leading-[3.424vw] tracking-[-0.056vw] text-off-white max-lg:hidden"
         >
           {project.plaats}
+        </Reveal>
+        {/* Disclaimer (comment 41): klein, rechtsonder onder de plaats. */}
+        <Reveal
+          as="p"
+          when={intro}
+          delay={0.7}
+          y={10}
+          className="absolute right-[2.361vw] bottom-[0.833vw] font-body font-medium text-[0.764vw] leading-[1vw] tracking-[-0.015vw] text-off-white/70 max-lg:hidden"
+        >
+          {project.disclaimer || STANDAARD_DISCLAIMER}
         </Reveal>
       </div>
 

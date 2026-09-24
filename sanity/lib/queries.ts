@@ -142,6 +142,8 @@ export const WONENBIJ_PROJECT_BY_SLUG_QUERY = `*[_type == "project" && slug.curr
   planning[]{ periode, titel, omschrijving, verwachtingen, actief },
   downloads[]{ titel, "url": bestand.asset->url },
   faq[]{ vraag, antwoord },
+  wonenBijDisclaimer,
+  "wonenBijNieuws": wonenBijNieuws[]->{ _id, title, "slug": slug.current, date, heroImage },
   woningTypes[]{
     naam,
     "slug": slug.current,
@@ -205,6 +207,33 @@ export const WONENBIJ_PROJECT_SLUGS_QUERY = `*[_type == "project" && (wonenBijEn
 
 // One-pager: projectkaarten + het geaggregeerde aanbod (alle woningtypes
 // van alle wonen-bij projecten).
+/* Singleton van de wonen-bij landingspagina; elk veld optioneel (code-fallback). */
+export const WONENBIJ_LANDING_QUERY = `*[_type == "wonenBijLanding"][0]{
+  heroVideoUrl,
+  heroImage,
+  heroTitel,
+  heroKnop,
+  introStatement,
+  introCtas[]{ tekst, knop, doel },
+  overTitel,
+  overFoto,
+  overTekst,
+  overFoto2,
+  overTekstRechts,
+  overKnop,
+  kwaliteitTitel,
+  kwaliteitIntro,
+  kwaliteitItems[]{ label, waarde },
+  aanbodTitel,
+  aanbodIntro,
+  aanbodIntroFoto,
+  projectenTitel,
+  projectenIntro,
+  contactLabel,
+  contactTekst,
+  seoDescription
+}`
+
 export const WONENBIJ_LANDING_PROJECTS_QUERY = `*[_type == "project" && showInWonen == true] | order(orderRank asc) {
   name,
   "slug": slug.current,

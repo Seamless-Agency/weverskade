@@ -1,9 +1,13 @@
-import WonenBijLanding from "@/components/wonenbij/WonenBijLanding";
+import type { Metadata } from "next";
+import WonenBijLanding, {
+  type WonenBijLandingData,
+} from "@/components/wonenbij/WonenBijLanding";
 import Footer from "@/components/Footer";
 import FooterReveal from "@/components/FooterReveal";
 import { sanityFetch } from "@/sanity/lib/fetch";
 import {
   WONENBIJ_LANDING_PROJECTS_QUERY,
+  WONENBIJ_LANDING_QUERY,
   FOOTER_QUERY,
 } from "@/sanity/lib/queries";
 import { sanityImageUrl } from "@/sanity/lib/helpers";
@@ -12,33 +16,112 @@ import { wonenbijUrl } from "@/lib/siteConfig";
 import {
   demoAanbod,
   demoLandingProjecten,
+  getWonenBijProjectByAlias,
+  landingDefaults,
   type AanbodKaart,
   type LandingProjectKaart,
 } from "@/data/wonenbij";
 
-export const metadata = {
-  title: "Wonen bij Weverskade",
-  description:
-    "Van stedelijke appartementen tot woonconcepten met extra service: kwaliteit, gebruiksgemak en een prettige leefomgeving staan centraal binnen de projecten van Weverskade.",
-  alternates: { canonical: wonenbijUrl() },
-  openGraph: { images: ["/images/wonenbij/hero.png"] },
-};
+/**
+ * De Sanity-slug van een project kan een alias zijn van de canonieke
+ * wonen-bij slug (zie aliasSlugs in data/wonenbij.ts). Kaarten linken dan
+ * direct naar de canonieke URL in plaats van via de redirect op de
+ * projectpagina.
+ */
+function canoniekeSlug(sanitySlug: string): string {
+  return getWonenBijProjectByAlias(sanitySlug)?.slug ?? sanitySlug;
+}
+
+const tekst = (v: unknown): string | undefined =>
+  typeof v === "string" && v.trim() ? v : undefined;
+
+/**
+ * Teksten en beelden van de landing uit het singleton "wonenBijLanding".
+ * Ontbreekt het document of een veld, dan gebruikt de component de
+ * standaard uit data/wonenbij.ts; de pagina blijft dan exact gelijk.
+ */
+function landingUitSanity(raw: any): WonenBijLandingData {
+  if (!raw) return {};
+  return {
+    heroImage: raw.heroImage?.asset
+      ? sanityImageUrl(raw.heroImage, landingDefaults.heroImage)
+      : undefined,
+    // null/undefined = niet ingevuld → standaardvideo; lege string = geen video
+    heroVideoUrl:
+      typeof raw.heroVideoUrl === "string" ? raw.heroVideoUrl.trim() : undefined,
+    heroKnop: tekst(raw.heroKnop),
+    introStatement: tekst(raw.introStatement),
+    introCtas: (raw.introCtas ?? [])
+      .filter((c: any) => tekst(c?.knop) && tekst(c?.doel))
+      .map((c: any) => ({
+        tekst: tekst(c.tekst) ?? "",
+        knop: c.knop,
+        href: c.doel,
+      })),
+    overTitel: tekst(raw.overTitel),
+    overFoto: raw.overFoto?.asset
+      ? sanityImageUrl(raw.overFoto, landingDefaults.overFoto)
+      : undefined,
+    overTekst: tekst(raw.overTekst),
+    overFoto2: raw.overFoto2?.asset
+      ? sanityImageUrl(raw.overFoto2, landingDefaults.overFoto2)
+      : undefined,
+    overTekstRechts: tekst(raw.overTekstRechts),
+    overKnop: tekst(raw.overKnop),
+    kwaliteitTitel: tekst(raw.kwaliteitTitel),
+    kwaliteitIntro: tekst(raw.kwaliteitIntro),
+    kwaliteitItems: (raw.kwaliteitItems ?? [])
+      .filter((k: any) => tekst(k?.label))
+      .map((k: any) => ({ label: k.label, waarde: tekst(k.waarde) ?? "" })),
+    aanbodTitel: tekst(raw.aanbodTitel),
+    aanbodIntro: tekst(raw.aanbodIntro),
+    aanbodIntroFoto: raw.aanbodIntroFoto?.asset
+      ? sanityImageUrl(raw.aanbodIntroFoto, landingDefaults.aanbodIntroFoto)
+      : undefined,
+    projectenTitel: tekst(raw.projectenTitel),
+    projectenIntro: tekst(raw.projectenIntro),
+    contactLabel: tekst(raw.contactLabel),
+    contactTekst: tekst(raw.contactTekst),
+  };
+}
+
+export async function generateMetadata(): Promise<Metadata> {
+  const raw = await sanityFetch<any>({
+    query: WONENBIJ_LANDING_QUERY,
+    tags: ["wonenBijLanding"],
+  });
+  const landing = landingUitSanity(raw);
+  return {
+    title: "Wonen bij Weverskade",
+    description:
+      tekst(raw?.seoDescription) ??
+      landing.introStatement ??
+      landingDefaults.introStatement,
+    alternates: { canonical: wonenbijUrl() },
+    openGraph: { images: [landing.heroImage ?? landingDefaults.heroImage] },
+  };
+}
 
 export default async function WonenBijHome() {
-  const [projectsData, footerData] = await Promise.all([
+  const [projectsData, footerData, landingRaw] = await Promise.all([
     sanityFetch<any[]>({
       query: WONENBIJ_LANDING_PROJECTS_QUERY,
       tags: ["project"],
     }),
     sanityFetch<any>({ query: FOOTER_QUERY, tags: ["footer"] }),
+    sanityFetch<any>({
+      query: WONENBIJ_LANDING_QUERY,
+      tags: ["wonenBijLanding"],
+    }),
   ]);
+  const landing = landingUitSanity(landingRaw);
 
   let projecten: LandingProjectKaart[] = demoLandingProjecten;
   let aanbod: AanbodKaart[] = demoAanbod();
 
   if (projectsData?.length) {
     projecten = projectsData.map((p: any) => ({
-      slug: p.slug ?? "",
+      slug: canoniekeSlug(p.slug ?? ""),
       // CMS-namen zijn "Naam - Plaats"; de kaart toont de plaats al apart.
       naam: wonenbijNaam(p.name ?? "", p.location),
       plaats: p.location ?? "",
@@ -52,7 +135,7 @@ export default async function WonenBijHome() {
       (p.woningTypes ?? [])
         .filter((t: any) => t?.naam && t?.slug)
         .map((t: any) => ({
-          projectSlug: p.slug ?? "",
+          projectSlug: canoniekeSlug(p.slug ?? ""),
           projectNaam: p.name ?? "",
           plaats: p.location ?? "",
           typeSlug: t.slug,
@@ -83,7 +166,7 @@ export default async function WonenBijHome() {
 
   return (
     <>
-      <WonenBijLanding data={{ projecten, aanbod }} />
+      <WonenBijLanding data={{ ...landing, projecten, aanbod }} />
       {/* Nav-thema voor de wonen-bij kop: groen zodra de footer bovenin komt */}
       <div data-nav-theme="green">
         <FooterReveal>

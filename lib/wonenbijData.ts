@@ -9,7 +9,7 @@ import {
   WONENBIJ_PROJECT_BY_SLUG_QUERY,
   WONENBIJ_PROJECT_SLUGS_QUERY,
 } from "@/sanity/lib/queries";
-import { sanityImageUrl } from "@/sanity/lib/helpers";
+import { formatSanityDate, sanityImageUrl } from "@/sanity/lib/helpers";
 import {
   demoBegeleiding,
   demoWonenBijProjecten,
@@ -299,6 +299,17 @@ function fromSanity(raw: any): WonenBijProject | null {
           .map((item: any) => ({ titel: item.titel, url: item.url }))
       : fallback.downloads,
     faq: raw.faq?.length ? raw.faq : fallback.faq,
+    disclaimer: raw.wonenBijDisclaimer?.trim() || fallback.disclaimer,
+    nieuws: raw.wonenBijNieuws?.length
+      ? raw.wonenBijNieuws
+          .filter((a: any) => a?.slug && a?.title)
+          .map((a: any) => ({
+            slug: a.slug,
+            titel: a.title,
+            datum: formatSanityDate(a.date, ""),
+            image: sanityImageUrl(a.heroImage, "/images/wonenbij/nieuws-thumb.png"),
+          }))
+      : fallback.nieuws,
     // Types nooit van een ander project lenen: zonder eigen types is dit de
     // variant zonder woningzoeker/aanbod en 404'en de typepagina's.
     woningTypes: woningTypes.length ? woningTypes : (fallback.woningTypes ?? []),

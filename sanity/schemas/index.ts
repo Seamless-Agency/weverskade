@@ -26,6 +26,7 @@ import { portefeuillePage } from './singletons/portefeuillePage'
 import { wonenBijPage } from './singletons/wonenBijPage'
 import { nieuwsPageSettings } from './singletons/nieuwsPageSettings'
 import { werkenBijPage } from './singletons/werkenBijPage'
+import { wonenBijLanding } from './singletons/wonenBijLanding'
 
 export const schemaTypes = [
   // Objects
@@ -54,6 +55,7 @@ export const schemaTypes = [
   wonenBijPage,
   nieuwsPageSettings,
   werkenBijPage,
+  wonenBijLanding,
 ]
 
 export const singletonTypes = new Set([
@@ -67,4 +69,5 @@ export const singletonTypes = new Set([
   'wonenBijPage',
   'nieuwsPageSettings',
   'werkenBijPage',
+  'wonenBijLanding',
 ])

@@ -454,6 +454,23 @@ export const project = defineType({
       ],
     }),
     defineField({
+      name: 'wonenBijNieuws',
+      title: 'Nieuwsberichten op deze pagina',
+      description:
+        'Kies welke nieuwsberichten onder "Nieuws en updates" staan. Leeg gelaten? Dan toont de pagina automatisch alleen berichten die de projectnaam in de titel hebben.',
+      type: 'array',
+      group: 'wonenbij',
+      of: [{ type: 'reference', to: [{ type: 'nieuwsArtikel' }] }],
+    }),
+    defineField({
+      name: 'wonenBijDisclaimer',
+      title: 'Disclaimer bij de beelden',
+      description:
+        'Kleine regel onderin de hero. Leeg gelaten? Dan staat er "De getoonde beelden zijn impressies en kunnen afwijken van de werkelijkheid."',
+      type: 'string',
+      group: 'wonenbij',
+    }),
+    defineField({
       name: 'woningTypes',
       title: 'Woningtypes',
       description:

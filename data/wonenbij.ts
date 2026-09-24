@@ -155,6 +155,13 @@ export interface WonenBijProject {
   planning?: PlanningFase[];
   downloads?: DownloadItem[];
   faq?: FaqItem[];
+  /** Kleine regel onderin de hero (comment 41); leeg = standaardtekst. */
+  disclaimer?: string;
+  /**
+   * Door de redactie gekozen nieuwsberichten (CMS-referenties). Zonder
+   * selectie kiest de projectpagina zelf op projectnaam in de titel.
+   */
+  nieuws?: NieuwsKaart[];
   woningTypes: WoningType[];
   /** Render + overgetrokken woningen voor de woningzoeker-overlay. */
   render?: string;
@@ -165,6 +172,18 @@ export interface WonenBijProject {
   /** Meerdere gevelaanzichten (voor/achter); heeft voorrang op de losse render. */
   aanzichten?: Aanzicht[];
 }
+
+/** Kaart in "Nieuws en updates" op de projectpagina. */
+export interface NieuwsKaart {
+  slug: string;
+  titel: string;
+  datum: string;
+  image?: string;
+}
+
+/** Standaardtekst onder de hero van elke projectpagina (comment 41). */
+export const STANDAARD_DISCLAIMER =
+  "De getoonde beelden zijn impressies en kunnen afwijken van de werkelijkheid.";
 
 export interface BegeleidingSectie {
   label: string;
@@ -1434,35 +1453,75 @@ export interface KwaliteitItem {
   waarde: string;
 }
 
+/* Landingteksten: MarkUp-feedback Vivianne 21-09 (comments 24-32) verwerkt
+ * 24-09. Tekstwijzigingen zijn haar kopij; "u" is naar "je" gezet omdat de
+ * hele omgeving in de je-vorm staat. */
 export const landingDefaults = {
   heroImage: "/images/wonenbij/hero.png",
+  // Zelfde showreel als de hero van de hoofdsite (comment 24). Een montage
+  // met alleen de woningprojecten is een nieuwe Vimeo-URL: hier omzetten.
+  heroVideoUrl: "https://vimeo.com/1184821093",
   heroTitel: "Wonen bij Weverskade",
   heroKnop: "Direct naar ons aanbod",
   introStatement:
-    "Van stedelijke appartementen tot woonconcepten met extra service: kwaliteit, gebruiksgemak en een prettige leefomgeving staan centraal binnen de projecten van Weverskade.",
-  introKnop: "Bekijk het aanbod",
+    "Van stedelijke appartementen tot woonconcepten met extra service: kwaliteit, gebruiksgemak en een prettige leefomgeving staan centraal binnen de woningen van Weverskade.",
+  // Twee routes onder het statement (comment 27): projecten óf direct aanbod.
+  introCtas: [
+    {
+      tekst: "Bekijk onze woonprojecten en ontdek waar je je thuis voelt.",
+      knop: "Bekijk onze woonprojecten",
+      href: "#projecten",
+    },
+    {
+      tekst: "Liever direct naar ons aanbod? Klik snel verder met deze knop.",
+      knop: "Direct naar ons aanbod",
+      href: "#aanbod",
+    },
+  ],
   overKnop: "Actueel aanbod",
   overTitel: "Wonen bij\nWeverskade",
   overFoto: "/images/wonenbij/picture-1.jpg",
   overTekst:
-    "Onze woningen worden met aandacht ontwikkeld en compleet opgeleverd, inclusief keuken, vloer- en wandafwerking. Zo ontstaat een comfortabele woonomgeving waarin bewoners zich direct thuis voelen.",
+    "Bij Weverskade geloven we dat prettig wonen verder gaat dan vier muren en een dak. Het gaat om een buurt waar mensen zich thuis voelen, woningen die met aandacht voor kwaliteit zijn gebouwd en aandacht hebben voor de omgeving waarin zij staan.\n\nOf het nu gaat om een nieuwbouwappartement aan het water, een karakteristieke stadswoning of een duurzaam woonconcept: wij ontwikkelen en beheren woningen waar met zorg over is nagedacht.",
   overFoto2: "/images/wonenbij/picture-21.png",
   overTekstRechts:
     "Of je nu huurt of koopt: bij Weverskade vind je woningen met karakter op plekken waar het leven vanzelfsprekend samenkomt - van stedelijke appartementen tot wonen aan het water.",
-  kwaliteitTitel: "Kwaliteit en gebruiksgemak",
+  // Comment 32: "Waarom wonen bij Weverskade" als de groene band, met haar
+  // drie punten als de blokken.
+  kwaliteitTitel: "Waarom wonen bij Weverskade",
+  kwaliteitIntro:
+    "Wij creëren woonomgevingen die niet alleen mooi zijn, maar ook prettig functioneren. Voor vandaag en morgen. Bij Weverskade vind je woningen waar:",
   kwaliteitItems: [
-    { label: "Duurzaamheid", waarde: "Energiezuinig en toekomstbestendig" },
-    { label: "Comfort", waarde: "Compleet en instapklaar opgeleverd" },
-    { label: "Flexibiliteit", waarde: "Woningtypes voor elke levensfase" },
-    { label: "Service", waarde: "Persoonlijk contact met ons team" },
-    { label: "Zekerheid", waarde: "Transparant en soepel huurtraject" },
-    { label: "Omgeving", waarde: "Wonen op bijzondere plekken" },
+    {
+      label: "Kwaliteit voorop staat",
+      waarde:
+        "Van ontwerp tot beheer: kwaliteit vormt de basis van iedere woning en elk project. Zo heeft iedere woning een luxe afwerking met een PVC-vloer, een uitgebreide keuken en een afgewerkte douche en wc.",
+    },
+    {
+      label: "Duurzaamheid hoog in het vaandel staat",
+      waarde:
+        "We streven naar toekomstbestendige woningen met oog voor mens, milieu en leefomgeving.",
+    },
+    {
+      label: "We ook na oplevering betrokken blijven",
+      waarde:
+        "Ook na oplevering blijven we betrokken bij het beheer van de woningen. Bewoners weten waar zij terechtkunnen en kunnen rekenen op duidelijke communicatie.",
+    },
   ] as KwaliteitItem[],
   aanbodTitel: "Beschikbare woningen",
+  // Comment 33: inleidend blok boven het aanbod, later om te zetten naar een
+  // algemene aanbodtekst; foto optioneel.
+  aanbodIntro:
+    "Nu in de verhuur: appartementencomplex De Taanschuurkade in Maassluis. Bekijk het actuele aanbod en schrijf je in voor je favoriete woning.",
+  aanbodIntroFoto: "/images/wonenbij/vogelvlucht.jpg",
   projectenTitel: "Onze woonprojecten",
+  // Comment 30
+  projectenIntro:
+    "Elk project heeft een eigen karakter, passend bij de locatie en de mensen die er wonen. Van binnenstedelijke ontwikkelingen tot woongebieden aan het water.\n\nBekijk onze projecten en ontdek de unieke kenmerken, de beschikbare woningen en de laatste ontwikkelingen.",
   contactLabel: "Neem contact op",
+  // Comment 31
   contactTekst:
-    "Heb je een vraag over een woning of project? Vul onderstaand formulier in, dan nemen we zo snel mogelijk contact met je op.",
+    "Heb je een algemene vraag? Vul onderstaand formulier in, dan nemen we zo snel mogelijk contact met je op.",
 };
 
 export const demoLandingProjecten: LandingProjectKaart[] = [

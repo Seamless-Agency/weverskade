@@ -18,6 +18,12 @@ interface WonenBijHeaderProps {
   anchors?: AnchorLink[];
   ctaLabel?: string;
   ctaHref?: string;
+  /**
+   * Korter opschrift onder lg. Met ankermenu staat naast de pill ook de
+   * menuknop; een lang opschrift ("Direct naar ons aanbod") duwt die dan
+   * buiten een 390px-viewport. Het volledige label blijft in het menu staan.
+   */
+  ctaLabelMobiel?: string;
   /** Pijl links in de knop ("Terug naar overzicht"). */
   ctaArrow?: boolean;
 }
@@ -69,6 +75,7 @@ export default function WonenBijHeader({
   anchors,
   ctaLabel,
   ctaHref,
+  ctaLabelMobiel,
   ctaArrow = false,
 }: WonenBijHeaderProps) {
   const navigate = usePageNavigation();
@@ -129,6 +136,9 @@ export default function WonenBijHeader({
   }, [startThema]);
 
   const handleAnchor = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    // De kop blijft boven het open menu staan; een klik op de pill daar
+    // hoort het menu ook te sluiten, anders scrolt de pagina erachter.
+    setMenuOpen(false);
     if (href.startsWith("#")) {
       e.preventDefault();
       document
@@ -263,6 +273,11 @@ export default function WonenBijHeader({
                       <span className="max-lg:hidden">{ctaLabel}</span>
                       <span className="hidden max-lg:inline">Terug</span>
                     </>
+                  ) : ctaLabelMobiel ? (
+                    <>
+                      <span className="max-lg:hidden">{ctaLabel}</span>
+                      <span className="hidden max-lg:inline">{ctaLabelMobiel}</span>
+                    </>
                   ) : (
                     ctaLabel
                   )}
@@ -295,7 +310,8 @@ export default function WonenBijHeader({
           isOpen={menuOpen}
           onClose={closeMenu}
           items={[
-            ...anchors!,
+            // Het paneel heeft onderin al "Home"; niet-ankerlinks dus niet dubbel.
+            ...anchors!.filter((a) => a.href.startsWith("#")),
             ...(ctaLabel && ctaHref ? [{ label: ctaLabel, href: ctaHref }] : []),
           ]}
           onNavigate={menuNavigate}

@@ -69,6 +69,9 @@ export default function VimeoBackground({
       <iframe
         src={src}
         title="Hero video"
+        // Decoratieve achtergrond: geen tab-stop en niet voorgelezen.
+        tabIndex={-1}
+        aria-hidden
         allow="autoplay; fullscreen; picture-in-picture"
         className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
         frameBorder={0}

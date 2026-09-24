@@ -39,6 +39,14 @@ export const structure: StructureResolver = (S, context) =>
             ])
         ),
       S.divider(),
+      // Nieuwe wonen-bij omgeving (wonenbij.weverskade.com). De project- en
+      // woningpagina's staan onder Projecten, tab "Wonen bij pagina".
+      S.listItem()
+        .title('Wonen bij - landingspagina')
+        .child(
+          S.document().schemaType('wonenBijLanding').documentId('wonenBijLanding')
+        ),
+      S.divider(),
       // Content types met drag-and-drop volgorde
       orderableDocumentListDeskItem({
         type: 'project',

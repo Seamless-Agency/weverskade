@@ -75,7 +75,10 @@ export default function WonenBijMenu({
   }, [isOpen]);
 
   // Escape + focus-trap; focus keert terug naar de menuknop bij sluiten.
-  const panelRef = useFocusTrap<HTMLDivElement>(isOpen, onClose);
+  // Pas actief zodra het paneel gemount is: op het moment dat isOpen
+  // omgaat is `mounted` nog false en bestaat de ref niet, waardoor de hook
+  // anders stil terugkeert zonder listeners (Escape en Tab-trap deden niets).
+  const panelRef = useFocusTrap<HTMLDivElement>(mounted && isOpen, onClose);
 
   const handleNavigation = (
     e: React.MouseEvent<HTMLAnchorElement>,

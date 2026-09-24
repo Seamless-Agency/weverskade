@@ -1,7 +1,7 @@
 import { notFound, redirect } from "next/navigation";
 import { getWonenBijProjectByAlias } from "@/data/wonenbij";
+import { type NieuwsKaart } from "@/data/wonenbij";
 import WonenBijProjectPage, {
-  type NieuwsKaart,
   type SocialLinks,
 } from "@/components/wonenbij/WonenBijProjectPage";
 import Footer from "@/components/Footer";
@@ -85,20 +85,34 @@ export default async function WonenBijProject({
 
   if (!project) notFound();
 
-  // Artikelen die het project bij naam noemen eerst (er is geen formele
-  // project-koppeling in het nieuws-schema, dus we matchen op de titel);
-  // de rest vult aan tot drie kaarten.
+  // Nieuws (comment 38: geen zakelijk Weverskade-nieuws op een woonpagina).
+  // Voorrang: door de redactie gekozen berichten (CMS-veld) > berichten die
+  // het project in de titel noemen > niets (de sectie verdwijnt dan). Alleen
+  // zonder Sanity-verbinding blijft de demo staan.
+  const naamWoorden = project.naam
+    .toLowerCase()
+    .split(/[^a-z0-9à-ÿ]+/)
+    .filter((w) => w.length >= 5);
+  // "Taanschuur appartementen" hoort bij "Taanschuurkade": een titelwoord en
+  // een naamwoord tellen als match zodra de één met de ander begint.
   const naamMatch = (titel: string) =>
-    titel.toLowerCase().includes(project.naam.toLowerCase());
-  const gesorteerd = nieuwsData?.length
-    ? [...nieuwsData].sort(
-        (a, b) =>
-          Number(naamMatch(b.title ?? "")) - Number(naamMatch(a.title ?? ""))
-      )
-    : nieuwsData;
+    titel
+      .toLowerCase()
+      .split(/[^a-z0-9à-ÿ]+/)
+      .some(
+        (t) =>
+          t.length >= 5 &&
+          naamWoorden.some((n) => t.startsWith(n) || n.startsWith(t))
+      );
 
-  const nieuws: NieuwsKaart[] = gesorteerd?.length
-    ? gesorteerd.slice(0, 3).map((artikel: any) => ({
+  let nieuws: NieuwsKaart[];
+  if (project.nieuws?.length) {
+    nieuws = project.nieuws;
+  } else if (nieuwsData) {
+    nieuws = nieuwsData
+      .filter((artikel: any) => naamMatch(artikel.title ?? ""))
+      .slice(0, 3)
+      .map((artikel: any) => ({
         slug: artikel.slug?.current ?? artikel.slug ?? "",
         titel: artikel.title ?? "",
         datum: formatSanityDate(artikel.date, ""),
@@ -106,8 +120,10 @@ export default async function WonenBijProject({
           artikel.heroImage,
           "/images/wonenbij/nieuws-thumb.png"
         ),
-      }))
-    : demoNieuws;
+      }));
+  } else {
+    nieuws = demoNieuws;
+  }
 
   const footerProps = footerData
     ? {

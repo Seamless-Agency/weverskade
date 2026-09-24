@@ -9,6 +9,7 @@ import TurnstileWidget, {
 import { usePageNavigation } from "@/hooks/usePageNavigation";
 import { submitFormSubmission } from "@/lib/formSubmissionClient";
 import WonenBijHeader from "@/components/wonenbij/WonenBijHeader";
+import VimeoBackground from "@/components/VimeoBackground";
 import {
   EASE,
   HeroParallax,
@@ -30,17 +31,47 @@ import {
   type LandingProjectKaart,
 } from "@/data/wonenbij";
 
+export interface IntroCta {
+  tekst: string;
+  knop: string;
+  href: string;
+}
+
+/**
+ * Alles is optioneel: een ontbrekend of leeg veld valt terug op de standaard
+ * uit data/wonenbij.ts (landingDefaults). Zo blijft de pagina identiek zonder
+ * Sanity-document en kan de redactie per veld overschrijven.
+ */
 export interface WonenBijLandingData {
   heroImage?: string;
+  /** Lege string = bewust geen video (alleen de foto). */
+  heroVideoUrl?: string;
+  heroKnop?: string;
   introStatement?: string;
+  introCtas?: IntroCta[];
+  overTitel?: string;
+  overFoto?: string;
   overTekst?: string;
+  overFoto2?: string;
   overTekstRechts?: string;
+  overKnop?: string;
   kwaliteitTitel?: string;
+  kwaliteitIntro?: string;
   kwaliteitItems?: KwaliteitItem[];
+  aanbodTitel?: string;
+  aanbodIntro?: string;
+  aanbodIntroFoto?: string;
+  projectenTitel?: string;
+  projectenIntro?: string;
+  contactLabel?: string;
   contactTekst?: string;
   aanbod?: AanbodKaart[];
   projecten?: LandingProjectKaart[];
 }
+
+/** Lege CMS-string telt als "niet ingevuld". */
+const of = (cms: string | undefined, standaard: string) =>
+  cms && cms.trim() ? cms : standaard;
 
 /**
  * De one-pager van wonenbij.weverskade.com - Figma "Portefeuille wonen"
@@ -53,25 +84,43 @@ export default function WonenBijLanding({ data }: { data?: WonenBijLandingData }
   const reduced = useReducedMotion();
   const d = landingDefaults;
 
-  const heroImage = data?.heroImage ?? d.heroImage;
-  const introStatement = data?.introStatement ?? d.introStatement;
-  const overTekst = data?.overTekst ?? d.overTekst;
-  const overTekstRechts = data?.overTekstRechts ?? d.overTekstRechts;
+  const heroImage = of(data?.heroImage, d.heroImage);
+  // undefined = geen CMS-waarde → standaard; "" = redactie wil geen video.
+  const heroVideoUrl = data?.heroVideoUrl ?? d.heroVideoUrl;
+  const heroKnop = of(data?.heroKnop, d.heroKnop);
+  const introStatement = of(data?.introStatement, d.introStatement);
+  const introCtas = data?.introCtas?.length ? data.introCtas : d.introCtas;
+  const overTitel = of(data?.overTitel, d.overTitel);
+  const overFoto = of(data?.overFoto, d.overFoto);
+  const overTekst = of(data?.overTekst, d.overTekst);
+  const overFoto2 = of(data?.overFoto2, d.overFoto2);
+  const overTekstRechts = of(data?.overTekstRechts, d.overTekstRechts);
+  const overKnop = of(data?.overKnop, d.overKnop);
+  const kwaliteitTitel = of(data?.kwaliteitTitel, d.kwaliteitTitel);
+  const kwaliteitIntro = of(data?.kwaliteitIntro, d.kwaliteitIntro);
   const kwaliteitItems = data?.kwaliteitItems?.length
     ? data.kwaliteitItems
     : d.kwaliteitItems;
-  const contactTekst = data?.contactTekst ?? d.contactTekst;
+  const aanbodTitel = of(data?.aanbodTitel, d.aanbodTitel);
+  const aanbodIntro = of(data?.aanbodIntro, d.aanbodIntro);
+  const aanbodIntroFoto = of(data?.aanbodIntroFoto, d.aanbodIntroFoto);
+  const projectenTitel = of(data?.projectenTitel, d.projectenTitel);
+  const projectenIntro = of(data?.projectenIntro, d.projectenIntro);
+  const contactTekst = of(data?.contactTekst, d.contactTekst);
+  const contactLabel = of(data?.contactLabel, d.contactLabel);
   const aanbod = data?.aanbod ?? [];
   const projecten = data?.projecten ?? [];
 
   const [hoveredCard, setHoveredCard] = useState<string | null>(null);
 
-  const scrollNaarAanbod = (e: React.MouseEvent<HTMLAnchorElement>) => {
+  const scrollNaar = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
     e.preventDefault();
     document
-      .getElementById("aanbod")
+      .getElementById(href.replace(/^#/, ""))
       ?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
+  const scrollNaarAanbod = (e: React.MouseEvent<HTMLAnchorElement>) =>
+    scrollNaar(e, "#aanbod");
 
   return (
     <section className="relative bg-white min-h-screen">
@@ -88,20 +137,34 @@ export default function WonenBijLanding({ data }: { data?: WonenBijLandingData }
           }}
         >
           <HeroParallax>
-            <Image
-              src={heroImage}
-              alt="Wonen bij Weverskade"
-              fill
-              priority
-              sizes="100vw"
-              className="object-cover"
-            />
+            {/* Dezelfde showreel als de hoofdsite-hero (comment 24); de foto
+                blijft de poster tot de video speelt en de fallback zonder URL. */}
+            {heroVideoUrl && !reduced ? (
+              <VimeoBackground url={heroVideoUrl} poster={heroImage} fit="cover" />
+            ) : (
+              <Image
+                src={heroImage}
+                alt="Wonen bij Weverskade"
+                fill
+                priority
+                sizes="100vw"
+                className="object-cover"
+              />
+            )}
           </HeroParallax>
         </div>
         <div className="absolute inset-0 bg-off-black/30" />
+        {/* Ankermenu zoals op de projectpagina (comment 25). */}
         <WonenBijHeader
           variant="licht"
-          ctaLabel={d.heroKnop}
+          anchors={[
+            { label: "Over", href: "#over" },
+            { label: "Aanbod", href: "#aanbod" },
+            { label: "Projecten", href: "#projecten" },
+            { label: "Contact", href: "#contact" },
+          ]}
+          ctaLabel={heroKnop}
+          ctaLabelMobiel="Aanbod"
           ctaHref="#aanbod"
         />
       </div>
@@ -109,39 +172,54 @@ export default function WonenBijLanding({ data }: { data?: WonenBijLandingData }
       {/* Enige h1 van de landing; visueel is het merk in de hero de kop. */}
       <h1 className="sr-only">Wonen bij Weverskade</h1>
 
-      {/* Statement — de knop staat inline achter de laatste regel; vaste paddings
-          (geen hoogte) zodat langere CMS-tekst de sectie laat meegroeien */}
+      {/* Statement; vaste paddings (geen hoogte) zodat langere CMS-tekst de
+          sectie laat meegroeien. Daaronder twee routes (comment 27): naar de
+          woonprojecten of direct naar het aanbod — elk een korte regel met
+          een pill, in het ritme tekst → pill van 54/32px dat de over-sectie
+          ook hanteert. */}
       <RevealGroup className="pt-[6.181vw] pb-[16.667vw] px-[2.569vw] max-lg:pt-12 max-lg:px-5 max-lg:pb-12" data-nav-theme="white">
         <p className="font-body font-medium text-[4.028vw] leading-[4.097vw] text-off-black indent-[10.278vw] max-w-[83.264vw] max-lg:indent-0 max-lg:text-[28px] max-lg:leading-[33px] max-lg:max-w-none">
           <RevealWords text={introStatement} stagger={0.04} duration={1} />
-          <Reveal
-            as="a"
-            href="#aanbod"
-            onClick={scrollNaarAanbod}
-            delay={0.75}
-            y={14}
-            className="pill-hover relative -top-[0.104vw] inline-flex items-center justify-center align-middle indent-0 leading-none whitespace-nowrap ml-[2.465vw] w-[12.083vw] h-[2.847vw] bg-green text-off-white no-underline rounded-full font-heading font-normal text-[1.181vw] tracking-[-0.024vw] max-lg:top-0 max-lg:flex max-lg:w-fit max-lg:ml-0 max-lg:mt-6 max-lg:h-auto max-lg:px-6 max-lg:py-2.5 max-lg:text-[15px]"
-          >
-            {d.introKnop}
-          </Reveal>
         </p>
+        <div className="mt-[3.75vw] grid grid-cols-2 gap-x-[4.167vw] max-w-[62.5vw] max-lg:mt-8 max-lg:grid-cols-1 max-lg:gap-y-8 max-lg:max-w-none">
+          {introCtas.map((cta, i) => (
+            <Reveal key={`${cta.href}-${i}`} delay={0.7 + i * 0.12} y={14}>
+              <p className="font-body font-medium text-[1.597vw] leading-[2.153vw] tracking-[-0.032vw] text-off-black max-lg:text-[17px] max-lg:leading-[24px]">
+                {cta.tekst}
+              </p>
+              <a
+                href={cta.href}
+                onClick={(e) => scrollNaar(e, cta.href)}
+                className="pill-hover mt-[2.222vw] inline-flex items-center justify-center h-[2.847vw] px-[1.944vw] bg-green text-off-white no-underline rounded-full font-heading font-normal text-[1.181vw] tracking-[-0.024vw] whitespace-nowrap max-lg:mt-4 max-lg:h-auto max-lg:px-6 max-lg:py-2.5 max-lg:text-[15px]"
+              >
+                {cta.knop}
+              </a>
+            </Reveal>
+          ))}
+        </div>
       </RevealGroup>
 
       {/* Over Wonen bij Weverskade — flow met vaste ankers i.p.v. een band met
           vaste hoogte: de Figma-witruimtes (252 boven, 285 tussen de blokken,
           248 onder) blijven exact, maar langere CMS-tekst laat de band groeien
           in plaats van over de foto's heen te lopen */}
-      <div className="bg-off-white pt-[17.5vw] pb-[17.222vw] max-lg:py-14 max-lg:px-5" data-nav-theme="light">
+      <div id="over" className="bg-off-white pt-[17.5vw] pb-[17.222vw] max-lg:py-14 max-lg:px-5 scroll-mt-[2vw]" data-nav-theme="light">
         <div className="px-[2.778vw] max-lg:px-0">
-          {/* Blok 1: titel + foto rechts; tekst links onder-verankerd 22 boven de foto-onderkant */}
-          <div className="relative min-h-[43.889vw] max-lg:min-h-0">
+          {/* Blok 1: titel + foto rechts; tekst links onder-verankerd 22 boven de
+              foto-onderkant. Tekst in de flow (mt-auto) i.p.v. absoluut: bij de
+              korte tekst pixelgelijk, bij langere CMS-tekst (comment 29, twee
+              alinea's) groeit het blok in plaats van door de kop te lopen. */}
+          <div className="relative flex flex-col min-h-[43.889vw] max-lg:min-h-0 max-lg:block">
             <h2 className="max-w-[38.194vw] font-heading font-normal text-[4.931vw] leading-[5.625vw] tracking-[-0.099vw] text-off-black whitespace-pre-line max-lg:max-w-none max-lg:text-[36px] max-lg:leading-[40px] max-lg:tracking-[-0.72px]">
-              <RevealWords text={d.overTitel} />
+              <RevealWords text={overTitel} />
             </h2>
-            <RevealMedia className="absolute top-0 right-[-0.347vw] w-[54.514vw] h-[43.889vw] overflow-hidden max-lg:relative max-lg:inset-auto max-lg:w-full max-lg:h-auto max-lg:aspect-[785/632] max-lg:mt-8">
+            {/* Onder-verankerd (bottom-0): bij korte tekst identiek aan top-0
+                (het blok is precies fotohoogte), bij lange tekst zakt de foto
+                mee zodat tekst en foto onderaan gelijk blijven lopen. */}
+            <RevealMedia className="absolute bottom-0 right-[-0.347vw] w-[54.514vw] h-[43.889vw] overflow-hidden max-lg:relative max-lg:inset-auto max-lg:w-full max-lg:h-auto max-lg:aspect-[785/632] max-lg:mt-8">
               <Parallax>
                 <Image
-                  src={d.overFoto}
+                  src={overFoto}
                   alt="Interieur van een Weverskade woning"
                   fill
                   sizes="(max-width: 768px) 100vw, 55vw"
@@ -152,7 +230,7 @@ export default function WonenBijLanding({ data }: { data?: WonenBijLandingData }
             <Reveal
               as="p"
               delay={0.15}
-              className="absolute left-0 bottom-[1.528vw] w-[29.792vw] font-body font-medium text-[1.597vw] leading-[2.153vw] tracking-[-0.032vw] text-off-black max-lg:static max-lg:w-full max-lg:mt-8 max-lg:text-[17px] max-lg:leading-[24px]"
+              className="mt-auto pt-[2.222vw] pb-[1.528vw] w-[29.792vw] whitespace-pre-line font-body font-medium text-[1.597vw] leading-[2.153vw] tracking-[-0.032vw] text-off-black max-lg:w-full max-lg:pt-0 max-lg:pb-0 max-lg:mt-8 max-lg:text-[17px] max-lg:leading-[24px]"
             >
               {overTekst}
             </Reveal>
@@ -163,7 +241,7 @@ export default function WonenBijLanding({ data }: { data?: WonenBijLandingData }
             <RevealMedia className="relative ml-[0.069vw] w-[54.931vw] aspect-[791/559] overflow-hidden max-lg:ml-0 max-lg:w-full">
               <Parallax>
                 <Image
-                  src={d.overFoto2}
+                  src={overFoto2}
                   alt="Woonkamer van een Weverskade woning"
                   fill
                   sizes="(max-width: 768px) 100vw, 55vw"
@@ -185,7 +263,7 @@ export default function WonenBijLanding({ data }: { data?: WonenBijLandingData }
             onClick={scrollNaarAanbod}
             className="pill-hover inline-flex items-center justify-center mt-[3.75vw] -ml-[0.139vw] w-[12.083vw] h-[2.847vw] bg-green text-off-white no-underline rounded-full font-heading font-normal text-[1.181vw] tracking-[-0.024vw] max-lg:mt-5 max-lg:ml-0 max-lg:w-auto max-lg:h-auto max-lg:px-6 max-lg:py-2.5 max-lg:text-[15px]"
           >
-              {d.overKnop}
+              {overKnop}
             </a>
             </Reveal>
           </div>
@@ -198,20 +276,35 @@ export default function WonenBijLanding({ data }: { data?: WonenBijLandingData }
       <div className="bg-green pt-[6.875vw] pb-[9.097vw] max-lg:py-14" data-nav-theme="green">
         <div className="pl-[18.542vw] pr-[2.431vw] max-lg:px-5">
           <h2 className="font-heading font-normal text-[4.653vw] leading-[5.736vw] tracking-[-0.093vw] text-off-white max-lg:text-[32px] max-lg:leading-[1.1] max-lg:tracking-[-0.64px]">
-            <RevealWords text={data?.kwaliteitTitel ?? d.kwaliteitTitel} />
+            <RevealWords text={kwaliteitTitel} />
           </h2>
+          {/* Introregel onder de kop (comment 32); zelfde 32px tekst-ritme als
+              elders, de blokken schuiven mee naar beneden. */}
+          {kwaliteitIntro ? (
+            <Reveal
+              as="p"
+              delay={0.1}
+              className="mt-[2.222vw] ml-[0.208vw] max-w-[48.264vw] font-body font-medium text-[1.597vw] leading-[2.153vw] tracking-[-0.032vw] text-off-white max-lg:mt-4 max-lg:ml-0 max-lg:max-w-none max-lg:text-[17px] max-lg:leading-[24px]"
+            >
+              {kwaliteitIntro}
+            </Reveal>
+          ) : null}
           {/* kolommen staan in Figma op 270/623/965 — ongelijke breedtes, geen uniform grid */}
           <RevealGroup className="mt-[4.264vw] ml-[0.208vw] grid grid-cols-[24.514vw_23.75vw_20.486vw] gap-y-[3.125vw] max-lg:mt-8 max-lg:ml-0 max-lg:grid-cols-1 max-lg:gap-y-6">
             {kwaliteitItems.map((item, i) => (
               <Reveal
                 key={item.label + item.waarde}
                 delay={0.1 + i * 0.075}
-                className="max-w-[20.486vw] max-lg:max-w-none"
+                /* Tekst mag tot 30px voor de volgende kolom lopen (kolommen
+                   1-2 zijn breder dan 3); bij korte waarden onzichtbaar,
+                   bij alinea's scheelt het twee regels in kolom 1. */
+                className={i < 2 ? "max-w-[22.431vw] max-lg:max-w-none" : "max-w-[20.486vw] max-lg:max-w-none"}
               >
                 <p className="font-body font-normal text-[1.042vw] leading-[1.806vw] text-off-white max-lg:text-[13px] max-lg:leading-[20px]">
                   {item.label}
                 </p>
-                <p className="font-heading font-normal text-[1.458vw] leading-[1.806vw] text-off-white max-lg:text-[18px] max-lg:leading-[24px]">
+                {/* Kleine ademruimte label→tekst; alleen zichtbaar bij alinea's. */}
+                <p className="mt-[0.417vw] font-heading font-normal text-[1.458vw] leading-[1.806vw] text-off-white max-lg:mt-1 max-lg:text-[18px] max-lg:leading-[24px]">
                   {item.waarde}
                 </p>
               </Reveal>
@@ -225,8 +318,32 @@ export default function WonenBijLanding({ data }: { data?: WonenBijLandingData }
         <div id="aanbod" className="pt-[6.875vw] px-[2.431vw] max-lg:pt-12 max-lg:px-5 scroll-mt-[2vw]" data-nav-theme="white">
           {/* koppen staan in Figma op x=40, de kaarten op x=35 */}
           <h2 className="ml-[0.347vw] font-heading font-normal text-[4.931vw] leading-[6.076vw] tracking-[-0.099vw] text-off-black max-lg:ml-0 max-lg:text-[36px] max-lg:leading-[1.1] max-lg:tracking-[-0.72px]">
-            <RevealWords text={d.aanbodTitel} />
+            <RevealWords text={aanbodTitel} />
           </h2>
+          {/* Introblok (comment 33): tekst links in het projecten-intro-ritme,
+              optionele foto rechts, uitgelijnd op de derde kaartkolom. */}
+          {aanbodIntro ? (
+            <div className="mt-[2.222vw] ml-[0.347vw] grid grid-cols-[47.153vw_1fr] gap-x-[4.167vw] items-start max-lg:mt-4 max-lg:ml-0 max-lg:grid-cols-1 max-lg:gap-y-6">
+              <Reveal
+                as="p"
+                delay={0.1}
+                className="whitespace-pre-line font-body font-medium text-[1.597vw] leading-[2.153vw] tracking-[-0.032vw] text-off-black max-lg:text-[17px] max-lg:leading-[24px]"
+              >
+                {aanbodIntro}
+              </Reveal>
+              {aanbodIntroFoto ? (
+                <RevealMedia className="relative justify-self-end w-[30.764vw] aspect-[443/280] overflow-hidden max-lg:w-full max-lg:aspect-[16/10]">
+                  <Image
+                    src={aanbodIntroFoto}
+                    alt=""
+                    fill
+                    sizes="(max-width: 1024px) 100vw, 44vw"
+                    className="object-cover"
+                  />
+                </RevealMedia>
+              ) : null}
+            </div>
+          ) : null}
           <div className="mt-[2.431vw] grid grid-cols-3 gap-x-[1.389vw] gap-y-[1.389vw] max-lg:mt-6 max-lg:grid-cols-1 max-lg:gap-y-5">
             {aanbod.map((kaart, i) => {
               const href = `/wonenbij/${kaart.projectSlug}/${kaart.typeSlug}`;
@@ -306,10 +423,20 @@ export default function WonenBijLanding({ data }: { data?: WonenBijLandingData }
 
       {/* Onze woonprojecten */}
       {projecten.length > 0 ? (
-        <div className="pt-[5.903vw] px-[2.431vw] max-lg:pt-12 max-lg:px-5">
+        <div id="projecten" className="pt-[5.903vw] px-[2.431vw] max-lg:pt-12 max-lg:px-5 scroll-mt-[2vw]">
           <h2 className="ml-[0.347vw] font-heading font-normal text-[4.931vw] leading-[6.076vw] tracking-[-0.099vw] text-off-black max-lg:ml-0 max-lg:text-[36px] max-lg:leading-[1.1] max-lg:tracking-[-0.72px]">
-            <RevealWords text={d.projectenTitel} />
+            <RevealWords text={projectenTitel} />
           </h2>
+          {/* Introtekst onder de kop (comment 30). */}
+          {projectenIntro ? (
+            <Reveal
+              as="p"
+              delay={0.1}
+              className="mt-[2.222vw] ml-[0.347vw] max-w-[47.153vw] whitespace-pre-line font-body font-medium text-[1.597vw] leading-[2.153vw] tracking-[-0.032vw] text-off-black max-lg:mt-4 max-lg:ml-0 max-lg:max-w-none max-lg:text-[17px] max-lg:leading-[24px]"
+            >
+              {projectenIntro}
+            </Reveal>
+          ) : null}
           <div className="mt-[2.917vw] grid grid-cols-3 gap-x-[1.389vw] gap-y-[1.389vw] max-lg:mt-6 max-lg:grid-cols-1 max-lg:gap-y-6">
             {projecten.map((project, i) => {
               const href = project.heeftWonenBijPagina
@@ -377,7 +504,7 @@ export default function WonenBijLanding({ data }: { data?: WonenBijLandingData }
 
       {/* Bewust statisch (geen scroll-reveal) voor ritme tussen de secties. */}
       <Statisch>
-        <ContactSectie tekst={contactTekst} />
+        <ContactSectie tekst={contactTekst} label={contactLabel} />
       </Statisch>
     </section>
   );
@@ -385,7 +512,7 @@ export default function WonenBijLanding({ data }: { data?: WonenBijLandingData }
 
 /* ─── Contactformulier (zelfde velden als het bestaande wonen_bij-formulier) ── */
 
-function ContactSectie({ tekst }: { tekst: string }) {
+function ContactSectie({ tekst, label }: { tekst: string; label: string }) {
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -447,13 +574,13 @@ function ContactSectie({ tekst }: { tekst: string }) {
   };
 
   return (
-    <div className="px-[2.431vw] mt-[14.583vw] pb-[15.833vw] max-lg:px-5 max-lg:mt-16 max-lg:pb-16" data-nav-theme="white">
+    <div id="contact" className="px-[2.431vw] mt-[14.583vw] pb-[15.833vw] max-lg:px-5 max-lg:mt-16 max-lg:pb-16 scroll-mt-[2vw]" data-nav-theme="white">
       <div className="flex items-start max-lg:flex-col max-lg:gap-4">
         <Reveal
           as="p"
           className="mt-[0.694vw] font-heading font-normal text-[1.389vw] leading-[1.715vw] text-off-black shrink-0 w-[31.458vw] pl-[8.056vw] max-lg:mt-0 max-lg:w-auto max-lg:text-[17px] max-lg:leading-[22px] max-lg:pl-0"
         >
-          {landingDefaults.contactLabel}
+          {label}
         </Reveal>
         <div className="flex-1 max-lg:w-full">
           <h2 className="font-body font-medium text-[3.75vw] leading-[3.681vw] text-off-black max-w-[62.569vw] mb-[4.653vw] max-lg:text-[28px] max-lg:leading-[32px] max-lg:max-w-none max-lg:mb-6">
