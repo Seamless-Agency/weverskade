@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="8.0437 5.81535 43.247 37.80975" width="43.247" height="37.80975" fill="#F7F5F0" role="img" aria-label="Weverskade">
+  <title>Weverskade</title>
+  <!-- Beeldmerk los (de twee haakjes, zelfde glyph als de menuknop), viewBox sluit precies om de balken -->
+  <path d="M8.0437 28.4972L24.78 43.6251H51.2907V36.0911H24.78L8.0437 20.9632V28.4972Z"/>
+  <path d="M8.0437 5.81535V13.3493H34.5544L51.2907 28.4972V20.9432L34.5544 5.81535H8.0437Z"/>
+</svg>
