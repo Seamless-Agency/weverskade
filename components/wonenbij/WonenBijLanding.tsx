@@ -55,9 +55,6 @@ export interface WonenBijLandingData {
   overFoto2?: string;
   overTekstRechts?: string;
   overKnop?: string;
-  waaromTitel?: string;
-  waaromIntro?: string;
-  waaromItems?: KwaliteitItem[];
   kwaliteitTitel?: string;
   kwaliteitItems?: KwaliteitItem[];
   aanbodTitel?: string;
@@ -98,9 +95,6 @@ export default function WonenBijLanding({ data }: { data?: WonenBijLandingData }
   const overFoto2 = of(data?.overFoto2, d.overFoto2);
   const overTekstRechts = of(data?.overTekstRechts, d.overTekstRechts);
   const overKnop = of(data?.overKnop, d.overKnop);
-  const waaromTitel = of(data?.waaromTitel, d.waaromTitel);
-  const waaromIntro = of(data?.waaromIntro, d.waaromIntro);
-  const waaromItems = data?.waaromItems?.length ? data.waaromItems : d.waaromItems;
   const kwaliteitTitel = of(data?.kwaliteitTitel, d.kwaliteitTitel);
   const kwaliteitItems = data?.kwaliteitItems?.length
     ? data.kwaliteitItems
@@ -272,45 +266,6 @@ export default function WonenBijLanding({ data }: { data?: WonenBijLandingData }
             </Reveal>
           </div>
 
-          {/* "Waarom wonen bij Weverskade" (comment 32): eigen blok onder de
-              over-sectie in het label-links/content-rechts patroon van
-              "Over het project" op de projectpagina; de drie punten in het
-              driekolomsritme van de groene band eronder. */}
-          {waaromTitel ? (
-            <RevealGroup className="mt-[11.458vw] grid grid-cols-12 gap-x-[1.389vw] max-lg:mt-12 max-lg:grid-cols-1 max-lg:gap-y-5">
-              <Reveal
-                as="p"
-                className="col-span-3 mt-[0.833vw] font-body font-medium text-[1.389vw] leading-[1.611vw] text-off-black max-lg:mt-0 max-lg:text-[17px] max-lg:leading-[22px]"
-              >
-                {waaromTitel}
-              </Reveal>
-              <div className="col-span-9">
-                {waaromIntro ? (
-                  <Reveal
-                    as="p"
-                    delay={0.1}
-                    className="max-w-[57.847vw] whitespace-pre-line font-heading font-normal text-[2.014vw] leading-[2.569vw] text-off-black max-lg:max-w-none max-lg:text-[19px] max-lg:leading-[26px]"
-                  >
-                    {waaromIntro}
-                  </Reveal>
-                ) : null}
-                {waaromItems.length ? (
-                  <div className="mt-[2.917vw] grid grid-cols-3 gap-x-[1.389vw] gap-y-[2.222vw] max-lg:mt-6 max-lg:grid-cols-1 max-lg:gap-y-5">
-                    {waaromItems.map((item, i) => (
-                      <Reveal key={item.label + item.waarde} delay={0.15 + i * 0.06} y={16} className="pr-[1.389vw] max-lg:pr-0">
-                        <p className="font-body font-medium text-[1.111vw] leading-[1.667vw] tracking-[-0.022vw] text-off-black max-lg:text-[15px] max-lg:leading-[22px]">
-                          {item.label}
-                        </p>
-                        <p className="mt-[0.417vw] font-body font-normal text-[1.111vw] leading-[1.667vw] tracking-[-0.022vw] text-off-black/80 max-lg:mt-1 max-lg:text-[15px] max-lg:leading-[22px]">
-                          {item.waarde}
-                        </p>
-                      </Reveal>
-                    ))}
-                  </div>
-                ) : null}
-              </div>
-            </RevealGroup>
-          ) : null}
         </div>
       </div>
 

@@ -1486,29 +1486,8 @@ export const landingDefaults = {
   overFoto2: "/images/wonenbij/picture-21.png",
   overTekstRechts:
     "Of je nu huurt of koopt: bij Weverskade vind je woningen met karakter op plekken waar het leven vanzelfsprekend samenkomt - van stedelijke appartementen tot wonen aan het water.",
-  // Comment 32: Viviannes "Waarom wonen bij Weverskade" als eigen blok in de
-  // over-sectie (naast foto 2, waar haar marker stond). De groene band houdt
-  // de korte usp's uit het design.
-  waaromTitel: "Waarom wonen bij Weverskade",
-  waaromIntro:
-    "Wij creëren woonomgevingen die niet alleen mooi zijn, maar ook prettig functioneren. Voor vandaag en morgen. Bij Weverskade vind je woningen waar:",
-  waaromItems: [
-    {
-      label: "Kwaliteit voorop staat",
-      waarde:
-        "Van ontwerp tot beheer: kwaliteit vormt de basis van iedere woning en elk project. Zo heeft iedere woning een luxe afwerking met een PVC-vloer, een uitgebreide keuken en een afgewerkte douche en wc.",
-    },
-    {
-      label: "Duurzaamheid hoog in het vaandel staat",
-      waarde:
-        "We streven naar toekomstbestendige woningen met oog voor mens, milieu en leefomgeving.",
-    },
-    {
-      label: "We ook na oplevering betrokken blijven",
-      waarde:
-        "Ook na oplevering blijven we betrokken bij het beheer van de woningen. Bewoners weten waar zij terechtkunnen en kunnen rekenen op duidelijke communicatie.",
-    },
-  ] as KwaliteitItem[],
+  // Comment 32 ("Waarom wonen bij Weverskade", drie punten) staat OPEN:
+  // plaatsing/vorm bespreekt Robin met Jim/designer. Tekst in memory.
   kwaliteitTitel: "Kwaliteit en gebruiksgemak",
   kwaliteitItems: [
     { label: "Duurzaamheid", waarde: "Energiezuinig en toekomstbestendig" },

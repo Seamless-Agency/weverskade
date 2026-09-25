@@ -17,7 +17,6 @@ export const wonenBijLanding = defineType({
     { name: 'hero', title: 'Hero', default: true },
     { name: 'intro', title: 'Intro' },
     { name: 'over', title: 'Over Weverskade' },
-    { name: 'waarom', title: 'Waarom wonen bij' },
     { name: 'usps', title: 'Groene band' },
     { name: 'overzichten', title: 'Aanbod en projecten' },
     { name: 'contact', title: 'Contact' },
@@ -138,42 +137,6 @@ export const wonenBijLanding = defineType({
       type: 'string',
       group: 'over',
       description: 'Verwijst naar het woningaanbod op deze pagina.',
-    }),
-
-    /* Waarom wonen bij (blok naast foto 2 in de over-sectie) */
-    defineField({
-      name: 'waaromTitel',
-      title: 'Kop',
-      type: 'string',
-      group: 'waarom',
-      description: 'Staat naast de tweede foto, boven de tekst met de knop.',
-    }),
-    defineField({
-      name: 'waaromIntro',
-      title: 'Introtekst',
-      type: 'text',
-      rows: 3,
-      group: 'waarom',
-    }),
-    defineField({
-      name: 'waaromItems',
-      title: 'Punten',
-      type: 'array',
-      group: 'waarom',
-      description: 'Elk punt heeft een kopje en een korte toelichting.',
-      of: [
-        defineArrayMember({
-          type: 'object',
-          name: 'waaromItem',
-          fields: [
-            defineField({ name: 'label', title: 'Kopje', type: 'string' }),
-            defineField({ name: 'waarde', title: 'Toelichting', type: 'text', rows: 4 }),
-          ],
-          preview: {
-            select: { title: 'label', subtitle: 'waarde' },
-          },
-        }),
-      ],
     }),
 
     /* Groene band: korte usp's */
