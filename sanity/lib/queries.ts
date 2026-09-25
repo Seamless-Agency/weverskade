@@ -211,7 +211,6 @@ export const WONENBIJ_PROJECT_SLUGS_QUERY = `*[_type == "project" && (wonenBijEn
 export const WONENBIJ_LANDING_QUERY = `*[_type == "wonenBijLanding"][0]{
   heroVideoUrl,
   heroImage,
-  heroTitel,
   heroKnop,
   introStatement,
   introCtas[]{ tekst, knop, doel },

@@ -42,12 +42,6 @@ export const wonenBijLanding = defineType({
         'Wordt getoond tot de video speelt, en als er geen video is ingesteld.',
     }),
     defineField({
-      name: 'heroTitel',
-      title: 'Merknaam in de hero',
-      type: 'string',
-      group: 'hero',
-    }),
-    defineField({
       name: 'heroKnop',
       title: 'Knop rechtsboven',
       type: 'string',
