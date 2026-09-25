@@ -240,12 +240,9 @@ export default function WonenBijLanding({ data }: { data?: WonenBijLandingData }
             </Reveal>
           </div>
 
-          {/* Blok 2: foto links; tekst + knop rechts, knop-onderkant = foto-onderkant.
-              Flex met items-end i.p.v. absolute: bij korte tekst pixelgelijk,
-              bij het extra "Waarom"-blok (comment 32) groeit de rij en blijft
-              de foto onderaan uitgelijnd. */}
-          <div className="relative mt-[19.792vw] flex items-end max-lg:mt-8 max-lg:block">
-            <RevealMedia className="relative shrink-0 ml-[0.069vw] w-[54.931vw] aspect-[791/559] overflow-hidden max-lg:ml-0 max-lg:w-full">
+          {/* Blok 2: foto links; tekst + knop rechts, knop-onderkant = foto-onderkant */}
+          <div className="relative mt-[19.792vw] max-lg:mt-8">
+            <RevealMedia className="relative ml-[0.069vw] w-[54.931vw] aspect-[791/559] overflow-hidden max-lg:ml-0 max-lg:w-full">
               <Parallax>
                 <Image
                   src={overFoto2}
@@ -256,40 +253,12 @@ export default function WonenBijLanding({ data }: { data?: WonenBijLandingData }
                 />
               </Parallax>
             </RevealMedia>
-            {/* Onder-uitgelijnd: de knop-onderkant valt samen met de foto-onderkant
+            {/* Onder-verankerd: de knop-onderkant valt samen met de foto-onderkant
                 (Figma: beide op 3245), langere tekst groeit naar boven */}
             <Reveal
               delay={0.15}
-              className="ml-[9.444vw] w-[27.986vw] max-lg:ml-0 max-lg:w-full max-lg:mt-8"
+              className="absolute left-[64.444vw] bottom-0 w-[27.986vw] max-lg:static max-lg:w-full max-lg:mt-8"
             >
-          {/* "Waarom wonen bij Weverskade" (comment 32): Viviannes tekst op de
-              plek van haar marker, boven de bestaande tekst en knop. */}
-          {waaromTitel ? (
-            <div className="mb-[3.75vw] max-lg:mb-8">
-              <h3 className="font-heading font-normal text-[2.014vw] leading-[2.569vw] text-off-black max-lg:text-[22px] max-lg:leading-[28px]">
-                {waaromTitel}
-              </h3>
-              {waaromIntro ? (
-                <p className="mt-[1.111vw] whitespace-pre-line font-body font-medium text-[1.111vw] leading-[1.667vw] tracking-[-0.022vw] text-off-black max-lg:mt-3 max-lg:text-[15px] max-lg:leading-[22px]">
-                  {waaromIntro}
-                </p>
-              ) : null}
-              {waaromItems.length ? (
-                <ul className="mt-[1.667vw] flex flex-col gap-[1.111vw] list-none m-0 p-0 max-lg:mt-4 max-lg:gap-3">
-                  {waaromItems.map((item) => (
-                    <li key={item.label + item.waarde}>
-                      <p className="font-body font-medium text-[1.111vw] leading-[1.667vw] tracking-[-0.022vw] text-off-black max-lg:text-[15px] max-lg:leading-[22px]">
-                        {item.label}
-                      </p>
-                      <p className="font-body font-normal text-[1.111vw] leading-[1.667vw] tracking-[-0.022vw] text-off-black/80 max-lg:text-[15px] max-lg:leading-[22px]">
-                        {item.waarde}
-                      </p>
-                    </li>
-                  ))}
-                </ul>
-              ) : null}
-            </div>
-          ) : null}
           <p className="font-body font-medium text-[1.597vw] leading-[2.153vw] tracking-[-0.032vw] text-off-black max-lg:text-[17px] max-lg:leading-[24px]">
             {overTekstRechts}
           </p>
@@ -302,6 +271,46 @@ export default function WonenBijLanding({ data }: { data?: WonenBijLandingData }
             </a>
             </Reveal>
           </div>
+
+          {/* "Waarom wonen bij Weverskade" (comment 32): eigen blok onder de
+              over-sectie in het label-links/content-rechts patroon van
+              "Over het project" op de projectpagina; de drie punten in het
+              driekolomsritme van de groene band eronder. */}
+          {waaromTitel ? (
+            <RevealGroup className="mt-[11.458vw] grid grid-cols-12 gap-x-[1.389vw] max-lg:mt-12 max-lg:grid-cols-1 max-lg:gap-y-5">
+              <Reveal
+                as="p"
+                className="col-span-3 mt-[0.833vw] font-body font-medium text-[1.389vw] leading-[1.611vw] text-off-black max-lg:mt-0 max-lg:text-[17px] max-lg:leading-[22px]"
+              >
+                {waaromTitel}
+              </Reveal>
+              <div className="col-span-9">
+                {waaromIntro ? (
+                  <Reveal
+                    as="p"
+                    delay={0.1}
+                    className="max-w-[57.847vw] whitespace-pre-line font-heading font-normal text-[2.014vw] leading-[2.569vw] text-off-black max-lg:max-w-none max-lg:text-[19px] max-lg:leading-[26px]"
+                  >
+                    {waaromIntro}
+                  </Reveal>
+                ) : null}
+                {waaromItems.length ? (
+                  <div className="mt-[2.917vw] grid grid-cols-3 gap-x-[1.389vw] gap-y-[2.222vw] max-lg:mt-6 max-lg:grid-cols-1 max-lg:gap-y-5">
+                    {waaromItems.map((item, i) => (
+                      <Reveal key={item.label + item.waarde} delay={0.15 + i * 0.06} y={16} className="pr-[1.389vw] max-lg:pr-0">
+                        <p className="font-body font-medium text-[1.111vw] leading-[1.667vw] tracking-[-0.022vw] text-off-black max-lg:text-[15px] max-lg:leading-[22px]">
+                          {item.label}
+                        </p>
+                        <p className="mt-[0.417vw] font-body font-normal text-[1.111vw] leading-[1.667vw] tracking-[-0.022vw] text-off-black/80 max-lg:mt-1 max-lg:text-[15px] max-lg:leading-[22px]">
+                          {item.waarde}
+                        </p>
+                      </Reveal>
+                    ))}
+                  </div>
+                ) : null}
+              </div>
+            </RevealGroup>
+          ) : null}
         </div>
       </div>
 
