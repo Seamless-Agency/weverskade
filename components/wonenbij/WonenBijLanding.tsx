@@ -55,8 +55,10 @@ export interface WonenBijLandingData {
   overFoto2?: string;
   overTekstRechts?: string;
   overKnop?: string;
+  waaromTitel?: string;
+  waaromIntro?: string;
+  waaromItems?: KwaliteitItem[];
   kwaliteitTitel?: string;
-  kwaliteitIntro?: string;
   kwaliteitItems?: KwaliteitItem[];
   aanbodTitel?: string;
   aanbodIntro?: string;
@@ -96,8 +98,10 @@ export default function WonenBijLanding({ data }: { data?: WonenBijLandingData }
   const overFoto2 = of(data?.overFoto2, d.overFoto2);
   const overTekstRechts = of(data?.overTekstRechts, d.overTekstRechts);
   const overKnop = of(data?.overKnop, d.overKnop);
+  const waaromTitel = of(data?.waaromTitel, d.waaromTitel);
+  const waaromIntro = of(data?.waaromIntro, d.waaromIntro);
+  const waaromItems = data?.waaromItems?.length ? data.waaromItems : d.waaromItems;
   const kwaliteitTitel = of(data?.kwaliteitTitel, d.kwaliteitTitel);
-  const kwaliteitIntro = of(data?.kwaliteitIntro, d.kwaliteitIntro);
   const kwaliteitItems = data?.kwaliteitItems?.length
     ? data.kwaliteitItems
     : d.kwaliteitItems;
@@ -236,9 +240,12 @@ export default function WonenBijLanding({ data }: { data?: WonenBijLandingData }
             </Reveal>
           </div>
 
-          {/* Blok 2: foto links; tekst + knop rechts, knop-onderkant = foto-onderkant */}
-          <div className="relative mt-[19.792vw] max-lg:mt-8">
-            <RevealMedia className="relative ml-[0.069vw] w-[54.931vw] aspect-[791/559] overflow-hidden max-lg:ml-0 max-lg:w-full">
+          {/* Blok 2: foto links; tekst + knop rechts, knop-onderkant = foto-onderkant.
+              Flex met items-end i.p.v. absolute: bij korte tekst pixelgelijk,
+              bij het extra "Waarom"-blok (comment 32) groeit de rij en blijft
+              de foto onderaan uitgelijnd. */}
+          <div className="relative mt-[19.792vw] flex items-end max-lg:mt-8 max-lg:block">
+            <RevealMedia className="relative shrink-0 ml-[0.069vw] w-[54.931vw] aspect-[791/559] overflow-hidden max-lg:ml-0 max-lg:w-full">
               <Parallax>
                 <Image
                   src={overFoto2}
@@ -249,12 +256,40 @@ export default function WonenBijLanding({ data }: { data?: WonenBijLandingData }
                 />
               </Parallax>
             </RevealMedia>
-            {/* Onder-verankerd: de knop-onderkant valt samen met de foto-onderkant
+            {/* Onder-uitgelijnd: de knop-onderkant valt samen met de foto-onderkant
                 (Figma: beide op 3245), langere tekst groeit naar boven */}
             <Reveal
               delay={0.15}
-              className="absolute left-[64.444vw] bottom-0 w-[27.986vw] max-lg:static max-lg:w-full max-lg:mt-8"
+              className="ml-[9.444vw] w-[27.986vw] max-lg:ml-0 max-lg:w-full max-lg:mt-8"
             >
+          {/* "Waarom wonen bij Weverskade" (comment 32): Viviannes tekst op de
+              plek van haar marker, boven de bestaande tekst en knop. */}
+          {waaromTitel ? (
+            <div className="mb-[3.75vw] max-lg:mb-8">
+              <h3 className="font-heading font-normal text-[2.014vw] leading-[2.569vw] text-off-black max-lg:text-[22px] max-lg:leading-[28px]">
+                {waaromTitel}
+              </h3>
+              {waaromIntro ? (
+                <p className="mt-[1.111vw] whitespace-pre-line font-body font-medium text-[1.111vw] leading-[1.667vw] tracking-[-0.022vw] text-off-black max-lg:mt-3 max-lg:text-[15px] max-lg:leading-[22px]">
+                  {waaromIntro}
+                </p>
+              ) : null}
+              {waaromItems.length ? (
+                <ul className="mt-[1.667vw] flex flex-col gap-[1.111vw] list-none m-0 p-0 max-lg:mt-4 max-lg:gap-3">
+                  {waaromItems.map((item) => (
+                    <li key={item.label + item.waarde}>
+                      <p className="font-body font-medium text-[1.111vw] leading-[1.667vw] tracking-[-0.022vw] text-off-black max-lg:text-[15px] max-lg:leading-[22px]">
+                        {item.label}
+                      </p>
+                      <p className="font-body font-normal text-[1.111vw] leading-[1.667vw] tracking-[-0.022vw] text-off-black/80 max-lg:text-[15px] max-lg:leading-[22px]">
+                        {item.waarde}
+                      </p>
+                    </li>
+                  ))}
+                </ul>
+              ) : null}
+            </div>
+          ) : null}
           <p className="font-body font-medium text-[1.597vw] leading-[2.153vw] tracking-[-0.032vw] text-off-black max-lg:text-[17px] max-lg:leading-[24px]">
             {overTekstRechts}
           </p>
@@ -274,40 +309,22 @@ export default function WonenBijLanding({ data }: { data?: WonenBijLandingData }
       {/* Figma-band is 521 hoog bij éénregelige placeholders; de maat die telt is
           de witruimte (99 boven, 131 onder) — de band groeit mee met de inhoud */}
       <div className="bg-green pt-[6.875vw] pb-[9.097vw] max-lg:py-14" data-nav-theme="green">
-        {/* Zelfde kantlijn en kolommen als de aanbod- en projectsecties
-            (kop op x=40, grid op x=35): de Figma-inspringing van 267px was
-            bedoeld voor drie korte regels en werd met de langere teksten
-            (comment 32) een smalle kolom met veel lege ruimte rechts. */}
-        <div className="px-[2.431vw] max-lg:px-5">
-          <h2 className="ml-[0.347vw] font-heading font-normal text-[4.653vw] leading-[5.736vw] tracking-[-0.093vw] text-off-white max-lg:ml-0 max-lg:text-[32px] max-lg:leading-[1.1] max-lg:tracking-[-0.64px]">
+        <div className="pl-[18.542vw] pr-[2.431vw] max-lg:px-5">
+          <h2 className="font-heading font-normal text-[4.653vw] leading-[5.736vw] tracking-[-0.093vw] text-off-white max-lg:text-[32px] max-lg:leading-[1.1] max-lg:tracking-[-0.64px]">
             <RevealWords text={kwaliteitTitel} />
           </h2>
-          {/* Introregel onder de kop (comment 32); zelfde 32px tekst-ritme als
-              elders, de blokken schuiven mee naar beneden. */}
-          {kwaliteitIntro ? (
-            <Reveal
-              as="p"
-              delay={0.1}
-              className="mt-[2.222vw] ml-[0.347vw] max-w-[47.153vw] font-body font-medium text-[1.597vw] leading-[2.153vw] tracking-[-0.032vw] text-off-white max-lg:mt-4 max-lg:ml-0 max-lg:max-w-none max-lg:text-[17px] max-lg:leading-[24px]"
-            >
-              {kwaliteitIntro}
-            </Reveal>
-          ) : null}
           {/* kolommen staan in Figma op 270/623/965 — ongelijke breedtes, geen uniform grid */}
-          <RevealGroup className="mt-[4.264vw] grid grid-cols-3 gap-x-[1.389vw] gap-y-[3.125vw] max-lg:mt-8 max-lg:grid-cols-1 max-lg:gap-y-6">
+          <RevealGroup className="mt-[4.264vw] ml-[0.208vw] grid grid-cols-[24.514vw_23.75vw_20.486vw] gap-y-[3.125vw] max-lg:mt-8 max-lg:ml-0 max-lg:grid-cols-1 max-lg:gap-y-6">
             {kwaliteitItems.map((item, i) => (
               <Reveal
                 key={item.label + item.waarde}
                 delay={0.1 + i * 0.075}
-                /* Tekst op de kop-kantlijn (x=40) met 20px lucht vóór de
-                   volgende kolom, zoals de kaartteksten in de aanbodsectie. */
-                className="pl-[0.347vw] pr-[1.389vw] max-lg:px-0"
+                className="max-w-[20.486vw] max-lg:max-w-none"
               >
                 <p className="font-body font-normal text-[1.042vw] leading-[1.806vw] text-off-white max-lg:text-[13px] max-lg:leading-[20px]">
                   {item.label}
                 </p>
-                {/* Kleine ademruimte label→tekst; alleen zichtbaar bij alinea's. */}
-                <p className="mt-[0.417vw] font-heading font-normal text-[1.458vw] leading-[1.806vw] text-off-white max-lg:mt-1 max-lg:text-[18px] max-lg:leading-[24px]">
+                <p className="font-heading font-normal text-[1.458vw] leading-[1.806vw] text-off-white max-lg:mt-1 max-lg:text-[18px] max-lg:leading-[24px]">
                   {item.waarde}
                 </p>
               </Reveal>

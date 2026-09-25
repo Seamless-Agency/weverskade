@@ -1486,12 +1486,13 @@ export const landingDefaults = {
   overFoto2: "/images/wonenbij/picture-21.png",
   overTekstRechts:
     "Of je nu huurt of koopt: bij Weverskade vind je woningen met karakter op plekken waar het leven vanzelfsprekend samenkomt - van stedelijke appartementen tot wonen aan het water.",
-  // Comment 32: "Waarom wonen bij Weverskade" als de groene band, met haar
-  // drie punten als de blokken.
-  kwaliteitTitel: "Waarom wonen bij Weverskade",
-  kwaliteitIntro:
+  // Comment 32: Viviannes "Waarom wonen bij Weverskade" als eigen blok in de
+  // over-sectie (naast foto 2, waar haar marker stond). De groene band houdt
+  // de korte usp's uit het design.
+  waaromTitel: "Waarom wonen bij Weverskade",
+  waaromIntro:
     "Wij creëren woonomgevingen die niet alleen mooi zijn, maar ook prettig functioneren. Voor vandaag en morgen. Bij Weverskade vind je woningen waar:",
-  kwaliteitItems: [
+  waaromItems: [
     {
       label: "Kwaliteit voorop staat",
       waarde:
@@ -1507,6 +1508,15 @@ export const landingDefaults = {
       waarde:
         "Ook na oplevering blijven we betrokken bij het beheer van de woningen. Bewoners weten waar zij terechtkunnen en kunnen rekenen op duidelijke communicatie.",
     },
+  ] as KwaliteitItem[],
+  kwaliteitTitel: "Kwaliteit en gebruiksgemak",
+  kwaliteitItems: [
+    { label: "Duurzaamheid", waarde: "Energiezuinig en toekomstbestendig" },
+    { label: "Comfort", waarde: "Compleet en instapklaar opgeleverd" },
+    { label: "Flexibiliteit", waarde: "Woningtypes voor elke levensfase" },
+    { label: "Service", waarde: "Persoonlijk contact met ons team" },
+    { label: "Zekerheid", waarde: "Transparant en soepel huurtraject" },
+    { label: "Omgeving", waarde: "Wonen op bijzondere plekken" },
   ] as KwaliteitItem[],
   aanbodTitel: "Beschikbare woningen",
   // Comment 33: inleidende tekst boven het aanbod, later om te zetten naar

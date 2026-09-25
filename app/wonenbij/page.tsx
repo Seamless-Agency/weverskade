@@ -69,8 +69,12 @@ function landingUitSanity(raw: any): WonenBijLandingData {
       : undefined,
     overTekstRechts: tekst(raw.overTekstRechts),
     overKnop: tekst(raw.overKnop),
+    waaromTitel: tekst(raw.waaromTitel),
+    waaromIntro: tekst(raw.waaromIntro),
+    waaromItems: (raw.waaromItems ?? [])
+      .filter((k: any) => tekst(k?.label))
+      .map((k: any) => ({ label: k.label, waarde: tekst(k.waarde) ?? "" })),
     kwaliteitTitel: tekst(raw.kwaliteitTitel),
-    kwaliteitIntro: tekst(raw.kwaliteitIntro),
     kwaliteitItems: (raw.kwaliteitItems ?? [])
       .filter((k: any) => tekst(k?.label))
       .map((k: any) => ({ label: k.label, waarde: tekst(k.waarde) ?? "" })),

@@ -18,6 +18,7 @@ export const wonenBijLanding = defineType({
     { name: 'intro', title: 'Intro' },
     { name: 'over', title: 'Over Weverskade' },
     { name: 'waarom', title: 'Waarom wonen bij' },
+    { name: 'usps', title: 'Groene band' },
     { name: 'overzichten', title: 'Aanbod en projecten' },
     { name: 'contact', title: 'Contact' },
     { name: 'seo', title: 'SEO' },
@@ -139,33 +140,63 @@ export const wonenBijLanding = defineType({
       description: 'Verwijst naar het woningaanbod op deze pagina.',
     }),
 
-    /* Waarom wonen bij (groene band) */
+    /* Waarom wonen bij (blok naast foto 2 in de over-sectie) */
     defineField({
-      name: 'kwaliteitTitel',
-      title: 'Titel',
+      name: 'waaromTitel',
+      title: 'Kop',
       type: 'string',
       group: 'waarom',
+      description: 'Staat naast de tweede foto, boven de tekst met de knop.',
     }),
     defineField({
-      name: 'kwaliteitIntro',
+      name: 'waaromIntro',
       title: 'Introtekst',
       type: 'text',
       rows: 3,
       group: 'waarom',
     }),
     defineField({
-      name: 'kwaliteitItems',
+      name: 'waaromItems',
       title: 'Punten',
       type: 'array',
       group: 'waarom',
-      description: 'Drie punten naast elkaar, elk met een kopje en een korte toelichting.',
+      description: 'Elk punt heeft een kopje en een korte toelichting.',
+      of: [
+        defineArrayMember({
+          type: 'object',
+          name: 'waaromItem',
+          fields: [
+            defineField({ name: 'label', title: 'Kopje', type: 'string' }),
+            defineField({ name: 'waarde', title: 'Toelichting', type: 'text', rows: 4 }),
+          ],
+          preview: {
+            select: { title: 'label', subtitle: 'waarde' },
+          },
+        }),
+      ],
+    }),
+
+    /* Groene band: korte usp's */
+    defineField({
+      name: 'kwaliteitTitel',
+      title: 'Titel',
+      type: 'string',
+      group: 'usps',
+    }),
+    defineField({
+      name: 'kwaliteitItems',
+      title: "Usp's",
+      type: 'array',
+      group: 'usps',
+      description:
+        'Zes korte punten in twee rijen van drie: een kopje van één woord en een toelichting van één regel.',
       of: [
         defineArrayMember({
           type: 'object',
           name: 'kwaliteitItem',
           fields: [
             defineField({ name: 'label', title: 'Kopje', type: 'string' }),
-            defineField({ name: 'waarde', title: 'Toelichting', type: 'text', rows: 4 }),
+            defineField({ name: 'waarde', title: 'Toelichting', type: 'string' }),
           ],
           preview: {
             select: { title: 'label', subtitle: 'waarde' },
