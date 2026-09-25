@@ -68,15 +68,18 @@ export default async function WonenBijProject({
     sanityFetch<any[]>({ query: ALL_NIEUWS_QUERY, tags: ["nieuwsArtikel"] }),
     sanityFetch<any>({ query: FOOTER_QUERY, tags: ["footer"] }),
     sanityFetch<{
+      linkedIn?: string;
       instagram?: string;
       facebook?: string;
     } | null>({ query: SITE_SETTINGS_QUERY, tags: ["siteSettings"] }),
   ]);
 
-  // Social-kanalen uit de site-instellingen. Bewust zonder LinkedIn: dat is
-  // het zakelijke kanaal van Weverskade (comment 38, Vivianne); zonder
-  // ingevulde Instagram/Facebook-URL verdwijnt de hele regel.
+  // Social-kanalen uit de site-instellingen (Instellingen > Algemeen); geen
+  // code-fallback, zodat de redactie een kanaal weghaalt door het veld leeg
+  // te maken (comment 38: LinkedIn is mogelijk te zakelijk). Zonder enige
+  // URL verdwijnt de hele regel. De hoofdsite leest deze velden niet.
   const socials: SocialLinks = {
+    linkedIn: settings?.linkedIn ?? undefined,
     instagram: settings?.instagram ?? undefined,
     facebook: settings?.facebook ?? undefined,
   };
