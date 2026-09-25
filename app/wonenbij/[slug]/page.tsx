@@ -68,17 +68,15 @@ export default async function WonenBijProject({
     sanityFetch<any[]>({ query: ALL_NIEUWS_QUERY, tags: ["nieuwsArtikel"] }),
     sanityFetch<any>({ query: FOOTER_QUERY, tags: ["footer"] }),
     sanityFetch<{
-      linkedIn?: string;
       instagram?: string;
       facebook?: string;
     } | null>({ query: SITE_SETTINGS_QUERY, tags: ["siteSettings"] }),
   ]);
 
-  // Social-kanalen uit de site-instellingen; LinkedIn heeft dezelfde
-  // fallback als de footer zodat de verwijzing nooit leeg is.
+  // Social-kanalen uit de site-instellingen. Bewust zonder LinkedIn: dat is
+  // het zakelijke kanaal van Weverskade (comment 38, Vivianne); zonder
+  // ingevulde Instagram/Facebook-URL verdwijnt de hele regel.
   const socials: SocialLinks = {
-    linkedIn:
-      settings?.linkedIn ?? "https://www.linkedin.com/company/weverskade",
     instagram: settings?.instagram ?? undefined,
     facebook: settings?.facebook ?? undefined,
   };

@@ -12,7 +12,6 @@ import InschrijfForm from "@/components/wonenbij/InschrijfForm";
 import {
   FacebookIcon,
   InstagramIcon,
-  LinkedInIcon,
   PijlIcon,
 } from "@/components/wonenbij/icons";
 import { usePageNavigation } from "@/hooks/usePageNavigation";
@@ -42,7 +41,6 @@ export type { NieuwsKaart };
 
 /** Social-kanalen onder het nieuws; alleen ingevulde kanalen worden getoond. */
 export interface SocialLinks {
-  linkedIn?: string;
   instagram?: string;
   facebook?: string;
 }
@@ -74,7 +72,6 @@ export default function WonenBijProjectPage({
   socials?: SocialLinks;
 }) {
   const socialKanalen = [
-    { label: "LinkedIn", href: socials?.linkedIn, Icoon: LinkedInIcon },
     { label: "Instagram", href: socials?.instagram, Icoon: InstagramIcon },
     { label: "Facebook", href: socials?.facebook, Icoon: FacebookIcon },
   ].filter((k): k is typeof k & { href: string } => Boolean(k.href));
