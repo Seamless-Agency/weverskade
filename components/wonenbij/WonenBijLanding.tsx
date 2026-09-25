@@ -274,8 +274,12 @@ export default function WonenBijLanding({ data }: { data?: WonenBijLandingData }
       {/* Figma-band is 521 hoog bij éénregelige placeholders; de maat die telt is
           de witruimte (99 boven, 131 onder) — de band groeit mee met de inhoud */}
       <div className="bg-green pt-[6.875vw] pb-[9.097vw] max-lg:py-14" data-nav-theme="green">
-        <div className="pl-[18.542vw] pr-[2.431vw] max-lg:px-5">
-          <h2 className="font-heading font-normal text-[4.653vw] leading-[5.736vw] tracking-[-0.093vw] text-off-white max-lg:text-[32px] max-lg:leading-[1.1] max-lg:tracking-[-0.64px]">
+        {/* Zelfde kantlijn en kolommen als de aanbod- en projectsecties
+            (kop op x=40, grid op x=35): de Figma-inspringing van 267px was
+            bedoeld voor drie korte regels en werd met de langere teksten
+            (comment 32) een smalle kolom met veel lege ruimte rechts. */}
+        <div className="px-[2.431vw] max-lg:px-5">
+          <h2 className="ml-[0.347vw] font-heading font-normal text-[4.653vw] leading-[5.736vw] tracking-[-0.093vw] text-off-white max-lg:ml-0 max-lg:text-[32px] max-lg:leading-[1.1] max-lg:tracking-[-0.64px]">
             <RevealWords text={kwaliteitTitel} />
           </h2>
           {/* Introregel onder de kop (comment 32); zelfde 32px tekst-ritme als
@@ -284,21 +288,20 @@ export default function WonenBijLanding({ data }: { data?: WonenBijLandingData }
             <Reveal
               as="p"
               delay={0.1}
-              className="mt-[2.222vw] ml-[0.208vw] max-w-[48.264vw] font-body font-medium text-[1.597vw] leading-[2.153vw] tracking-[-0.032vw] text-off-white max-lg:mt-4 max-lg:ml-0 max-lg:max-w-none max-lg:text-[17px] max-lg:leading-[24px]"
+              className="mt-[2.222vw] ml-[0.347vw] max-w-[47.153vw] font-body font-medium text-[1.597vw] leading-[2.153vw] tracking-[-0.032vw] text-off-white max-lg:mt-4 max-lg:ml-0 max-lg:max-w-none max-lg:text-[17px] max-lg:leading-[24px]"
             >
               {kwaliteitIntro}
             </Reveal>
           ) : null}
           {/* kolommen staan in Figma op 270/623/965 — ongelijke breedtes, geen uniform grid */}
-          <RevealGroup className="mt-[4.264vw] ml-[0.208vw] grid grid-cols-[24.514vw_23.75vw_20.486vw] gap-y-[3.125vw] max-lg:mt-8 max-lg:ml-0 max-lg:grid-cols-1 max-lg:gap-y-6">
+          <RevealGroup className="mt-[4.264vw] grid grid-cols-3 gap-x-[1.389vw] gap-y-[3.125vw] max-lg:mt-8 max-lg:grid-cols-1 max-lg:gap-y-6">
             {kwaliteitItems.map((item, i) => (
               <Reveal
                 key={item.label + item.waarde}
                 delay={0.1 + i * 0.075}
-                /* Tekst mag tot 30px voor de volgende kolom lopen (kolommen
-                   1-2 zijn breder dan 3); bij korte waarden onzichtbaar,
-                   bij alinea's scheelt het twee regels in kolom 1. */
-                className={i < 2 ? "max-w-[22.431vw] max-lg:max-w-none" : "max-w-[20.486vw] max-lg:max-w-none"}
+                /* Tekst op de kop-kantlijn (x=40) met 20px lucht vóór de
+                   volgende kolom, zoals de kaartteksten in de aanbodsectie. */
+                className="pl-[0.347vw] pr-[1.389vw] max-lg:px-0"
               >
                 <p className="font-body font-normal text-[1.042vw] leading-[1.806vw] text-off-white max-lg:text-[13px] max-lg:leading-[20px]">
                   {item.label}
