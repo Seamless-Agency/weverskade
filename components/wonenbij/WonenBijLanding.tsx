@@ -10,6 +10,7 @@ import { usePageNavigation } from "@/hooks/usePageNavigation";
 import { submitFormSubmission } from "@/lib/formSubmissionClient";
 import WonenBijHeader from "@/components/wonenbij/WonenBijHeader";
 import VimeoBackground from "@/components/VimeoBackground";
+import SleepRij from "@/components/wonenbij/SleepRij";
 import {
   EASE,
   HeroParallax,
@@ -138,7 +139,7 @@ export default function WonenBijLanding({ data }: { data?: WonenBijLandingData }
             {/* Dezelfde showreel als de hoofdsite-hero (comment 24); de foto
                 blijft de poster tot de video speelt en de fallback zonder URL. */}
             {heroVideoUrl && !reduced ? (
-              <VimeoBackground url={heroVideoUrl} poster={heroImage} fit="cover" />
+              <VimeoBackground url={heroVideoUrl} poster={heroImage} fit="cover" meetContainer />
             ) : (
               <Image
                 src={heroImage}
@@ -316,7 +317,10 @@ export default function WonenBijLanding({ data }: { data?: WonenBijLandingData }
               {aanbodIntro}
             </Reveal>
           ) : null}
-          <div className="mt-[2.431vw] grid grid-cols-3 gap-x-[1.389vw] gap-y-[1.389vw] max-lg:mt-6 max-lg:grid-cols-1 max-lg:gap-y-5">
+          {/* Eén sleepbare rij i.p.v. een raster (comment 43): drie kaarten
+              in beeld op desktop, op mobiel één kaart met de volgende die
+              al zichtbaar is. Kaartmaat gelijk aan het oude raster. */}
+          <SleepRij label={aanbodTitel} className="mt-[2.431vw] max-lg:mt-6">
             {aanbod.map((kaart, i) => {
               const href = `/wonenbij/${kaart.projectSlug}/${kaart.typeSlug}`;
               return (
@@ -326,12 +330,13 @@ export default function WonenBijLanding({ data }: { data?: WonenBijLandingData }
                   href={href}
                   delay={(i % 3) * 0.09}
                   onClick={(e: React.MouseEvent<HTMLAnchorElement>) => navigate(e, href)}
-                  className="block bg-off-white pt-[1.389vw] px-[1.25vw] pb-[1.944vw] no-underline group max-lg:p-4"
+                  className="block shrink-0 snap-start basis-[calc((100%-2.778vw)/3)] bg-off-white pt-[1.389vw] px-[1.25vw] pb-[1.944vw] no-underline group max-lg:basis-[85%] max-lg:p-4"
                 >
                   <div className="relative w-full aspect-[407/275] overflow-hidden">
                     <Image
                       src={kaart.foto}
                       alt={kaart.typeNaam}
+                      draggable={false}
                       fill
                       sizes="(max-width: 768px) 100vw, 30vw"
                       className="object-cover transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-105"
@@ -389,7 +394,7 @@ export default function WonenBijLanding({ data }: { data?: WonenBijLandingData }
                 </Reveal>
               );
             })}
-          </div>
+          </SleepRij>
         </div>
       ) : null}
 

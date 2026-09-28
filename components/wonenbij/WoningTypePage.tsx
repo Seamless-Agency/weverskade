@@ -136,8 +136,11 @@ export default function WoningTypePage({
       <div className="relative pt-[13.472vw] pb-[10.625vw] max-lg:pt-[90px] max-lg:pb-12">
         <WonenBijHeader
           variant="donker"
-          ctaLabel="Terug naar overzicht"
-          ctaHref={projectHref}
+          // Comment 40: terug naar de woningzoeker op de projectpagina
+          // i.p.v. naar de bovenkant; de projectpagina scrolt na de page
+          // transition naar #aanbod.
+          ctaLabel="Terug naar woningzoeker"
+          ctaHref={`${projectHref}#aanbod`}
           ctaArrow
         />
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import GebouwImageCarousel from "@/components/GebouwImageCarousel";
 import WonenBijHeader from "@/components/wonenbij/WonenBijHeader";
@@ -116,6 +116,44 @@ export default function WonenBijProjectPage({
         return true;
     }
   });
+
+  // Terug vanaf een woningpagina (comment 40): de URL eindigt op #aanbod.
+  // De page transition zet de scroll aan het eind op 0, dus pas daarna naar
+  // de woningzoeker. Zonder transition (directe load, reduced motion) na
+  // PageTransition's eigen scrollTo(0,0), dus een frame later.
+  useEffect(() => {
+    if (window.location.hash !== "#aanbod" || !heeftAanbod) return;
+    const naarWoningzoeker = () =>
+      document
+        .getElementById("aanbod")
+        ?.scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "start" });
+    // Loopt er (straks) een transition, dan wachten op het einde ervan;
+    // anders twee frames na mount, ná PageTransition's eigen scrollTo(0,0).
+    // Ook na het einde-event nog twee frames: op dat moment staat de pagina
+    // nog in de transitie-opmaak en is er niets te scrollen.
+    let naEinde = 0;
+    const naTransitie = () => {
+      naEinde = requestAnimationFrame(() => {
+        naEinde = requestAnimationFrame(naarWoningzoeker);
+      });
+    };
+    window.addEventListener("page-transition-end", naTransitie, { once: true });
+    let frame = requestAnimationFrame(() => {
+      frame = requestAnimationFrame(() => {
+        if (!window.__pageTransitioning && !window.__pageSnapshot) {
+          window.removeEventListener("page-transition-end", naTransitie);
+          naarWoningzoeker();
+        }
+      });
+    });
+    return () => {
+      cancelAnimationFrame(frame);
+      cancelAnimationFrame(naEinde);
+      window.removeEventListener("page-transition-end", naTransitie);
+    };
+    // Alleen bij aankomst op de pagina.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const scrollNaar = (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
     e.preventDefault();
@@ -314,49 +352,13 @@ export default function WonenBijProjectPage({
         />
       ) : null}
 
-      {/* Persoonlijk begeleid — Figma: label op 146 van de bandtop (x=268),
-          lijstblok en knop op x=258, vaste witruimtes 13/31/38/31, onder 178.
-          Bewust statisch (geen scroll-reveal) voor ritme tussen de secties. */}
-      <Statisch>
-      <div className="bg-blue pt-[10.139vw] pb-[12.361vw] max-lg:py-14" data-nav-theme="blue">
-        <div className="pl-[18.611vw] pr-[2.431vw] max-lg:px-5">
-          <Reveal
-            as="p"
-            className="font-body font-medium text-[1.389vw] leading-[1.611vw] text-off-white max-lg:text-[16px] max-lg:leading-[21px]"
-          >
-            {project.begeleiding.label}
-          </Reveal>
-          <h2 className="mt-[0.903vw] max-w-[70.139vw] whitespace-pre-line font-heading font-normal text-[4.931vw] leading-[5.278vw] tracking-[-0.099vw] text-off-white max-lg:mt-3 max-lg:max-w-none max-lg:whitespace-normal max-lg:text-[32px] max-lg:leading-[38px] max-lg:tracking-[-0.64px]">
-            <RevealWords text={project.begeleiding.titel} delay={0.1} />
-          </h2>
-          <RevealGroup
-            as="ul"
-            className="mt-[2.153vw] -ml-[0.694vw] max-w-[45.347vw] list-disc pl-[1.736vw] font-body font-medium text-[1.389vw] leading-[2.639vw] text-off-white max-lg:mt-6 max-lg:ml-0 max-lg:max-w-none max-lg:pl-6 max-lg:text-[16px] max-lg:leading-[30px]"
-          >
-            {project.begeleiding.punten.map((punt, i) => (
-              <Reveal as="li" key={punt} delay={0.1 + i * 0.06} y={16}>
-                {punt}
-              </Reveal>
-            ))}
-          </RevealGroup>
-          <Reveal
-            as="p"
-            delay={0.15}
-            className="mt-[2.639vw] -ml-[0.694vw] max-w-[45.347vw] font-body font-medium text-[1.389vw] leading-[2.639vw] text-off-white max-lg:mt-5 max-lg:ml-0 max-lg:max-w-none max-lg:text-[16px] max-lg:leading-[28px]"
-          >
-            {project.begeleiding.slotTekst}
-          </Reveal>
-          <Reveal as="span" className="inline-block" delay={0.25}>
-            <a
-              href="/contact"
-              className="pill-hover inline-block mt-[2.153vw] -ml-[0.694vw] bg-off-white text-off-black no-underline rounded-full px-[1.528vw] py-[0.694vw] font-heading font-normal text-[1.181vw] leading-[1.458vw] tracking-[-0.024vw] max-lg:mt-6 max-lg:ml-0 max-lg:px-5 max-lg:py-2.5 max-lg:text-[14px] max-lg:leading-normal"
-            >
-              {project.begeleiding.knopTekst}
-            </a>
-          </Reveal>
-        </div>
-      </div>
-      </Statisch>
+      {/* De blauwe band "Aandacht voor prettig wonen" (Figma: "Persoonlijk
+          begeleid") is weggehaald op verzoek van Vivianne (MarkUp 34 + 35,
+          28-09-2026): de generieke Weverskade-boodschap staat al op de
+          landing, en de knop verwees naar de zakelijke contactpagina.
+          Terugzetten: git show 169529b:components/wonenbij/WonenBijProjectPage.tsx
+          (blok "Persoonlijk begeleid"); de tekst staat nog in
+          data/wonenbij.ts (demoBegeleiding). */}
 
       {/* Welkom bij + beeldcarrousel — Figma: label op 336 van de bandtop,
           tekstblokken onder-verankerd aan de foto-onderkant, fotoblokken 319 uit elkaar */}

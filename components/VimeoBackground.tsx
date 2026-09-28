@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 function parseVimeoUrl(url: string): { id: string; hash?: string } | null {
   const match = url.match(/vimeo\.com\/(?:video\/)?(\d+)(?:\/([a-zA-Z0-9]+))?/);
@@ -12,9 +12,17 @@ export default function VimeoBackground({
   url,
   poster,
   fit = "cover",
+  meetContainer = false,
 }: {
   url: string;
   poster?: string;
+  /**
+   * Meet de container met een ResizeObserver en zet de iframe-maat in px.
+   * Onafhankelijk van container-query-units, die in sommige embed-omgevingen
+   * (bijv. de MarkUp-preview) niet de containermaat opleveren. Standaard uit,
+   * zodat de hoofdsite exact hetzelfde blijft.
+   */
+  meetContainer?: boolean;
   /**
    * "cover" — iframe fills the container, overflow is cropped.
    * "contain" — iframe fits inside the container (letterbox if aspect mismatch).
@@ -24,6 +32,28 @@ export default function VimeoBackground({
 }) {
   const [visible, setVisible] = useState(false);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [gemeten, setGemeten] = useState<{ w: number; h: number } | null>(null);
+
+  useEffect(() => {
+    if (!meetContainer) return;
+    const el = containerRef.current;
+    if (!el) return;
+    const meet = () => {
+      const w = el.clientWidth;
+      const h = el.clientHeight;
+      if (!w || !h) return;
+      const ratio = 16 / 9;
+      const cover = fit === "cover";
+      // cover: minstens zo groot als de container; contain: er precies in.
+      const breedte = cover ? Math.max(w, h * ratio) : Math.min(w, h * ratio);
+      setGemeten({ w: Math.ceil(breedte), h: Math.ceil(breedte / ratio) });
+    };
+    meet();
+    const ro = new ResizeObserver(meet);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [meetContainer, fit]);
   const parsed = parseVimeoUrl(url);
   if (!parsed) return null;
   const params = new URLSearchParams({
@@ -51,9 +81,11 @@ export default function VimeoBackground({
         };
 
   const posterObjectFit = fit === "contain" ? "contain" : "cover";
+  const maat = gemeten ? { width: `${gemeten.w}px`, height: `${gemeten.h}px` } : iframeSize;
 
   return (
     <div
+      ref={containerRef}
       className="absolute inset-0 pointer-events-none"
       style={{ containerType: "size" }}
     >
@@ -80,7 +112,7 @@ export default function VimeoBackground({
           timeoutRef.current = setTimeout(() => setVisible(true), 600);
         }}
         style={{
-          ...iframeSize,
+          ...maat,
           opacity: visible ? 1 : 0,
           transition: "opacity 0.8s ease-out",
         }}
