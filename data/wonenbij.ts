@@ -1379,43 +1379,67 @@ export const demoWonenBijProjecten: WonenBijProject[] = [
     // niet aangeleverd (map "Project informatie" in de OneDrive is leeg).
     // Zonder items verbergt de downloadsectie zichzelf.
     downloads: [],
+    // Aangeleverd door Wikke (29-09-2026); staat ook zo in Sanity.
     faq: [
       {
-        vraag: "Zijn de woningen van Weverskade instapklaar?",
+        vraag: "Zijn de woningen instapklaar?",
         antwoord:
-          "Ja. De woningen worden compleet opgeleverd, inclusief een keuken en vloer- en wandafwerking. Hierdoor kunnen nieuwe bewoners hun woning direct betrekken zonder eerst uitgebreide werkzaamheden uit te voeren.",
+          "Ja. De woningen worden compleet opgeleverd, inclusief keuken en vloer- en wandafwerking. Je kunt na de sleuteloverdracht direct beginnen met inrichten.",
       },
       {
-        vraag: "Hoe kan ik mij aanmelden voor een woning van Weverskade?",
+        vraag: "Hoe schrijf ik mij in voor een woning?",
         antwoord:
-          "Via het inschrijfformulier op deze pagina meld je je vrijblijvend aan. Geef je voorkeurstype door en wij informeren je zodra de inschrijving opent of er aanbod beschikbaar komt.",
+          "Bekijk het actuele woningaanbod en kies de woning die bij je past. Via de pagina van die specifieke woning kun je je vrijblijvend inschrijven. In het formulier kun je ook een tweede voorkeur aangeven.",
       },
       {
-        vraag: "Wat voor type woningen verhuurt Weverskade?",
+        vraag: "Wat voor woningen zijn er beschikbaar?",
         antwoord:
-          "Weverskade verhuurt vrije sector huurappartementen en studio's, variërend in oppervlakte en aantal slaapkamers. Alle woningen worden compleet en duurzaam opgeleverd.",
+          "Aan de Taanschuurkade komen studio’s en huurappartementen beschikbaar, met verschillende woonoppervlaktes en indelingen. Bekijk het actuele aanbod voor de beschikbare woningtypen.",
       },
       {
         vraag: "Waar vind ik het actuele woningaanbod en de huurprijzen?",
         antwoord:
-          "Bij 'Aanbod' vind je het actuele woningaanbod en de huurprijzen per woningtype. We werken deze informatie bij zodra er nieuwe woningen beschikbaar komen.",
+          "Bij Aanbod vind je de beschikbare woningen, plattegronden, huurprijzen en voorwaarden. Deze informatie werken we bij zodra er nieuw aanbod beschikbaar komt.",
       },
-      // TODO (wacht op Weverskade): Wikke stelde op 3 sep 2026 deze extra
-      // vragen voor, maar de antwoorden zijn nog niet aangeleverd. Zodra ze
-      // er zijn hier (of in het CMS) invullen, in deze volgorde:
-      // - Welke kosten betaal ik naast de huur?
-      // - Aan welke inkomenseisen moet ik voldoen?
-      // - Hoe worden de woningen toegewezen?
-      // - Welke documenten heb ik nodig om mij in te schrijven?
-      // - Wanneer kan ik de woning betrekken?
-      // - Is er een minimale huurtermijn?
-      // - Kan ik een woning bezichtigen voordat ik een huurovereenkomst teken?
-      // - Zijn huisdieren toegestaan?
-      // - Kan ik samen met iemand anders een woning huren?
       {
-        vraag: "Kan ik mij aanmelden voor meerdere projecten tegelijk?",
+        vraag: "Welke kosten betaal ik naast de huur?",
         antwoord:
-          "Ja, dat kan. Schrijf je per project in via de betreffende projectpagina. Je inschrijvingen staan los van elkaar en zijn altijd vrijblijvend.",
+          "Naast de kale huur kunnen servicekosten in rekening worden gebracht. De hoogte en opbouw van de servicekosten staan bij iedere beschikbare woning.",
+      },
+      {
+        vraag: "Aan welke inkomenseis moet ik voldoen?",
+        antwoord:
+          "Voor een woning aan de Taanschuurkade geldt een inkomenseis van minimaal 2,5 keer de maandhuur.",
+      },
+      {
+        vraag: "Betaal ik een waarborgsom?",
+        antwoord:
+          "Ja. De waarborgsom bedraagt één maand huur.",
+      },
+      {
+        vraag: "Hoe worden de woningen toegewezen?",
+        antwoord:
+          "We beoordelen kandidaten op basis van de aangeleverde gegevens, de voorwaarden en de passendheid bij de woning.",
+      },
+      {
+        vraag: "Welke documenten heb ik nodig?",
+        antwoord:
+          "Je hebt in ieder geval een geldig identiteitsbewijs en inkomensgegevens nodig. Afhankelijk van je situatie kunnen aanvullende documenten worden gevraagd.",
+      },
+      {
+        vraag: "Hoe lang duurt de huurovereenkomst?",
+        antwoord:
+          "Je ontvangt een huurovereenkomst voor onbepaalde tijd. De opzegtermijn is één maand.",
+      },
+      {
+        vraag: "Kan ik parkeren?",
+        antwoord:
+          "Parkeren kan in de omgeving. Er zijn geen parkeerplaatsen direct toegewezen aan het complex.",
+      },
+      {
+        vraag: "Zijn huisdieren toegestaan?",
+        antwoord:
+          "Ja. Huisdieren zijn toegestaan in de woningen.",
       },
     ],
     woningTypes: taanschuurkadeWoningTypes,
