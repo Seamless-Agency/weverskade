@@ -136,7 +136,7 @@ export default function SleepRij({
         // Geen native link-/beeld-drag die het slepen overneemt.
         onDragStart={(e) => e.preventDefault()}
         className={[
-          "flex gap-x-[1.389vw] overflow-x-auto overscroll-x-contain outline-none",
+          "flex gap-x-[1.389vw] overflow-x-auto overflow-y-hidden overscroll-x-contain outline-none",
           "[scrollbar-width:none] [&::-webkit-scrollbar]:hidden",
           "max-lg:gap-x-4",
           sleept ? "cursor-grabbing select-none" : "snap-x snap-mandatory",
