@@ -9,7 +9,7 @@ import TurnstileWidget, {
 import { usePageNavigation } from "@/hooks/usePageNavigation";
 import { submitFormSubmission } from "@/lib/formSubmissionClient";
 import WonenBijHeader from "@/components/wonenbij/WonenBijHeader";
-import VimeoBackground from "@/components/VimeoBackground";
+import VimeoBackground, { parseVimeoUrl } from "@/components/VimeoBackground";
 import SleepRij from "@/components/wonenbij/SleepRij";
 import {
   EASE,
@@ -87,6 +87,9 @@ export default function WonenBijLanding({ data }: { data?: WonenBijLandingData }
   const heroImage = of(data?.heroImage, d.heroImage);
   // undefined = geen CMS-waarde → standaard; "" = redactie wil geen video.
   const heroVideoUrl = data?.heroVideoUrl ?? d.heroVideoUrl;
+  const heroFragmenten = heroVideoUrl
+    ? d.heroVideoFragmenten[parseVimeoUrl(heroVideoUrl)?.id ?? ""]
+    : undefined;
   const heroKnop = of(data?.heroKnop, d.heroKnop);
   const introStatement = of(data?.introStatement, d.introStatement);
   const introCtas = data?.introCtas?.length ? data.introCtas : d.introCtas;
@@ -139,7 +142,7 @@ export default function WonenBijLanding({ data }: { data?: WonenBijLandingData }
             {/* Dezelfde showreel als de hoofdsite-hero (comment 24); de foto
                 blijft de poster tot de video speelt en de fallback zonder URL. */}
             {heroVideoUrl && !reduced ? (
-              <VimeoBackground url={heroVideoUrl} poster={heroImage} fit="cover" meetContainer />
+              <VimeoBackground url={heroVideoUrl} poster={heroImage} fit="cover" meetContainer fragmenten={heroFragmenten} />
             ) : (
               <Image
                 src={heroImage}

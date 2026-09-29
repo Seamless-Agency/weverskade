@@ -1461,6 +1461,17 @@ export const landingDefaults = {
   // Zelfde showreel als de hero van de hoofdsite (comment 24). Een montage
   // met alleen de woningprojecten is een nieuwe Vimeo-URL: hier omzetten.
   heroVideoUrl: "https://vimeo.com/1184821093",
+  // MarkUp 24/42: alleen woningen in de hero. De showreel (Vimeo-account van
+  // Jetway, niet te downloaden) bevat twee woonprojecten; die stukken spelen
+  // we af i.p.v. het bestand te knippen. 0-2,1s The New Citizen, 11,6-14,8s
+  // De Dirigent (shotgrenzen gemeten 29-09). Geldt alleen voor deze video-id:
+  // een nieuwe URL in Sanity speelt gewoon in zijn geheel.
+  heroVideoFragmenten: {
+    "1184821093": [
+      [0.05, 2.1],
+      [11.6, 14.8],
+    ],
+  } as Record<string, [number, number][]>,
   heroTitel: "Wonen bij Weverskade",
   heroKnop: "Direct naar ons aanbod",
   introStatement:
