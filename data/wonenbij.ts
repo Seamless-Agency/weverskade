@@ -1515,7 +1515,7 @@ export const landingDefaults = {
   ],
   overKnop: "Actueel aanbod",
   overTitel: "Wonen bij\nWeverskade",
-  overFoto: "/images/wonenbij/picture-1.jpg",
+  overFoto: "/images/wonenbij/picture-1-hd.jpg",
   overTekst:
     "Bij Weverskade geloven we dat prettig wonen verder gaat dan vier muren en een dak. Het gaat om een buurt waar mensen zich thuis voelen, woningen die met aandacht voor kwaliteit zijn gebouwd en aandacht hebben voor de omgeving waarin zij staan.\n\nOf het nu gaat om een nieuwbouwappartement aan het water, een karakteristieke stadswoning of een duurzaam woonconcept: wij ontwikkelen en beheren woningen waar met zorg over is nagedacht.",
   overFoto2: "/images/wonenbij/picture-21.png",

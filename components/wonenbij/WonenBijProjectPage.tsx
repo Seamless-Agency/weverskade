@@ -400,7 +400,7 @@ export default function WonenBijProjectPage({
               <RevealMedia className="relative w-full aspect-[785/632] overflow-hidden">
                 <Parallax>
                   <Image
-                    src={project.welkomFotos?.[0] ?? "/images/wonenbij/picture-1.jpg"}
+                    src={project.welkomFotos?.[0] ?? "/images/wonenbij/picture-1-hd.jpg"}
                     alt={`Interieur ${project.naam}`}
                     fill
                     sizes="(max-width: 768px) 100vw, 55vw"
