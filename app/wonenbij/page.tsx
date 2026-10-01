@@ -168,7 +168,7 @@ export default async function WonenBijHome() {
       {/* Nav-thema voor de wonen-bij kop: groen zodra de footer bovenin komt */}
       <div data-nav-theme="green">
         <FooterReveal>
-          <Footer bg="bg-green" data={footerProps} mobielTot="lg" />
+          <Footer bg="bg-green" data={footerProps} mobielTot="lg" privacyHref="/wonenbij/privacybeleid" />
         </FooterReveal>
       </div>
     </>

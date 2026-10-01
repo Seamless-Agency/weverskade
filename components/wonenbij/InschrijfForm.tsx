@@ -392,7 +392,7 @@ export default function InschrijfForm({
                 />
                 <span className="mt-[0.764vw] font-body font-normal text-[0.764vw] leading-[0.889vw] text-off-black max-w-[27.431vw] max-lg:mt-0 max-lg:text-[11px] max-lg:leading-normal max-lg:max-w-none">
                   Ik ga akkoord met de{" "}
-                  <a href="/privacybeleid" className="underline decoration-solid">
+                  <a href="/wonenbij/privacybeleid" target="_blank" rel="noopener noreferrer" className="underline decoration-solid">
                     algemene voorwaarden
                   </a>{" "}
                   en het gebruiken van mijn gegevens om contact met mij op te

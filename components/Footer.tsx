@@ -44,8 +44,15 @@ export default function Footer({
   bg = "bg-blue",
   data,
   mobielTot = "md",
+  privacyHref = "/privacybeleid",
 }: {
   bg?: string;
+  /**
+   * Doel van de link "Privacy & Disclaimer". De wonen-bij omgeving heeft een
+   * eigen pagina met dezelfde tekst (op het subdomein bestaat /privacybeleid
+   * van de hoofdsite niet).
+   */
+  privacyHref?: string;
   data?: FooterData;
   /**
    * Breakpoint waaronder de mobiele footer toont. De hoofdsite wisselt op
@@ -119,7 +126,7 @@ export default function Footer({
           <p className="font-body font-medium text-[1.111vw] leading-[1.25vw] text-off-white">
             © {new Date().getFullYear()} | {data?.companyName ?? "Weverskade B.V."} |{" "}
             <a
-              href="/privacybeleid"
+              href={privacyHref}
               className="link-underline text-off-white pb-[0.208vw]"
               style={{ "--underline-h": "0.069vw" } as React.CSSProperties}
             >
@@ -233,7 +240,7 @@ export default function Footer({
         <p className="font-body font-medium text-[13px] leading-[18px] text-off-white">
           © {new Date().getFullYear()} | {data?.companyName ?? "Weverskade B.V."} |{" "}
           <a
-            href="/privacybeleid"
+            href={privacyHref}
             className="link-underline text-off-white pb-0.5"
             style={{ "--underline-h": "1px" } as React.CSSProperties}
           >

@@ -209,8 +209,8 @@ export default function WonenBijMenu({
             Home
           </a>
           <a
-            href="/privacybeleid"
-            onClick={(e) => handleNavigation(e, "/privacybeleid")}
+            href="/wonenbij/privacybeleid"
+            onClick={(e) => handleNavigation(e, "/wonenbij/privacybeleid")}
             className="absolute right-[1.458vw] bottom-[1.944vw] font-body font-medium text-[0.694vw] leading-normal tracking-[-0.04em] text-off-white no-underline hover:opacity-70 transition-opacity duration-200 max-md:right-5 max-md:bottom-8 max-md:text-[11px]"
             style={{
               opacity: visible ? 1 : 0,
