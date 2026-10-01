@@ -657,7 +657,7 @@ export default function WonenBijProjectPage({
               <Reveal
                 as="p"
                 delay={0.1}
-                className="mt-[2.917vw] ml-[32.153vw] font-body font-medium text-[1.111vw] leading-[1.667vw] tracking-[-0.022vw] text-off-black max-lg:mt-8 max-lg:ml-0 max-lg:text-[15px] max-lg:leading-[22px]"
+                className="mt-[2.917vw] font-body font-medium text-[1.111vw] leading-[1.667vw] tracking-[-0.022vw] text-off-black max-lg:mt-8 max-lg:text-[15px] max-lg:leading-[22px]"
               >
                 {/* Harde spatie: "via" en de iconen blijven bij elkaar, ook
                     als de regel op mobiel afbreekt. */}
