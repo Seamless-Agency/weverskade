@@ -20,6 +20,7 @@ import {
 import { usePageNavigation } from "@/hooks/usePageNavigation";
 import { useInView } from "@/hooks/useInView";
 import { Reveal, RevealWords } from "@/components/wonenbij/motion";
+import { useGevelKaartInBeeld } from "@/components/wonenbij/useGevelKaartInBeeld";
 
 // Sorteren zit als één menu in de filterbalk (bewuste afwijking van de vier
 // losse sorteerknoppen in Figma): alle opties op één plek, naast de filters.
@@ -208,6 +209,15 @@ export default function WoningzoekerSection({
     );
   }, [actiefAanzicht, hoveredWoningId]);
 
+  // Staat de opgelichte kaart buiten beeld, dan schuift de lijst (alleen
+  // desktop, gedebounced, minimaal) hem in beeld terwijl de gevel blijft staan.
+  const kaartRefs = useRef(new Map<string, HTMLElement>());
+  useGevelKaartInBeeld({
+    type: gevelHoverType,
+    kaartRefs,
+    paneelRef: paneelKijkRef,
+  });
+
   /** Typen waarvan minimaal één woning door het filter komt. Typen zonder
    *  gekoppelde woningen blijven altijd zichtbaar. */
   const zichtbareTypes = useMemo(() => {
@@ -366,6 +376,10 @@ export default function WoningzoekerSection({
             {zichtbareTypes.map((type, i) => (
               <a
                 key={type.slug}
+                ref={(el) => {
+                  if (el) kaartRefs.current.set(type.naam, el);
+                  else kaartRefs.current.delete(type.naam);
+                }}
                 href={`/wonenbij/${projectSlug}/${type.slug}`}
                 onClick={(e) => navigate(e, `/wonenbij/${projectSlug}/${type.slug}`)}
                 onMouseEnter={() => setHoveredType(type.naam)}
