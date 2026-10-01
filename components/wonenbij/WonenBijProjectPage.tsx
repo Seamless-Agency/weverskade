@@ -473,7 +473,7 @@ export default function WonenBijProjectPage({
           <Reveal
             as="p"
             delay={0.1}
-            className="mt-[3.194vw] max-w-[40.833vw] font-body font-medium text-[1.597vw] leading-[2.153vw] tracking-[-0.032vw] text-off-black max-lg:mt-5 max-lg:max-w-none max-lg:text-[17px] max-lg:leading-[24px]"
+            className="mt-[3.194vw] max-w-[46.806vw] font-body font-medium text-[1.597vw] leading-[2.153vw] tracking-[-0.032vw] text-off-black max-lg:mt-5 max-lg:max-w-none max-lg:text-[17px] max-lg:leading-[24px]"
           >
             {project.locatieIntro}
           </Reveal>
@@ -657,7 +657,7 @@ export default function WonenBijProjectPage({
               <Reveal
                 as="p"
                 delay={0.1}
-                className="mt-[2.917vw] font-body font-medium text-[1.111vw] leading-[1.667vw] tracking-[-0.022vw] text-off-black max-lg:mt-8 max-lg:text-[15px] max-lg:leading-[22px]"
+                className="mt-[2.917vw] ml-[32.153vw] font-body font-medium text-[1.111vw] leading-[1.667vw] tracking-[-0.022vw] text-off-black max-lg:mt-8 max-lg:ml-0 max-lg:text-[15px] max-lg:leading-[22px]"
               >
                 {/* Harde spatie: "via" en de iconen blijven bij elkaar, ook
                     als de regel op mobiel afbreekt. */}
@@ -851,7 +851,7 @@ function LocatieAccordion({
   return (
     // Figma: lijn → titel 13, dicht: titel → lijn 21; open: titel → tekst 20,
     // tekst → lijn 34. Pijl wijst omlaag (dicht) en draait horizontaal (open).
-    <RevealGroup className="mt-[3.681vw] max-w-[42.014vw] max-lg:mt-7 max-lg:max-w-none">
+    <RevealGroup className="mt-[3.681vw] max-w-[46.806vw] max-lg:mt-7 max-lg:max-w-none">
       {items.map((item, i) => {
         const open = openIndex === i;
         return (
@@ -904,7 +904,7 @@ function LocatieAccordion({
                   zonder de 0fr-animatie te raken */}
               <div className="overflow-hidden" inert={!open}>
                 <p
-                  className="pb-[2.361vw] max-w-[40.417vw] font-body font-medium text-[0.972vw] leading-[1.528vw] tracking-[-0.019vw] text-off-black max-lg:pb-4 max-lg:max-w-none max-lg:text-[14px] max-lg:leading-[21px]"
+                  className="pb-[2.361vw] max-w-[45.208vw] font-body font-medium text-[0.972vw] leading-[1.528vw] tracking-[-0.019vw] text-off-black max-lg:pb-4 max-lg:max-w-none max-lg:text-[14px] max-lg:leading-[21px]"
                   style={{
                     opacity: open ? 1 : 0,
                     transform: open ? "translateY(0)" : "translateY(8px)",

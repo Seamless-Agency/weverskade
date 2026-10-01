@@ -282,7 +282,7 @@ export default function WonenBijLanding({ data }: { data?: WonenBijLandingData }
             <RevealWords text={kwaliteitTitel} />
           </h2>
           {/* kolommen staan in Figma op 270/623/965 — ongelijke breedtes, geen uniform grid */}
-          <RevealGroup className="mt-[4.264vw] ml-[0.208vw] grid grid-cols-[24.514vw_23.75vw_20.486vw] gap-y-[3.125vw] max-lg:mt-8 max-lg:ml-0 max-lg:grid-cols-1 max-lg:gap-y-6">
+          <RevealGroup className="mt-[4.264vw] ml-[0.208vw] grid grid-cols-[24.514vw_23.75vw_15vw] gap-y-[3.125vw] max-lg:mt-8 max-lg:ml-0 max-lg:grid-cols-1 max-lg:gap-y-6">
             {kwaliteitItems.map((item, i) => (
               <Reveal
                 key={item.label + item.waarde}
