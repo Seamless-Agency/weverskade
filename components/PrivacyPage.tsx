@@ -98,8 +98,36 @@ export default function PrivacyPage() {
             </Paragraph>
           </Section>
 
-          {/* Section: 1.1 Contactformulier */}
-          <Section title="1.1 Contactformulier" startWhen={bodyReady}>
+          {/* Section: 1.1 Inschrijfformulier (wonen bij). Teruggezet op
+              02-10-2026 na verwijdering op 27-05, afgestemd op de velden van
+              components/wonenbij/InschrijfForm.tsx. */}
+          <Section title="1.1 Inschrijfformulier" startWhen={bodyReady}>
+            <Paragraph startWhen={bodyReady}>
+              Als u zich inschrijft voor een woning, geeft u persoonsgegevens op in ons
+              inschrijfformulier. Wij vragen de volgende persoonsgegevens:
+            </Paragraph>
+            <BulletList
+              startWhen={bodyReady}
+              items={[
+                "Voornaam",
+                "Achternaam",
+                "E-mailadres",
+                "Telefoonnummer",
+                "Voorkeur woning en eventuele tweede voorkeur",
+                "Leeftijd",
+                "Werkgever of beroep",
+                "Indicatie bruto huishoudinkomen",
+                "Gezinssamenstelling",
+              ]}
+            />
+            <Paragraph startWhen={bodyReady}>
+              Uw gegevens worden door Weverskade B.V. opgeslagen ten behoeve van een juiste match
+              tussen woning, huurder en verhuurder.
+            </Paragraph>
+          </Section>
+
+          {/* Section: 1.2 Contactformulier */}
+          <Section title="1.2 Contactformulier" startWhen={bodyReady}>
             <Paragraph startWhen={bodyReady}>
               Als klant geeft u persoonsgegevens op in ons contactformulier. Wij vragen de
               volgende persoonsgegevens:
