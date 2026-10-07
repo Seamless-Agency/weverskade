@@ -124,9 +124,8 @@ export default async function WonenBijHome() {
       naam: wonenbijNaam(p.name ?? "", p.location),
       plaats: p.location ?? "",
       image: sanityImageUrl(p.portfolioImage, "/images/wonenbij/vogelvlucht.jpg"),
-      // Transitie: showInWonen telt mee zolang wonenBijEnabled nog niet
-      // door de redactie wordt gebruikt (zie WONENBIJ_PROJECT_BY_SLUG_QUERY).
-      heeftWonenBijPagina: Boolean(p.wonenBijEnabled || p.showInWonen),
+      // De query levert alleen projecten met wonenBijEnabled.
+      heeftWonenBijPagina: true,
     }));
 
     const sanityAanbod: AanbodKaart[] = projectsData.flatMap((p: any) =>

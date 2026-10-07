@@ -20,7 +20,7 @@ export function isWonenBijStudio(hostname: string): boolean {
 }
 
 // Velden die wonen bij gebruikt én die op weverskade.com staan.
-const GEDEELD = new Set(['name', 'location', 'portfolioImage', 'showInWonen', 'mapLat', 'mapLng'])
+const GEDEELD = new Set(['name', 'location', 'portfolioImage', 'mapLat', 'mapLng'])
 const GEDEELD_MAIL = new Set(['autoReplyEnabled', 'autoReplySubject', 'autoReplyBody'])
 const LET_OP = 'Let op: ook zichtbaar op weverskade.com.'
 
@@ -32,8 +32,10 @@ type Field = (typeof project.fields)[number] & {
 }
 
 const fields = project.fields as Field[]
+// Welke projecten op wonen bij staan, regelen wij; uitzetten zou het project
+// hier ook uit de lijst laten verdwijnen.
 const wonenBijVelden = fields
-  .filter((f) => f.group === 'wonenbij')
+  .filter((f) => f.group === 'wonenbij' && f.name !== 'wonenBijEnabled')
   .map((f) =>
     // De gewone uitleg verwijst naar het tabblad Media, dat hier verborgen is.
     f.name === 'wonenBijHero'
@@ -55,7 +57,10 @@ const mailVelden = fields
 // maar onzichtbaar en zonder tab.
 const verborgenVelden = fields
   .filter(
-    (f) => f.group !== 'wonenbij' && !GEDEELD.has(f.name) && !GEDEELD_MAIL.has(f.name)
+    (f) =>
+      (f.group !== 'wonenbij' || f.name === 'wonenBijEnabled') &&
+      !GEDEELD.has(f.name) &&
+      !GEDEELD_MAIL.has(f.name)
   )
   .map((f) => ({ ...f, group: undefined, fieldset: undefined, hidden: true }))
 
@@ -85,8 +90,7 @@ export const projectWonenBij = {
 } as typeof project
 
 // Projecten die op wonen bij staan; zelfde voorwaarde als de wonen-bij queries.
-const WOONPROJECTEN_FILTER =
-  '_type == "project" && (wonenBijEnabled == true || showInWonen == true)'
+const WOONPROJECTEN_FILTER = '_type == "project" && wonenBijEnabled == true'
 
 export const wonenBijStructure: StructureResolver = (S) =>
   S.list()
