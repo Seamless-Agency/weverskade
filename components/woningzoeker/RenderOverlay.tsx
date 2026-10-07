@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useEffect, useRef, useState, type CSSProperties } from "react";
-import { STATUS_META, formatHuur } from "@/data/woningzoeker";
+import { STATUS_META, formatWoningHuur } from "@/data/woningzoeker";
 import type { PolygonPoint, Woning } from "@/data/woningzoeker";
 import type { OverzichtZone } from "@/data/wonenbij";
 
@@ -330,7 +330,7 @@ export default function RenderOverlay({
               {" · "}
               {active.oppervlakte} m²
               {active.status === "beschikbaar"
-                ? ` · ${active.prijsVanaf ? "v.a. " : ""}${formatHuur(active.huurprijs)}`
+                ? ` · ${formatWoningHuur(active)}`
                 : ` · ${STATUS_META[active.status].label}`}
             </span>
           </div>

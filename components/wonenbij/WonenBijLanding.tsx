@@ -25,7 +25,7 @@ import {
 } from "@/components/wonenbij/motion";
 import {
   STATUS_TYPE_META,
-  formatPrijs,
+  formatPrijsRange,
   landingDefaults,
   type AanbodKaart,
   type KwaliteitItem,
@@ -382,7 +382,7 @@ export default function WonenBijLanding({ data }: { data?: WonenBijLandingData }
                         />
                       </div>
                       <div className="font-body font-medium text-[0.833vw] leading-[1.806vw] text-off-black max-lg:text-[12px] max-lg:leading-[19px]">
-                        <p>{formatPrijs(kaart.prijsVan)} p/m</p>
+                        <p>{formatPrijsRange(kaart.prijsVan, kaart.prijsTot)} p/m</p>
                         <p>
                           {kaart.slaapkamers}{" "}
                           {kaart.slaapkamers === 1 ? "slaapkamer" : "slaapkamers"}

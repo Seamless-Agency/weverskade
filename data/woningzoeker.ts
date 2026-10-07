@@ -40,6 +40,9 @@ export interface Woning {
   /** Toon de huurprijs als vanaf-prijs ("v.a. €X") zolang alleen een
    *  indicatieve range per type bekend is. */
   prijsVanaf?: boolean;
+  /** Bovenkant van een indicatieve range: dan toont de woning
+   *  "€huurprijs - €huurprijsTot" en telt huurprijs als ondergrens. */
+  huurprijsTot?: number;
   orientatie?: string;
   buitenruimte?: string;
   /** Pad naar de plattegrond. */
@@ -84,6 +87,14 @@ export const FASE_META: Record<ProjectFase, { label: string; color: string }> = 
 
 export function formatHuur(bedrag: number): string {
   return `€${bedrag.toLocaleString("nl-NL")}`;
+}
+
+/** Prijs van één woning: range, vanaf-prijs of vast bedrag. */
+export function formatWoningHuur(woning: Pick<Woning, "huurprijs" | "huurprijsTot" | "prijsVanaf">): string {
+  if (woning.huurprijsTot) {
+    return `${formatHuur(woning.huurprijs)} - ${formatHuur(woning.huurprijsTot)}`;
+  }
+  return `${woning.prijsVanaf ? "v.a. " : ""}${formatHuur(woning.huurprijs)}`;
 }
 
 /* ─── Demodata ──────────────────────────────────────────────────────────

@@ -12,7 +12,7 @@ import { STATUS_ORDER } from "@/data/woningzoeker";
 import type { Woning, WoningStatus } from "@/data/woningzoeker";
 import {
   STATUS_TYPE_META,
-  formatPrijs,
+  formatPrijsRange,
   type Aanzicht,
   type WoningType,
   type WoningTypeStatus,
@@ -63,6 +63,8 @@ interface WoningzoekerSectionProps {
   renderHeight?: number;
   /** Meerdere gevelaanzichten (voor/achter); heeft voorrang op de losse render. */
   aanzichten?: Aanzicht[];
+  /** Kleine regel onder de typekaarten, bijv. wat de huurprijs omvat. */
+  prijsToelichting?: string;
 }
 
 /**
@@ -80,6 +82,7 @@ export default function WoningzoekerSection({
   renderWidth,
   renderHeight,
   aanzichten,
+  prijsToelichting,
 }: WoningzoekerSectionProps) {
   const navigate = usePageNavigation();
   const [sortering, setSortering] = useState<Sortering>("standaard");
@@ -408,7 +411,7 @@ export default function WoningzoekerSection({
                   </p>
                   <div className="mt-[2.222vw] max-lg:mt-2">
                     {[
-                      { icoon: "key-klein.svg", w: "w-[0.833vw]", tekst: `${formatPrijs(type.prijsVan)} p/m` },
+                      { icoon: "key-klein.svg", w: "w-[0.833vw]", tekst: `${formatPrijsRange(type.prijsVan, type.prijsTot)} p/m` },
                       { icoon: "bed-klein.svg", w: "w-[0.972vw]", tekst: `${type.slaapkamers} ${type.slaapkamers === 1 ? "slaapkamer" : "slaapkamers"}` },
                       { icoon: "m2-klein.svg", w: "w-[0.764vw]", tekst: `${type.oppervlakte} m²` },
                     ].map(({ icoon, w, tekst }) => (
@@ -434,6 +437,11 @@ export default function WoningzoekerSection({
                 </div>
               </a>
             ))}
+            {prijsToelichting ? (
+              <p className="mt-[1.111vw] max-w-[36.111vw] whitespace-pre-line font-body font-medium text-[0.764vw] leading-[1.181vw] text-off-black/60 max-lg:mt-3 max-lg:max-w-none max-lg:text-[11px] max-lg:leading-[16px]">
+                {prijsToelichting}
+              </p>
+            ) : null}
           </div>
 
           {heeftRender && actiefAanzicht ? (

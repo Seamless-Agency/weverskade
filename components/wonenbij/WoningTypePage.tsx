@@ -306,6 +306,19 @@ export default function WoningTypePage({
               </Reveal>
             ) : null}
 
+            {project.prijsToelichting ? (
+              <Reveal
+                when={intro}
+                delay={0.42}
+                y={16}
+                className="mt-[0.833vw] max-w-[29.792vw] max-lg:mt-3 max-lg:max-w-none"
+              >
+                <p className="whitespace-pre-line font-body font-medium text-[0.764vw] leading-[1.181vw] text-off-black/60 max-lg:text-[11px] max-lg:leading-[16px]">
+                  {project.prijsToelichting}
+                </p>
+              </Reveal>
+            ) : null}
+
             {/* Omschrijving */}
             <Reveal
               when={intro}

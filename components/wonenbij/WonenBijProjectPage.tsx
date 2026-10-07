@@ -349,6 +349,7 @@ export default function WonenBijProjectPage({
           renderWidth={project.renderWidth}
           renderHeight={project.renderHeight}
           aanzichten={project.aanzichten}
+          prijsToelichting={project.prijsToelichting}
         />
       ) : null}
 

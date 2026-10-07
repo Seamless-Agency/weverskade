@@ -143,6 +143,7 @@ export const WONENBIJ_PROJECT_BY_SLUG_QUERY = `*[_type == "project" && slug.curr
   downloads[]{ titel, "url": bestand.asset->url },
   faq[]{ vraag, antwoord },
   wonenBijDisclaimer,
+  prijsToelichting,
   "wonenBijNieuws": wonenBijNieuws[]->{ _id, title, "slug": slug.current, date, heroImage },
   woningTypes[]{
     naam,
@@ -242,6 +243,7 @@ export const WONENBIJ_LANDING_PROJECTS_QUERY = `*[_type == "project" && wonenBij
     "slug": slug.current,
     status,
     prijsVan,
+    prijsTot,
     oppervlakte,
     slaapkamers,
     "foto": fotos[0].asset->url

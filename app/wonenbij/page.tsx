@@ -139,6 +139,7 @@ export default async function WonenBijHome() {
           typeNaam: t.naam,
           status: t.status ?? "inschrijven",
           prijsVan: t.prijsVan ?? 0,
+          prijsTot: t.prijsTot ?? undefined,
           slaapkamers: t.slaapkamers ?? 0,
           oppervlakte: t.oppervlakte ?? 0,
           foto: t.foto ?? "/images/wonenbij/aanbod-card.png",

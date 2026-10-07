@@ -471,6 +471,15 @@ export const project = defineType({
       group: 'wonenbij',
     }),
     defineField({
+      name: 'prijsToelichting',
+      title: 'Toelichting bij de huurprijzen',
+      description:
+        'Kleine regel onder de prijzen op de woningpagina\'s en onder de woningzoeker. Leeg gelaten? Dan staat er geen toelichting.',
+      type: 'text',
+      rows: 2,
+      group: 'wonenbij',
+    }),
+    defineField({
       name: 'woningTypes',
       title: 'Woningtypes',
       description:
