@@ -40,6 +40,23 @@ const tekst = (v: unknown): string | undefined =>
  * Ontbreekt het document of een veld, dan gebruikt de component de
  * standaard uit data/wonenbij.ts; de pagina blijft dan exact gelijk.
  */
+/**
+ * "Vanaf 12 oktober" zolang de teaserdatum nog in de toekomst ligt. De pagina
+ * wordt elke minuut opnieuw opgebouwd (revalidate 60), dus de kaarten worden
+ * kort na het moment vanzelf weer klikbaar.
+ */
+function teaserLabel(tot: unknown): string | undefined {
+  if (typeof tot !== "string") return undefined;
+  const moment = Date.parse(tot);
+  if (!Number.isFinite(moment) || Date.now() >= moment) return undefined;
+  const datum = new Intl.DateTimeFormat("nl-NL", {
+    day: "numeric",
+    month: "long",
+    timeZone: "Europe/Amsterdam",
+  }).format(moment);
+  return `Vanaf ${datum}`;
+}
+
 function landingUitSanity(raw: any): WonenBijLandingData {
   if (!raw) return {};
   return {
@@ -75,6 +92,7 @@ function landingUitSanity(raw: any): WonenBijLandingData {
       .map((k: any) => ({ label: k.label, waarde: tekst(k.waarde) ?? "" })),
     aanbodTitel: tekst(raw.aanbodTitel),
     aanbodIntro: tekst(raw.aanbodIntro),
+    aanbodTeaser: teaserLabel(raw.aanbodTeaserTot),
     projectenTitel: tekst(raw.projectenTitel),
     projectenIntro: tekst(raw.projectenIntro),
     contactLabel: tekst(raw.contactLabel),
@@ -168,7 +186,7 @@ export default async function WonenBijHome() {
       {/* Nav-thema voor de wonen-bij kop: groen zodra de footer bovenin komt */}
       <div data-nav-theme="green">
         <FooterReveal>
-          <Footer bg="bg-green" data={footerProps} mobielTot="lg" privacyHref="/wonenbij/privacybeleid" />
+          <Footer bg="bg-green" data={footerProps} mobielTot="lg" privacyHref="/wonenbij/privacybeleid" wonenBij />
         </FooterReveal>
       </div>
     </>

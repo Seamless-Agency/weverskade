@@ -225,6 +225,7 @@ export const WONENBIJ_LANDING_QUERY = `*[_type == "wonenBijLanding"][0]{
   kwaliteitItems[]{ label, waarde },
   aanbodTitel,
   aanbodIntro,
+  aanbodTeaserTot,
   projectenTitel,
   projectenIntro,
   contactLabel,

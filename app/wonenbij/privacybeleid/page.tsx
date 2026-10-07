@@ -52,6 +52,7 @@ export default async function WonenBijPrivacybeleid() {
             data={footerProps}
             mobielTot="lg"
             privacyHref="/wonenbij/privacybeleid"
+            wonenBij
           />
         </FooterReveal>
       </div>

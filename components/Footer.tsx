@@ -30,6 +30,39 @@ interface FooterData {
 }
 
 const LINKEDIN_URL = "https://www.linkedin.com/company/weverskade";
+const HOOFDSITE = "https://www.weverskade.com";
+
+type NavItem = { label: string; href: string; extern?: boolean };
+
+/**
+ * Wonen-bij variant (MarkUp 49): de footerlinks gaan naar de hoofdsite, dus
+ * absolute URL's (op het subdomein bestaan die paden niet) met een pijltje
+ * dat je de site verlaat. "Home" heet hier "weverskade.com", zodat hij niet
+ * met de wonen-bij home verward wordt; "Wonen bij" blijft op deze site.
+ */
+function naarHoofdsite(items: { label: string; href: string }[]): NavItem[] {
+  return items.map((item) => {
+    if (item.href === "/wonen-bij") return { label: item.label, href: "/wonenbij" };
+    if (item.href.startsWith("http")) return { ...item, extern: true };
+    return {
+      label: item.href === "/" ? "weverskade.com" : item.label,
+      href: `${HOOFDSITE}${item.href === "/" ? "" : item.href}`,
+      extern: true,
+    };
+  });
+}
+
+function PijlExtern() {
+  return (
+    <svg
+      viewBox="0 0 10 10"
+      aria-hidden="true"
+      className="inline-block ml-[0.35em] w-[0.55em] h-[0.55em] align-[0.1em]"
+    >
+      <path d="M2 8 8 2M3.5 2H8v4.5" fill="none" stroke="currentColor" strokeWidth="1.2" />
+    </svg>
+  );
+}
 
 function mapsHref(address: string, postalCode: string, country: string) {
   const query = [address, postalCode, country].filter(Boolean).join(", ");
@@ -45,6 +78,7 @@ export default function Footer({
   data,
   mobielTot = "md",
   privacyHref = "/privacybeleid",
+  wonenBij = false,
 }: {
   bg?: string;
   /**
@@ -61,8 +95,15 @@ export default function Footer({
    * schermhoge band.
    */
   mobielTot?: "md" | "lg";
+  /** Wonen-bij variant: links naar de hoofdsite als externe links + uitleg. */
+  wonenBij?: boolean;
 } = {}) {
   const totLg = mobielTot === "lg";
+  const kolom1: NavItem[] = wonenBij ? naarHoofdsite(navCol1) : navCol1;
+  const kolom2: NavItem[] = wonenBij ? naarHoofdsite(navCol2) : navCol2;
+  const onderdeelVan = wonenBij
+    ? "Wonen bij Weverskade is onderdeel van Weverskade. De links met een pijl gaan naar weverskade.com."
+    : null;
   const pathname = usePathname();
   const navigate = usePageNavigation();
   const dotRef = useRef<HTMLSpanElement>(null);
@@ -133,6 +174,11 @@ export default function Footer({
               Privacy &amp; Disclaimer
             </a>
           </p>
+          {onderdeelVan ? (
+            <p className="mt-[1.111vw] max-w-[22.222vw] font-body font-medium text-[0.903vw] leading-[1.25vw] text-off-white/70">
+              {onderdeelVan}
+            </p>
+          ) : null}
         </div>
 
         {/* Nav columns with animated dot */}
@@ -151,16 +197,17 @@ export default function Footer({
           {/* Nav column 1 */}
           <div className="shrink-0 w-[16.389vw]">
             <nav className="font-body font-medium text-[1.181vw] leading-[1.458vw] text-off-white">
-              {navCol1.map((item) => (
+              {kolom1.map((item) => (
                 <p key={item.label}>
                   <a
                     ref={pathname === item.href ? activeLinkRef : undefined}
                     href={item.href}
-                    onClick={(e) => navigate(e, item.href)}
+                    onClick={item.extern ? undefined : (e) => navigate(e, item.href)}
                     className="text-off-white no-underline hover:opacity-70 transition-opacity duration-200"
                     onMouseEnter={moveDot}
                   >
                     {item.label}
+                    {wonenBij && item.extern ? <PijlExtern /> : null}
                   </a>
                 </p>
               ))}
@@ -170,16 +217,17 @@ export default function Footer({
           {/* Nav column 2 */}
           <div className="shrink-0 w-[16.389vw]">
             <nav className="font-body font-medium text-[1.181vw] leading-[1.458vw] text-off-white">
-              {navCol2.map((item) => (
+              {kolom2.map((item) => (
                 <p key={item.label}>
                   <a
                     ref={pathname === item.href ? activeLinkRef : undefined}
                     href={item.href}
-                    onClick={(e) => navigate(e, item.href)}
+                    onClick={item.extern ? undefined : (e) => navigate(e, item.href)}
                     className="text-off-white no-underline hover:opacity-70 transition-opacity duration-200"
                     onMouseEnter={moveDot}
                   >
                     {item.label}
+                    {wonenBij && item.extern ? <PijlExtern /> : null}
                   </a>
                 </p>
               ))}
@@ -247,6 +295,19 @@ export default function Footer({
             Privacy &amp; Disclaimer
           </a>
         </p>
+        {wonenBij ? (
+          <p className="mt-3 font-body font-medium text-[12px] leading-[17px] text-off-white/70">
+            Wonen bij Weverskade is onderdeel van Weverskade.{" "}
+            <a
+              href={HOOFDSITE}
+              className="link-underline text-off-white/90 pb-0.5"
+              style={{ "--underline-h": "1px" } as React.CSSProperties}
+            >
+              Naar weverskade.com
+              <PijlExtern />
+            </a>
+          </p>
+        ) : null}
 
         {/* Two-column headings */}
         <div className="flex mt-16">

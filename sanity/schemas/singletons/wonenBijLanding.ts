@@ -178,6 +178,15 @@ export const wonenBijLanding = defineType({
         'De kaarten eronder komen automatisch uit de projecten met een ingevulde "Wonen bij pagina".',
     }),
     defineField({
+      name: 'aanbodTeaserTot',
+      title: 'Woningaanbod als teaser tonen tot',
+      type: 'datetime',
+      group: 'overzichten',
+      description:
+        'Tot dit moment zijn de woningkaarten nog niet aanklikbaar en staat er "Vanaf [datum]" op. Daarna worden het vanzelf weer gewone kaarten. Leeg laten = geen teaser.',
+      options: { dateFormat: 'D MMMM YYYY', timeFormat: 'HH:mm' },
+    }),
+    defineField({
       name: 'aanbodIntro',
       title: 'Introtekst woningaanbod',
       type: 'text',

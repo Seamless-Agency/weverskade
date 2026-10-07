@@ -48,11 +48,13 @@ export interface SocialLinks {
 }
 
 // "Home" (comment 39) brengt je terug naar de landingspagina; "Over het
-// project" (comment 26) i.p.v. "Over".
+// project" (comment 26) i.p.v. "Over". "Wonen" (MarkUp 48) leidt naar de
+// sectie "Welkom bij …" tussen het aanbod en de locatie.
 const ANCHORS = [
   { label: "Home", href: "/wonenbij" },
   { label: "Over het project", href: "#over" },
   { label: "Aanbod", href: "#aanbod" },
+  { label: "Wonen", href: "#wonen" },
   { label: "Locatie", href: "#locatie" },
   { label: "Planning", href: "#planning" },
   { label: "Nieuws", href: "#nieuws" },
@@ -363,7 +365,7 @@ export default function WonenBijProjectPage({
 
       {/* Welkom bij + beeldcarrousel — Figma: label op 336 van de bandtop,
           tekstblokken onder-verankerd aan de foto-onderkant, fotoblokken 319 uit elkaar */}
-      <div className="bg-off-white pt-[23.333vw] pb-[8.056vw] max-lg:pt-12 max-lg:pb-10" data-nav-theme="light">
+      <div id="wonen" className="bg-off-white pt-[23.333vw] pb-[8.056vw] max-lg:pt-12 max-lg:pb-10 scroll-mt-[2vw]" data-nav-theme="light">
         <div className="px-[2.361vw] max-lg:px-5">
           {/* De tekst staat bewust ín de flow (flex + mt-auto) in plaats van
               absoluut aan de foto-onderkant verankerd: bij korte tekst is het

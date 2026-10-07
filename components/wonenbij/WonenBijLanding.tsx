@@ -60,6 +60,8 @@ export interface WonenBijLandingData {
   kwaliteitItems?: KwaliteitItem[];
   aanbodTitel?: string;
   aanbodIntro?: string;
+  /** Teaser (MarkUp 50): kaarten niet aanklikbaar, met dit label ("Vanaf 12 oktober"). */
+  aanbodTeaser?: string;
   projectenTitel?: string;
   projectenIntro?: string;
   contactLabel?: string;
@@ -105,6 +107,7 @@ export default function WonenBijLanding({ data }: { data?: WonenBijLandingData }
     : d.kwaliteitItems;
   const aanbodTitel = of(data?.aanbodTitel, d.aanbodTitel);
   const aanbodIntro = of(data?.aanbodIntro, d.aanbodIntro);
+  const aanbodTeaser = data?.aanbodTeaser;
   const projectenTitel = of(data?.projectenTitel, d.projectenTitel);
   const projectenIntro = of(data?.projectenIntro, d.projectenIntro);
   const contactTitel = of(data?.contactTitel, d.contactTitel);
@@ -238,9 +241,13 @@ export default function WonenBijLanding({ data }: { data?: WonenBijLandingData }
             </Reveal>
           </div>
 
-          {/* Blok 2: foto links; tekst + knop rechts, knop-onderkant = foto-onderkant */}
-          <div className="relative mt-[19.792vw] max-lg:mt-8">
-            <RevealMedia className="relative ml-[0.069vw] w-[54.931vw] aspect-[791/559] overflow-hidden max-lg:ml-0 max-lg:w-full">
+          {/* Blok 2: foto links; tekst + knop rechts, knop-onderkant = foto-onderkant.
+              De foto heeft de Figma-hoogte als minimum (791/559 van 54.931vw =
+              38.825vw) en rekt mee met het tekstblok, dat 2.778vw (40px)
+              bovenmarge houdt: de foto steekt dus altijd minstens 40px boven
+              de tekst uit, ook bij lange CMS-tekst (MarkUp 07-10). */}
+          <div className="relative mt-[19.792vw] flex items-end max-lg:mt-8 max-lg:block">
+            <RevealMedia className="relative ml-[0.069vw] w-[54.931vw] shrink-0 self-stretch min-h-[38.825vw] overflow-hidden max-lg:ml-0 max-lg:w-full max-lg:min-h-0 max-lg:aspect-[791/559]">
               <Parallax>
                 <Image
                   src={overFoto2}
@@ -252,10 +259,10 @@ export default function WonenBijLanding({ data }: { data?: WonenBijLandingData }
               </Parallax>
             </RevealMedia>
             {/* Onder-verankerd: de knop-onderkant valt samen met de foto-onderkant
-                (Figma: beide op 3245), langere tekst groeit naar boven */}
+                (Figma: beide op 3245); x = 64.444vw zoals voorheen absoluut */}
             <Reveal
               delay={0.15}
-              className="absolute left-[64.444vw] bottom-0 w-[27.986vw] max-lg:static max-lg:w-full max-lg:mt-8"
+              className="ml-[9.444vw] w-[27.986vw] shrink-0 pt-[2.778vw] max-lg:ml-0 max-lg:w-full max-lg:pt-0 max-lg:mt-8"
             >
           <p className="whitespace-pre-line font-body font-medium text-[1.597vw] leading-[2.153vw] tracking-[-0.032vw] text-off-black max-lg:text-[17px] max-lg:leading-[24px]">
             {overTekstRechts}
@@ -326,14 +333,22 @@ export default function WonenBijLanding({ data }: { data?: WonenBijLandingData }
           <SleepRij label={aanbodTitel} className="mt-[2.431vw] max-lg:mt-6">
             {aanbod.map((kaart, i) => {
               const href = `/wonenbij/${kaart.projectSlug}/${kaart.typeSlug}`;
+              // Teaser (MarkUp 50): zelfde kaart, maar geen link en geen hover
+              // tot de verhuur start; het label vervangt status en knop.
               return (
                 <Reveal
-                  as="a"
+                  as={aanbodTeaser ? "div" : "a"}
                   key={kaart.projectSlug + kaart.typeSlug}
-                  href={href}
+                  href={aanbodTeaser ? undefined : href}
+                  onClick={
+                    aanbodTeaser
+                      ? undefined
+                      : (e: React.MouseEvent<HTMLAnchorElement>) => navigate(e, href)
+                  }
                   delay={(i % 3) * 0.09}
-                  onClick={(e: React.MouseEvent<HTMLAnchorElement>) => navigate(e, href)}
-                  className="block shrink-0 snap-start basis-[calc((100%-2.778vw)/3)] bg-off-white pt-[1.389vw] px-[1.25vw] pb-[1.944vw] no-underline group max-lg:basis-[85%] max-lg:p-4"
+                  className={`block shrink-0 snap-start basis-[calc((100%-2.778vw)/3)] bg-off-white pt-[1.389vw] px-[1.25vw] pb-[1.944vw] no-underline max-lg:basis-[85%] max-lg:p-4 ${
+                    aanbodTeaser ? "" : "group"
+                  }`}
                 >
                   <div className="relative w-full aspect-[407/275] overflow-hidden">
                     <Image
@@ -344,13 +359,22 @@ export default function WonenBijLanding({ data }: { data?: WonenBijLandingData }
                       sizes="(max-width: 768px) 100vw, 30vw"
                       className="object-cover transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-105"
                     />
+                    {aanbodTeaser ? (
+                      <span className="absolute left-[0.833vw] top-[0.833vw] inline-flex items-center h-[2.222vw] px-[1.111vw] bg-green text-off-white rounded-full font-heading font-normal text-[1.042vw] tracking-[-0.021vw] max-lg:left-3 max-lg:top-3 max-lg:h-8 max-lg:px-4 max-lg:text-[14px]">
+                        {aanbodTeaser}
+                      </span>
+                    ) : null}
                   </div>
                   <div className="mt-[0.625vw] flex items-start justify-between gap-4 max-lg:mt-3">
                     <p className="font-heading font-normal text-[1.667vw] leading-[2.056vw] text-off-black max-lg:text-[18px] max-lg:leading-[1.05]">
                       {kaart.typeNaam}
                     </p>
                     <p className="shrink-0 mt-[0.417vw] font-body font-medium text-[0.833vw] leading-[1.389vw] text-off-black max-lg:mt-0 max-lg:text-[12px] max-lg:leading-[17px]">
-                      {kaart.status === "inschrijven" ? "Inschrijven" : "Te huur"}
+                      {aanbodTeaser
+                        ? "Binnenkort"
+                        : kaart.status === "inschrijven"
+                          ? "Inschrijven"
+                          : "Te huur"}
                     </p>
                   </div>
                   <p className="mt-[0.306vw] font-body font-medium text-[0.833vw] leading-[1.389vw] text-off-black max-lg:text-[12px] max-lg:leading-[17px]">
@@ -390,9 +414,11 @@ export default function WonenBijLanding({ data }: { data?: WonenBijLandingData }
                         <p>{kaart.oppervlakte} m²</p>
                       </div>
                     </div>
-                    <span className="inline-flex items-center justify-center w-[8.056vw] h-[1.875vw] mb-[0.417vw] bg-green text-off-white rounded-full font-heading font-normal text-[0.764vw] tracking-[-0.015vw] max-lg:w-auto max-lg:h-auto max-lg:mb-0 max-lg:px-3 max-lg:py-1.5 max-lg:text-[11px]">
-                      Naar deze woning
-                    </span>
+                    {aanbodTeaser ? null : (
+                      <span className="inline-flex items-center justify-center w-[8.056vw] h-[1.875vw] mb-[0.417vw] bg-green text-off-white rounded-full font-heading font-normal text-[0.764vw] tracking-[-0.015vw] max-lg:w-auto max-lg:h-auto max-lg:mb-0 max-lg:px-3 max-lg:py-1.5 max-lg:text-[11px]">
+                        Naar deze woning
+                      </span>
+                    )}
                   </div>
                 </Reveal>
               );
