@@ -186,7 +186,7 @@ export default function WonenBijLanding({ data }: { data?: WonenBijLandingData }
         <div className="mt-[3.75vw] grid grid-cols-2 gap-x-[4.167vw] max-w-[62.5vw] max-lg:mt-8 max-lg:grid-cols-1 max-lg:gap-y-8 max-lg:max-w-none">
           {introCtas.map((cta, i) => (
             <Reveal key={`${cta.href}-${i}`} delay={0.7 + i * 0.12} y={14}>
-              <p className="font-body font-medium text-[1.597vw] leading-[2.153vw] tracking-[-0.032vw] text-off-black max-lg:text-[17px] max-lg:leading-[24px]">
+              <p className="whitespace-pre-line font-body font-medium text-[1.597vw] leading-[2.153vw] tracking-[-0.032vw] text-off-black max-lg:text-[17px] max-lg:leading-[24px]">
                 {cta.tekst}
               </p>
               <a
@@ -257,7 +257,7 @@ export default function WonenBijLanding({ data }: { data?: WonenBijLandingData }
               delay={0.15}
               className="absolute left-[64.444vw] bottom-0 w-[27.986vw] max-lg:static max-lg:w-full max-lg:mt-8"
             >
-          <p className="font-body font-medium text-[1.597vw] leading-[2.153vw] tracking-[-0.032vw] text-off-black max-lg:text-[17px] max-lg:leading-[24px]">
+          <p className="whitespace-pre-line font-body font-medium text-[1.597vw] leading-[2.153vw] tracking-[-0.032vw] text-off-black max-lg:text-[17px] max-lg:leading-[24px]">
             {overTekstRechts}
           </p>
           <a
@@ -292,7 +292,7 @@ export default function WonenBijLanding({ data }: { data?: WonenBijLandingData }
                 <p className="font-body font-normal text-[1.042vw] leading-[1.806vw] text-off-white max-lg:text-[13px] max-lg:leading-[20px]">
                   {item.label}
                 </p>
-                <p className="font-heading font-normal text-[1.458vw] leading-[1.806vw] text-off-white max-lg:mt-1 max-lg:text-[18px] max-lg:leading-[24px]">
+                <p className="whitespace-pre-line font-heading font-normal text-[1.458vw] leading-[1.806vw] text-off-white max-lg:mt-1 max-lg:text-[18px] max-lg:leading-[24px]">
                   {item.waarde}
                 </p>
               </Reveal>

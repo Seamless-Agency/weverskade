@@ -318,7 +318,7 @@ export default function WoningTypePage({
                   <p className="font-body font-semibold text-[1.111vw] leading-[1.667vw] tracking-[-0.022vw] text-off-black max-lg:text-[15px] max-lg:leading-[22px]">
                     {blok.kop}
                   </p>
-                  <p className="font-body font-medium text-[1.111vw] leading-[1.667vw] tracking-[-0.022vw] text-off-black max-lg:text-[15px] max-lg:leading-[22px]">
+                  <p className="whitespace-pre-line font-body font-medium text-[1.111vw] leading-[1.667vw] tracking-[-0.022vw] text-off-black max-lg:text-[15px] max-lg:leading-[22px]">
                     {blok.tekst}
                   </p>
                 </div>

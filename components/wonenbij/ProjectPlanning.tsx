@@ -113,7 +113,7 @@ export default function ProjectPlanning({ fases }: { fases: PlanningFase[] }) {
               delay={0.2 + i * 0.12}
               className="mt-[1.667vw] ml-[0.278vw] mr-[2.708vw] font-body font-medium text-[0.833vw] leading-[1.181vw] tracking-[-0.017vw] text-off-white max-lg:mt-4 max-lg:mx-0 max-lg:text-[13px] max-lg:leading-[19px]"
             >
-              <p>{fase.omschrijving}</p>
+              <p className="whitespace-pre-line">{fase.omschrijving}</p>
             </Reveal>
             {fase.verwachtingen.length ? (
               <Reveal

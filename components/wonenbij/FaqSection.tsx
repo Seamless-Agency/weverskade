@@ -95,7 +95,7 @@ export default function FaqSection({ items }: { items: FaqItem[] }) {
                         accessibility tree zonder de 0fr-animatie te raken */}
                     <div className="overflow-hidden" inert={!open}>
                       <p
-                        className="mt-[2.757vw] pb-[3.056vw] max-w-[59.375vw] font-body font-medium text-[1.319vw] leading-[2.153vw] tracking-[-0.026vw] text-off-black max-lg:mt-0 max-lg:pb-5 max-lg:max-w-none max-lg:text-[15px] max-lg:leading-[23px]"
+                        className="whitespace-pre-line mt-[2.757vw] pb-[3.056vw] max-w-[59.375vw] font-body font-medium text-[1.319vw] leading-[2.153vw] tracking-[-0.026vw] text-off-black max-lg:mt-0 max-lg:pb-5 max-lg:max-w-none max-lg:text-[15px] max-lg:leading-[23px]"
                         style={{
                           opacity: open ? 1 : 0,
                           transform: open ? "translateY(0)" : "translateY(8px)",
