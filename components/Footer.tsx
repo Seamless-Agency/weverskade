@@ -14,7 +14,8 @@ const navCol1 = [
 
 const navCol2 = [
   { label: "Werken bij", href: "/werken-bij" },
-  { label: "Wonen bij", href: "/wonen-bij" },
+  // Sinds de lancering (08-10-2026) een eigen site op het subdomein.
+  { label: "Wonen bij", href: "https://wonenbij.weverskade.com" },
   { label: "Contact", href: "/contact" },
   { label: "LinkedIn", href: "https://www.linkedin.com/company/weverskade" },
 ];
@@ -42,7 +43,7 @@ type NavItem = { label: string; href: string; extern?: boolean };
  */
 function naarHoofdsite(items: { label: string; href: string }[]): NavItem[] {
   return items.map((item) => {
-    if (item.href === "/wonen-bij") return { label: item.label, href: "/wonenbij" };
+    if (item.label === "Wonen bij") return { label: item.label, href: "/wonenbij" };
     if (item.href.startsWith("http")) return { ...item, extern: true };
     return {
       label: item.href === "/" ? "weverskade.com" : item.label,
@@ -191,7 +192,7 @@ export default function Footer({
                   <a
                     ref={pathname === item.href ? activeLinkRef : undefined}
                     href={item.href}
-                    onClick={item.extern ? undefined : (e) => navigate(e, item.href)}
+                    onClick={item.extern || item.href.startsWith("http") ? undefined : (e) => navigate(e, item.href)}
                     className="text-off-white no-underline hover:opacity-70 transition-opacity duration-200"
                     onMouseEnter={moveDot}
                   >
@@ -210,7 +211,7 @@ export default function Footer({
                   <a
                     ref={pathname === item.href ? activeLinkRef : undefined}
                     href={item.href}
-                    onClick={item.extern ? undefined : (e) => navigate(e, item.href)}
+                    onClick={item.extern || item.href.startsWith("http") ? undefined : (e) => navigate(e, item.href)}
                     className="text-off-white no-underline hover:opacity-70 transition-opacity duration-200"
                     onMouseEnter={moveDot}
                   >

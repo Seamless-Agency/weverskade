@@ -6,7 +6,8 @@ import { useRouter, usePathname } from "next/navigation";
 const menuItems = [
   { label: "Over ons", href: "/over-ons" },
   { label: "Portefeuille", href: "/portefeuille" },
-  { label: "Wonen bij", href: "/wonen-bij" },
+  // Sinds de lancering (08-10-2026) een eigen site op het subdomein.
+  { label: "Wonen bij", href: "https://wonenbij.weverskade.com" },
   { label: "Nieuws", href: "/nieuws" },
   { label: "Maatschappelijk", href: "/maatschappelijk" },
   { label: "Werken bij", href: "/werken-bij" },
@@ -86,6 +87,8 @@ export default function Menu({ isOpen, onClose }: MenuProps) {
 
   const handleNavigation = useCallback(
     (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+      // Externe link (wonen bij op het subdomein): gewone browsernavigatie.
+      if (href.startsWith("http")) return;
       e.preventDefault();
       if (href === pathname) {
         onClose();
