@@ -19,7 +19,6 @@ const STATISCHE_PADEN = [
   "/portefeuille",
   "/privacybeleid",
   "/werken-bij",
-  "/wonen-bij",
 ];
 
 async function slugsVoor(query: string, tag: string): Promise<string[]> {
@@ -65,10 +64,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       urls.push(wonenbijUrl(`/${slug}/${t.slug}`))
     );
   }
-
-  // Wonen-bij nieuws: alleen het eigen demo-artikel. De overige slugs onder
-  // nieuws zijn duplicaten van /nieuws/ op de hoofdsite en staan daar al in.
-  urls.push(wonenbijUrl("/nieuws/start-bouw-taanschuurkade"));
 
   const nu = new Date();
   return [

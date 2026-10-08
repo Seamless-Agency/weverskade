@@ -22,9 +22,6 @@ export const structure: StructureResolver = (S, context) =>
                 .title('Portefeuille')
                 .child(S.document().schemaType('portefeuillePage').documentId('portefeuillePage')),
               S.listItem()
-                .title('Wonen Bij')
-                .child(S.document().schemaType('wonenBijPage').documentId('wonenBijPage')),
-              S.listItem()
                 .title('Maatschappelijk')
                 .child(S.document().schemaType('maatschappelijkPage').documentId('maatschappelijkPage')),
               S.listItem()
@@ -39,12 +36,34 @@ export const structure: StructureResolver = (S, context) =>
             ])
         ),
       S.divider(),
-      // Nieuwe wonen-bij omgeving (wonenbij.weverskade.com). De project- en
-      // woningpagina's staan onder Projecten, tab "Wonen bij pagina".
+      // Wonen bij (wonenbij.weverskade.com, live sinds 08-10-2026). De
+      // woonprojecten zijn gewone projecten; hier openen ze direct op het
+      // tabblad "Wonen bij pagina". De oude singleton "Wonen Bij" (pagina
+      // /wonen-bij, nu een doorverwijzing) staat niet meer in het menu; de
+      // data blijft bewaard.
       S.listItem()
-        .title('Wonen bij - landingspagina')
+        .title('Wonen bij')
         .child(
-          S.document().schemaType('wonenBijLanding').documentId('wonenBijLanding')
+          S.list()
+            .title('Wonen bij')
+            .items([
+              S.listItem()
+                .title('Startpagina')
+                .child(
+                  S.document().schemaType('wonenBijLanding').documentId('wonenBijLanding')
+                ),
+              S.listItem()
+                .title('Woonprojecten')
+                .schemaType('project')
+                .child(
+                  S.documentList()
+                    .title('Woonprojecten')
+                    .schemaType('project')
+                    .apiVersion('2024-01-01')
+                    .filter('_type == "project" && wonenBijEnabled == true')
+                    .defaultOrdering([{ field: 'orderRank', direction: 'asc' }])
+                ),
+            ])
         ),
       S.divider(),
       // Content types met drag-and-drop volgorde

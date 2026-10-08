@@ -154,6 +154,10 @@ export const project = defineType({
     defineField({
       name: 'showInWonen',
       title: 'Tonen op wonen-bij pagina',
+      // Stuurde de oude pagina /wonen-bij aan, die sinds 08-10-2026
+      // doorverwijst. Verborgen, data blijft bewaard. Wonen bij gebruikt
+      // "Wonen bij projectpagina tonen" op het tabblad Wonen bij pagina.
+      hidden: true,
       type: 'boolean',
       group: 'visibility',
       initialValue: false,
@@ -266,7 +270,7 @@ export const project = defineType({
       name: 'wonenBijEnabled',
       title: 'Wonen bij projectpagina tonen',
       description:
-        'Zet aan om voor dit project een eigen pagina op wonenbij.weverskade.com te genereren.',
+        'Zet aan om dit project op wonenbij.weverskade.com te tonen (startpagina en eigen projectpagina). Uit = alleen in de portefeuille van weverskade.com.',
       type: 'boolean',
       group: 'wonenbij',
       initialValue: false,
