@@ -200,7 +200,7 @@ export default function WonenBijProjectPage({
         {voorpremiere ? (
           /* Gelijkmatige verdonkering (geen gloed): de foto wordt decor
              voor het premièremoment, de titel en klok dragen. */
-          <div className="absolute inset-0 bg-black/45" />
+          <div className="absolute inset-0 bg-black/55" />
         ) : (
           <div className="absolute inset-x-0 bottom-0 h-[16.111vw] bg-gradient-to-b from-transparent to-black/70 max-lg:h-[120px]" />
         )}
@@ -230,26 +230,20 @@ export default function WonenBijProjectPage({
               <h1 className="mt-[0.694vw] font-body font-medium text-[9.722vw] leading-[9.722vw] tracking-[-0.278vw] text-off-white max-lg:mt-2 max-lg:text-[12.4vw] max-lg:leading-[1] max-lg:tracking-[-0.35vw]">
                 <RevealWords text={project.naam} when={intro} delay={0.35} duration={1.2} />
               </h1>
+              {/* Vier lagen, zoals het voorbeeld: aankondiging, titel,
+                  "wanneer" en de klok. De titel domineert; de klok is
+                  kleiner en de regel erboven fungeert als "premieres in". */}
               <Reveal
                 as="p"
                 when={intro}
                 delay={0.7}
                 y={12}
-                className="mt-[2.5vw] font-heading font-normal text-[1.667vw] leading-[2.083vw] text-off-white/85 max-lg:mt-8 max-lg:text-[17px] max-lg:leading-[22px]"
+                className="mt-[3.889vw] font-heading font-normal text-[1.528vw] leading-[1.944vw] text-off-white/80 max-lg:mt-10 max-lg:text-[16px] max-lg:leading-[21px]"
               >
-                De verhuur in {project.plaats} start over
+                Verhuur vanaf {voorpremiere.dag}
               </Reveal>
-              <Reveal when={intro} delay={0.85} y={16} className="mt-[1.389vw] max-lg:mt-4">
+              <Reveal when={intro} delay={0.85} y={16} className="mt-[1.111vw] max-lg:mt-3">
                 <Aftelklok tot={voorpremiere.tot} />
-              </Reveal>
-              <Reveal
-                as="p"
-                when={intro}
-                delay={1}
-                y={10}
-                className="mt-[1.667vw] font-body font-medium text-[1.042vw] leading-[1.458vw] text-off-white/70 max-lg:mt-5 max-lg:text-[13px] max-lg:leading-[18px]"
-              >
-                {voorpremiere.dag.charAt(0).toUpperCase() + voorpremiere.dag.slice(1)}
               </Reveal>
             </div>
             {/* Disclaimer (comment 41), klein en gecentreerd onderin */}

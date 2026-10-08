@@ -77,7 +77,7 @@ export default function Aftelklok({
 
   const cijfers = nu === null ? ["00", "00", "00", "00"] : delen(doel - nu);
   const cijferClass = premiere
-    ? "text-[5.556vw] leading-[5.833vw] tracking-[-0.111vw] max-lg:text-[40px] max-lg:leading-[44px] max-lg:tracking-[-0.8px]"
+    ? "text-[4.167vw] leading-[4.444vw] tracking-[-0.083vw] max-lg:text-[34px] max-lg:leading-[38px] max-lg:tracking-[-0.68px]"
     : "text-[3.75vw] leading-[3.958vw] tracking-[-0.075vw] max-lg:text-[28px] max-lg:leading-[30px] max-lg:tracking-[-0.56px]";
 
   return (
@@ -103,7 +103,7 @@ export default function Aftelklok({
             <span
               className={`font-body font-medium ${
                 premiere
-                  ? "mt-[0.556vw] text-[0.903vw] leading-[1.25vw] text-off-white/70 max-lg:mt-1 max-lg:text-[11px] max-lg:leading-[14px]"
+                  ? "mt-[0.417vw] text-[0.764vw] leading-[1.042vw] text-off-white/55 max-lg:mt-1 max-lg:text-[10px] max-lg:leading-[13px]"
                   : "mt-[0.417vw] text-[0.903vw] leading-[1.25vw] text-off-black/60 max-lg:mt-1 max-lg:text-[11px] max-lg:leading-[14px]"
               }`}
             >
@@ -113,7 +113,7 @@ export default function Aftelklok({
           {premiere && i < cijfers.length - 1 ? (
             <span
               aria-hidden="true"
-              className={`mx-[1.667vw] font-body font-normal text-off-white/45 max-lg:mx-2.5 ${cijferClass}`}
+              className={`mx-[1.389vw] font-body font-normal text-off-white/30 max-lg:mx-2 ${cijferClass}`}
             >
               :
             </span>
