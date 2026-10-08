@@ -36,8 +36,8 @@ type NavItem = { label: string; href: string; extern?: boolean };
 
 /**
  * Wonen-bij variant (MarkUp 49): de footerlinks gaan naar de hoofdsite, dus
- * absolute URL's (op het subdomein bestaan die paden niet) met een pijltje
- * dat je de site verlaat. "Home" heet hier "weverskade.com", zodat hij niet
+ * absolute URL's (op het subdomein bestaan die paden niet); een regel onder
+ * de copyright legt uit waar ze heen gaan. "Home" heet hier "weverskade.com", zodat hij niet
  * met de wonen-bij home verward wordt; "Wonen bij" blijft op deze site.
  */
 function naarHoofdsite(items: { label: string; href: string }[]): NavItem[] {
@@ -52,17 +52,6 @@ function naarHoofdsite(items: { label: string; href: string }[]): NavItem[] {
   });
 }
 
-function PijlExtern() {
-  return (
-    <svg
-      viewBox="0 0 10 10"
-      aria-hidden="true"
-      className="inline-block ml-[0.35em] w-[0.55em] h-[0.55em] align-[0.1em]"
-    >
-      <path d="M2 8 8 2M3.5 2H8v4.5" fill="none" stroke="currentColor" strokeWidth="1.2" />
-    </svg>
-  );
-}
 
 function mapsHref(address: string, postalCode: string, country: string) {
   const query = [address, postalCode, country].filter(Boolean).join(", ");
@@ -95,14 +84,14 @@ export default function Footer({
    * schermhoge band.
    */
   mobielTot?: "md" | "lg";
-  /** Wonen-bij variant: links naar de hoofdsite als externe links + uitleg. */
+  /** Wonen-bij variant: links naar de hoofdsite als absolute links + uitleg. */
   wonenBij?: boolean;
 } = {}) {
   const totLg = mobielTot === "lg";
   const kolom1: NavItem[] = wonenBij ? naarHoofdsite(navCol1) : navCol1;
   const kolom2: NavItem[] = wonenBij ? naarHoofdsite(navCol2) : navCol2;
   const onderdeelVan = wonenBij
-    ? "Wonen bij Weverskade is onderdeel van Weverskade. De links met een pijl gaan naar weverskade.com."
+    ? "Wonen bij Weverskade is onderdeel van Weverskade. De links hiernaast gaan naar weverskade.com."
     : null;
   const pathname = usePathname();
   const navigate = usePageNavigation();
@@ -207,7 +196,6 @@ export default function Footer({
                     onMouseEnter={moveDot}
                   >
                     {item.label}
-                    {wonenBij && item.extern ? <PijlExtern /> : null}
                   </a>
                 </p>
               ))}
@@ -227,7 +215,6 @@ export default function Footer({
                     onMouseEnter={moveDot}
                   >
                     {item.label}
-                    {wonenBij && item.extern ? <PijlExtern /> : null}
                   </a>
                 </p>
               ))}
@@ -304,7 +291,6 @@ export default function Footer({
               style={{ "--underline-h": "1px" } as React.CSSProperties}
             >
               Naar weverskade.com
-              <PijlExtern />
             </a>
           </p>
         ) : null}

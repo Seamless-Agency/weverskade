@@ -47,11 +47,11 @@ export interface SocialLinks {
   facebook?: string;
 }
 
-// "Home" (comment 39) brengt je terug naar de landingspagina; "Over het
-// project" (comment 26) i.p.v. "Over". "Wonen" (MarkUp 48) leidt naar de
-// sectie "Welkom bij …" tussen het aanbod en de locatie.
+// "Over het project" (comment 26) i.p.v. "Over". "Wonen" (MarkUp 48) leidt
+// naar de sectie "Welkom bij …" tussen het aanbod en de locatie. "Home"
+// (comment 39) is er op 08-10 weer uit (Robin): het logo linkt al naar de
+// landingspagina.
 const ANCHORS = [
-  { label: "Home", href: "/wonenbij" },
   { label: "Over het project", href: "#over" },
   { label: "Aanbod", href: "#aanbod" },
   { label: "Wonen", href: "#wonen" },
