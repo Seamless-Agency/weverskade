@@ -159,6 +159,8 @@ export interface WonenBijProject {
   disclaimer?: string;
   /** Toelichting onder de huurprijzen (typepagina en woningzoeker). */
   prijsToelichting?: string;
+  /** Start van de verhuur (ISO); daarvóór is de pagina een voorpremière. */
+  verhuurStart?: string;
   /**
    * Door de redactie gekozen nieuwsberichten (CMS-referenties). Zonder
    * selectie kiest de projectpagina zelf op projectnaam in de titel.
@@ -204,6 +206,28 @@ export const STATUS_TYPE_META: Record<WoningTypeStatus, string> = {
 
 export function formatPrijs(bedrag: number): string {
   return `€${bedrag.toLocaleString("nl-NL")}`;
+}
+
+/**
+ * Voorpremière (wens Vivianne, 08-10): zolang de verhuurstart in de toekomst
+ * ligt, toont de projectpagina een aftelklok en zijn woningzoeker, woning-
+ * pagina's en inschrijven nog dicht. Server-side bepaald; de pagina's worden
+ * elke minuut opnieuw opgebouwd, dus na het moment is alles vanzelf open.
+ */
+export function voorpremiere(
+  verhuurStart: string | undefined,
+  nu = Date.now()
+): { tot: string; datum: string; dag: string } | null {
+  if (!verhuurStart) return null;
+  const moment = Date.parse(verhuurStart);
+  if (!Number.isFinite(moment) || nu >= moment) return null;
+  const fmt = (o: Intl.DateTimeFormatOptions) =>
+    new Intl.DateTimeFormat("nl-NL", { ...o, timeZone: "Europe/Amsterdam" }).format(moment);
+  return {
+    tot: new Date(moment).toISOString(),
+    datum: fmt({ day: "numeric", month: "long" }),
+    dag: fmt({ weekday: "long", day: "numeric", month: "long" }),
+  };
 }
 
 /** "€1.400 - €1.450", of alleen de ondergrens als er geen bovengrens is. */

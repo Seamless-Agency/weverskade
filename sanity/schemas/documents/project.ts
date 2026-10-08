@@ -272,6 +272,15 @@ export const project = defineType({
       initialValue: false,
     }),
     defineField({
+      name: 'verhuurStart',
+      title: 'Verhuur start op',
+      description:
+        'Tot dit moment is de projectpagina een voorpremière: een aftelklok in de hero en bij inschrijven, de woningzoeker als voorproefje en de woningpagina\'s nog dicht. Daarna is alles vanzelf open. Leeg laten = direct open.',
+      type: 'datetime',
+      group: 'wonenbij',
+      options: { dateFormat: 'D MMMM YYYY', timeFormat: 'HH:mm' },
+    }),
+    defineField({
       name: 'wonenBijHero',
       title: 'Hero afbeelding (wonen bij)',
       type: 'image',

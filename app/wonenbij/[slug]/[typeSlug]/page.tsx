@@ -1,5 +1,5 @@
 import { notFound, redirect } from "next/navigation";
-import { getWonenBijProjectByAlias } from "@/data/wonenbij";
+import { getWonenBijProjectByAlias, voorpremiere } from "@/data/wonenbij";
 import WoningTypePage from "@/components/wonenbij/WoningTypePage";
 import Footer from "@/components/Footer";
 import FooterReveal from "@/components/FooterReveal";
@@ -67,6 +67,10 @@ export default async function WoningType({
     project?.woningTypes.findIndex((t) => t.slug === typeSlug) ?? -1;
 
   if (!project || typeIndex < 0) notFound();
+
+  // Voorpremière: woningpagina's (met het inschrijfformulier) gaan pas open
+  // bij de verhuurstart; tot dan naar de projectpagina met de aftelklok.
+  if (voorpremiere(project.verhuurStart)) redirect(`/wonenbij/${project.slug}`);
 
   const type = project.woningTypes[typeIndex];
   const volgendeType =

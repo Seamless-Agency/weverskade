@@ -111,6 +111,7 @@ export const WONENBIJ_PROJECT_BY_SLUG_QUERY = `*[_type == "project" && slug.curr
   location,
   heroImage,
   wonenBijHero,
+  verhuurStart,
   // Gebouw-content van de hoofdsite: vult de wonen-bij pagina van projecten
   // zonder eigen wonen-bij velden (variant zonder woningzoeker).
   tagline,

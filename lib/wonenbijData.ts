@@ -301,6 +301,7 @@ function fromSanity(raw: any): WonenBijProject | null {
     faq: raw.faq?.length ? raw.faq : fallback.faq,
     disclaimer: raw.wonenBijDisclaimer?.trim() || fallback.disclaimer,
     prijsToelichting: raw.prijsToelichting?.trim() || fallback.prijsToelichting,
+    verhuurStart: raw.verhuurStart ?? fallback.verhuurStart,
     nieuws: raw.wonenBijNieuws?.length
       ? raw.wonenBijNieuws
           .filter((a: any) => a?.slug && a?.title)

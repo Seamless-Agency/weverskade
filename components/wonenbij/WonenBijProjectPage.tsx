@@ -9,6 +9,7 @@ import ProjectPlanning from "@/components/wonenbij/ProjectPlanning";
 import DownloadsSection from "@/components/wonenbij/DownloadsSection";
 import FaqSection from "@/components/wonenbij/FaqSection";
 import InschrijfForm from "@/components/wonenbij/InschrijfForm";
+import Aftelklok from "@/components/wonenbij/Aftelklok";
 import {
   FacebookIcon,
   InstagramIcon,
@@ -70,10 +71,13 @@ export default function WonenBijProjectPage({
   project,
   nieuws,
   socials,
+  voorpremiere,
 }: {
   project: WonenBijProject;
   nieuws: NieuwsKaart[];
   socials?: SocialLinks;
+  /** Voorpremière tot de verhuurstart (server-side bepaald), anders null. */
+  voorpremiere?: { tot: string; datum: string; dag: string } | null;
 }) {
   const socialKanalen = [
     { label: "LinkedIn", href: socials?.linkedIn, Icoon: LinkedInIcon },
@@ -183,7 +187,7 @@ export default function WonenBijProjectPage({
               fill
               priority
               sizes="100vw"
-              className="object-cover"
+              className={`object-cover ${voorpremiere ? "premiere-zoom" : ""}`}
             />
           </HeroParallax>
         </div>
@@ -193,13 +197,74 @@ export default function WonenBijProjectPage({
             zodat de scrim in de foto oplost. De donkerte achter de navrij
             (0-55% van de hoogte) blijft gelijk aan de Figma-waarden. */}
         <div className="absolute inset-x-0 top-0 h-[11.319vw] bg-[linear-gradient(to_bottom,rgba(0,0,0,0.8)_0%,rgba(0,0,0,0.66)_20%,rgba(0,0,0,0.5)_40%,rgba(0,0,0,0.34)_58%,rgba(0,0,0,0.18)_74%,rgba(0,0,0,0.07)_88%,rgba(0,0,0,0)_100%)] max-lg:h-[80px]" />
-        <div className="absolute inset-x-0 bottom-0 h-[16.111vw] bg-gradient-to-b from-transparent to-black/70 max-lg:h-[120px]" />
+        {voorpremiere ? (
+          /* Gelijkmatige verdonkering (geen gloed): de foto wordt decor
+             voor het premièremoment, de titel en klok dragen. */
+          <div className="absolute inset-0 bg-black/45" />
+        ) : (
+          <div className="absolute inset-x-0 bottom-0 h-[16.111vw] bg-gradient-to-b from-transparent to-black/70 max-lg:h-[120px]" />
+        )}
         <WonenBijHeader
           variant="licht"
           anchors={anchors}
           ctaLabel="Inschrijven"
           ctaHref="#inschrijven"
         />
+        {voorpremiere ? (
+          <>
+            {/* Voorpremière (wens Vivianne, 08-10): een eigen, gecentreerde
+                hero naar het voorbeeld "SPACE presents MARS — premieres in",
+                in de taal van Weverskade: aankondiging, titel, plaats en
+                aftelklok op één verticale as. Titel linksonder en plaats
+                rechtsonder vervallen tot de verhuurstart. */}
+            <div className="absolute inset-0 flex flex-col items-center justify-center px-[2.639vw] pt-[4.861vw] text-center max-lg:px-5 max-lg:pt-16">
+              <Reveal
+                as="p"
+                when={intro}
+                delay={0.2}
+                y={12}
+                className="font-heading font-normal text-[1.667vw] leading-[2.083vw] text-off-white/85 max-lg:text-[17px] max-lg:leading-[22px]"
+              >
+                Weverskade presenteert
+              </Reveal>
+              <h1 className="mt-[0.694vw] font-body font-medium text-[9.722vw] leading-[9.722vw] tracking-[-0.278vw] text-off-white max-lg:mt-2 max-lg:text-[12.4vw] max-lg:leading-[1] max-lg:tracking-[-0.35vw]">
+                <RevealWords text={project.naam} when={intro} delay={0.35} duration={1.2} />
+              </h1>
+              <Reveal
+                as="p"
+                when={intro}
+                delay={0.7}
+                y={12}
+                className="mt-[2.5vw] font-heading font-normal text-[1.667vw] leading-[2.083vw] text-off-white/85 max-lg:mt-8 max-lg:text-[17px] max-lg:leading-[22px]"
+              >
+                De verhuur in {project.plaats} start over
+              </Reveal>
+              <Reveal when={intro} delay={0.85} y={16} className="mt-[1.389vw] max-lg:mt-4">
+                <Aftelklok tot={voorpremiere.tot} />
+              </Reveal>
+              <Reveal
+                as="p"
+                when={intro}
+                delay={1}
+                y={10}
+                className="mt-[1.667vw] font-body font-medium text-[1.042vw] leading-[1.458vw] text-off-white/70 max-lg:mt-5 max-lg:text-[13px] max-lg:leading-[18px]"
+              >
+                {voorpremiere.dag.charAt(0).toUpperCase() + voorpremiere.dag.slice(1)}
+              </Reveal>
+            </div>
+            {/* Disclaimer (comment 41), klein en gecentreerd onderin */}
+            <Reveal
+              as="p"
+              when={intro}
+              delay={1.1}
+              y={8}
+              className="absolute inset-x-0 bottom-[2.292vw] text-center font-body font-medium text-[0.833vw] leading-[1.111vw] tracking-[-0.017vw] text-off-white/60 max-lg:bottom-5 max-lg:px-5 max-lg:text-[11px] max-lg:leading-[15px]"
+            >
+              {project.disclaimer || STANDAARD_DISCLAIMER}
+            </Reveal>
+          </>
+        ) : (
+          <>
         <div className="absolute left-[2.639vw] bottom-[1.667vw] max-lg:left-5 max-lg:right-5 max-lg:bottom-6">
           {/* Op mobiel staat de plaats klein boven de titel (rechtsonder is daar geen ruimte) */}
           <Reveal
@@ -246,6 +311,8 @@ export default function WonenBijProjectPage({
         >
           {project.disclaimer || STANDAARD_DISCLAIMER}
         </Reveal>
+          </>
+        )}
       </div>
 
       {/* Over het project — Figma: tekst op 109 onder de hero, 165 boven de groene band */}
@@ -352,6 +419,7 @@ export default function WonenBijProjectPage({
           renderHeight={project.renderHeight}
           aanzichten={project.aanzichten}
           prijsToelichting={project.prijsToelichting}
+          gesloten={voorpremiere ? `Vanaf ${voorpremiere.datum}` : undefined}
         />
       ) : null}
 
@@ -695,7 +763,18 @@ export default function WonenBijProjectPage({
           wegwijzer naar het aanbod i.p.v. het algemene formulier, zodat
           inschrijven altijd op een specifieke woning gebeurt. */}
       <Statisch>
-      {inschrijvenViaWoning && project.woningTypes.length ? (
+      {voorpremiere ? (
+        <InschrijfForm
+          wegwijzer
+          aftellenTot={voorpremiere.tot}
+          label="Beschikbaarheid"
+          heading={`Inschrijven kan vanaf ${voorpremiere.dag}`}
+          intro="Vanaf dat moment kies je in het aanbod de woning die bij je past en schrijf je je daar vrijblijvend op in. Bekijk hierboven alvast de woningtypes, de prijzen en de locatie."
+          projectName={project.naam}
+          projectSlug={project.slug}
+          voorkeurOpties={[]}
+        />
+      ) : inschrijvenViaWoning && project.woningTypes.length ? (
         <InschrijfForm
           wegwijzer
           label="Beschikbaarheid"

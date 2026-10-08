@@ -65,6 +65,12 @@ interface WoningzoekerSectionProps {
   aanzichten?: Aanzicht[];
   /** Kleine regel onder de typekaarten, bijv. wat de huurprijs omvat. */
   prijsToelichting?: string;
+  /**
+   * Voorpremière: label ("Vanaf 12 oktober"). De woningzoeker is dan een
+   * voorproefje: kaarten zonder link, gevel alleen hover (prijs/m²), geen
+   * doorklik naar de woningpagina's, die tot de verhuurstart dicht zijn.
+   */
+  gesloten?: string;
 }
 
 /**
@@ -83,6 +89,7 @@ export default function WoningzoekerSection({
   renderHeight,
   aanzichten,
   prijsToelichting,
+  gesloten,
 }: WoningzoekerSectionProps) {
   const navigate = usePageNavigation();
   const [sortering, setSortering] = useState<Sortering>("standaard");
@@ -243,6 +250,12 @@ export default function WoningzoekerSection({
 
   const openWoning = (id: string) => {
     const touch = window.matchMedia("(pointer: coarse)").matches;
+    // Voorpremière: alleen het label tonen, nooit doorklikken.
+    if (gesloten) {
+      setHoveredWoningId(id);
+      setHintWeg(true);
+      return;
+    }
     if (touch && laatsteTik.current !== id) {
       laatsteTik.current = id;
       setHoveredWoningId(id);
@@ -383,8 +396,14 @@ export default function WoningzoekerSection({
                   if (el) kaartRefs.current.set(type.naam, el);
                   else kaartRefs.current.delete(type.naam);
                 }}
-                href={`/wonenbij/${projectSlug}/${type.slug}`}
-                onClick={(e) => navigate(e, `/wonenbij/${projectSlug}/${type.slug}`)}
+                href={gesloten ? undefined : `/wonenbij/${projectSlug}/${type.slug}`}
+                onClick={(e) => {
+                  if (gesloten) {
+                    e.preventDefault();
+                    return;
+                  }
+                  navigate(e, `/wonenbij/${projectSlug}/${type.slug}`);
+                }}
                 onMouseEnter={() => setHoveredType(type.naam)}
                 onMouseLeave={() => setHoveredType(null)}
                 className={`grid grid-cols-[14.722vw_1fr] gap-x-[1.181vw] items-start border-t border-off-black/40 pt-[2.014vw] pb-[2.292vw] no-underline group transition-colors duration-200 hover:bg-off-white max-lg:grid-cols-[100px_1fr] max-lg:gap-x-4 max-lg:py-4 ${
@@ -407,7 +426,7 @@ export default function WoningzoekerSection({
                     {type.naam}
                   </p>
                   <p className="font-body font-medium text-[0.833vw] leading-[1.389vw] text-off-black max-lg:mt-1 max-lg:text-[12px] max-lg:leading-[17px]">
-                    {STATUS_TYPE_META[type.status]}
+                    {gesloten ? "Status: binnenkort beschikbaar" : STATUS_TYPE_META[type.status]}
                   </p>
                   <div className="mt-[2.222vw] max-lg:mt-2">
                     {[
@@ -432,7 +451,7 @@ export default function WoningzoekerSection({
                     ))}
                   </div>
                   <span className="absolute right-[3.611vw] top-[7.708vw] inline-flex items-center justify-center w-[8.056vw] h-[1.875vw] bg-green text-off-white rounded-full font-heading font-normal text-[0.764vw] leading-[0.944vw] tracking-[-0.015vw] max-lg:static max-lg:mt-2 max-lg:inline-block max-lg:w-auto max-lg:h-auto max-lg:px-3 max-lg:py-1 max-lg:text-[11px] max-lg:leading-normal">
-                    Over deze woning
+                    {gesloten ?? "Over deze woning"}
                   </span>
                 </div>
               </a>
@@ -494,11 +513,18 @@ export default function WoningzoekerSection({
               {/* Hint dat de gevel interactief is; verdwijnt na de eerste
                   hover/tik op een woningvlak. */}
               <div
-                aria-hidden={hintWeg}
+                aria-hidden={gesloten ? false : hintWeg}
                 className={`pointer-events-none absolute top-[1.111vw] left-[1.111vw] z-10 transition-opacity duration-500 max-lg:top-3 max-lg:left-3 ${
-                  hintWeg ? "opacity-0" : "opacity-100"
+                  hintWeg && !gesloten ? "opacity-0" : "opacity-100"
                 }`}
               >
+                {gesloten ? (
+                  /* Voorpremière: blijvend label in de groene merkstijl,
+                     zelfde plek als de interactie-hint. */
+                  <span className="inline-flex items-center bg-green text-off-white rounded-full h-[2.222vw] px-[1.111vw] font-heading font-normal text-[1.042vw] tracking-[-0.021vw] leading-none max-lg:h-8 max-lg:px-4 max-lg:text-[14px]">
+                    {gesloten}: woningen bekijken en inschrijven
+                  </span>
+                ) : (
                 <span className="inline-flex items-center bg-off-black/75 text-off-white rounded-full h-[2.083vw] px-[1.042vw] font-body font-medium text-[0.903vw] leading-none max-lg:h-auto max-lg:px-3 max-lg:py-1.5 max-lg:text-[12px]">
                   <span className="max-lg:hidden">
                     Beweeg over de gevel voor prijs en beschikbaarheid
@@ -507,6 +533,7 @@ export default function WoningzoekerSection({
                     Tik op een woning, tik nogmaals om te openen
                   </span>
                 </span>
+                )}
               </div>
               {views.length > 1 ? (
                 <div className="absolute bottom-[1.111vw] left-[1.111vw] z-10 hidden gap-[0.556vw] lg:flex">

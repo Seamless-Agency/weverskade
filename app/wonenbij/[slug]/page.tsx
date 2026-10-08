@@ -1,5 +1,5 @@
 import { notFound, redirect } from "next/navigation";
-import { getWonenBijProjectByAlias } from "@/data/wonenbij";
+import { getWonenBijProjectByAlias, voorpremiere } from "@/data/wonenbij";
 import { type NieuwsKaart } from "@/data/wonenbij";
 import WonenBijProjectPage, {
   type SocialLinks,
@@ -94,7 +94,12 @@ export default async function WonenBijProject({
 
   return (
     <>
-      <WonenBijProjectPage project={project} nieuws={nieuws} socials={socials} />
+      <WonenBijProjectPage
+        project={project}
+        nieuws={nieuws}
+        socials={socials}
+        voorpremiere={voorpremiere(project.verhuurStart)}
+      />
       {/* Nav-thema voor de wonen-bij kop: groen zodra de footer bovenin komt */}
       <div data-nav-theme="green">
         <FooterReveal>

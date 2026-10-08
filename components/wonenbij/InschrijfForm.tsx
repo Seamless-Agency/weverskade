@@ -8,6 +8,7 @@ import TurnstileWidget, {
 import { submitFormSubmission } from "@/lib/formSubmissionClient";
 import { ChevronIcon } from "@/components/wonenbij/icons";
 import { Reveal, RevealWords } from "@/components/wonenbij/motion";
+import Aftelklok from "@/components/wonenbij/Aftelklok";
 
 const INKOMEN_OPTIES = [
   "Tot €40.000",
@@ -53,6 +54,8 @@ interface InschrijfFormProps {
    * knoppen gewoon blijven werken.
    */
   wegwijzer?: boolean;
+  /** Voorpremière: in plaats van de wegwijzer een kleine aftelklok. */
+  aftellenTot?: string;
 }
 
 /**
@@ -71,6 +74,7 @@ export default function InschrijfForm({
   voorkeurPreselect,
   tweedeVoorkeurOpties,
   wegwijzer = false,
+  aftellenTot,
 }: InschrijfFormProps) {
   const [form, setForm] = useState({
     voornaam: "",
@@ -204,7 +208,11 @@ export default function InschrijfForm({
             {intro}
           </Reveal>
 
-          {wegwijzer ? (
+          {aftellenTot ? (
+            <Reveal delay={0.25} className="mt-[2.222vw] ml-[0.625vw] max-lg:mt-8 max-lg:ml-0">
+              <Aftelklok tot={aftellenTot} variant="klein" />
+            </Reveal>
+          ) : wegwijzer ? (
             /* Launchmodus: zelfde sectie en witruimteritme, maar in plaats
                van het formulier één duidelijke route naar de woningzoeker. */
             <Reveal delay={0.25}>

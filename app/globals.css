@@ -48,6 +48,33 @@ html {
   }
 }
 
+/* Voorpremière-hero (wonen bij): cijfers van de aftelklok rollen van onder
+   het masker omhoog; de foto zoomt heel langzaam in. */
+@keyframes cijferIn {
+  from {
+    transform: translateY(105%);
+  }
+}
+
+@keyframes premiereZoom {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.08);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .cijfer-in {
+    animation: cijferIn 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  .premiere-zoom {
+    animation: premiereZoom 40s linear both;
+  }
+}
+
 /* Fullscreen ankermenu (tablet/mobiel): overlay fade + gestaffelde links. */
 @media (prefers-reduced-motion: no-preference) {
   .menu-overlay-in {
