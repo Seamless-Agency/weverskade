@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useCallback, useEffect, useLayoutEffect, useRef } from "react";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter, useSelectedLayoutSegment } from "next/navigation";
 import Menu from "@/components/Menu";
 import { usePageNavigation } from "@/hooks/usePageNavigation";
 
@@ -36,8 +36,12 @@ export default function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
   // De wonen-bij omgeving (wonenbij.weverskade.com) heeft zijn eigen header.
-  const isStudio =
-    pathname?.startsWith("/studio") || pathname?.startsWith("/wonenbij");
+  // Op de route-segment, niet op de pathname: op het subdomein herschrijft de
+  // middleware "/" naar "/wonenbij", waardoor de server "/wonenbij" ziet en de
+  // browser "/". Dat gaf een hydration-fout (#418) en een onzichtbaar
+  // meegeladen hoofdsite-menu. Het segment is aan beide kanten "wonenbij".
+  const segment = useSelectedLayoutSegment();
+  const isStudio = pathname?.startsWith("/studio") || segment === "wonenbij";
   const [menuOpen, setMenuOpen] = useState(false);
   const closeMenu = useCallback(() => setMenuOpen(false), []);
   const navigate = usePageNavigation();
