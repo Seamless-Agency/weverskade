@@ -6,19 +6,19 @@ import { formatSanityDate } from "@/sanity/lib/helpers";
 
 const defaultArticles = [
   {
-    date: "22 januari, 2026",
+    date: "22 januari 2026",
     title: "Hier een header van het bericht in max twee zinnen",
     image: "/images/news-placeholder.webp",
     slug: "",
   },
   {
-    date: "22 januari, 2026",
+    date: "22 januari 2026",
     title: "Hier een header van het bericht in max twee zinnen",
     image: "/images/news-placeholder.webp",
     slug: "",
   },
   {
-    date: "22 januari, 2026",
+    date: "22 januari 2026",
     title: "Hier een header van het bericht in max twee zinnen",
     image: "/images/news-placeholder.webp",
     slug: "",

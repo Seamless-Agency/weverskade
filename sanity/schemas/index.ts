@@ -2,6 +2,11 @@
 import { portableText } from './objects/portableText'
 import { sectionCta } from './objects/sectionCta'
 import { stat } from './objects/stat'
+import { polygonPoint } from './objects/polygonPoint'
+import { woning } from './objects/woning'
+import { overzichtZone } from './objects/overzichtZone'
+import { aanzicht } from './objects/aanzicht'
+import { woningType } from './objects/woningType'
 
 // Documents
 import { project } from './documents/project'
@@ -21,12 +26,18 @@ import { portefeuillePage } from './singletons/portefeuillePage'
 import { wonenBijPage } from './singletons/wonenBijPage'
 import { nieuwsPageSettings } from './singletons/nieuwsPageSettings'
 import { werkenBijPage } from './singletons/werkenBijPage'
+import { wonenBijLanding } from './singletons/wonenBijLanding'
 
 export const schemaTypes = [
   // Objects
   portableText,
   sectionCta,
   stat,
+  polygonPoint,
+  woning,
+  overzichtZone,
+  aanzicht,
+  woningType,
   // Documents
   project,
   nieuwsArtikel,
@@ -44,6 +55,7 @@ export const schemaTypes = [
   wonenBijPage,
   nieuwsPageSettings,
   werkenBijPage,
+  wonenBijLanding,
 ]
 
 export const singletonTypes = new Set([
@@ -57,4 +69,5 @@ export const singletonTypes = new Set([
   'wonenBijPage',
   'nieuwsPageSettings',
   'werkenBijPage',
+  'wonenBijLanding',
 ])

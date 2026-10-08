@@ -30,6 +30,28 @@ interface FooterData {
 }
 
 const LINKEDIN_URL = "https://www.linkedin.com/company/weverskade";
+const HOOFDSITE = "https://www.weverskade.com";
+
+type NavItem = { label: string; href: string; extern?: boolean };
+
+/**
+ * Wonen-bij variant (MarkUp 49): de footerlinks gaan naar de hoofdsite, dus
+ * absolute URL's (op het subdomein bestaan die paden niet); een regel onder
+ * de copyright legt uit waar ze heen gaan. "Home" heet hier "weverskade.com", zodat hij niet
+ * met de wonen-bij home verward wordt; "Wonen bij" blijft op deze site.
+ */
+function naarHoofdsite(items: { label: string; href: string }[]): NavItem[] {
+  return items.map((item) => {
+    if (item.href === "/wonen-bij") return { label: item.label, href: "/wonenbij" };
+    if (item.href.startsWith("http")) return { ...item, extern: true };
+    return {
+      label: item.href === "/" ? "weverskade.com" : item.label,
+      href: `${HOOFDSITE}${item.href === "/" ? "" : item.href}`,
+      extern: true,
+    };
+  });
+}
+
 
 function mapsHref(address: string, postalCode: string, country: string) {
   const query = [address, postalCode, country].filter(Boolean).join(", ");
@@ -40,7 +62,37 @@ function telHref(phone: string) {
   return `tel:${phone.replace(/[^\d+]/g, "")}`;
 }
 
-export default function Footer({ bg = "bg-blue", data }: { bg?: string; data?: FooterData } = {}) {
+export default function Footer({
+  bg = "bg-blue",
+  data,
+  mobielTot = "md",
+  privacyHref = "/privacybeleid",
+  wonenBij = false,
+}: {
+  bg?: string;
+  /**
+   * Doel van de link "Privacy & Disclaimer". De wonen-bij omgeving heeft een
+   * eigen pagina met dezelfde tekst (op het subdomein bestaat /privacybeleid
+   * van de hoofdsite niet).
+   */
+  privacyHref?: string;
+  data?: FooterData;
+  /**
+   * Breakpoint waaronder de mobiele footer toont. De hoofdsite wisselt op
+   * max-md; de wonen-bij omgeving zit op max-lg en geeft "lg" mee, anders
+   * krijgen tablets (768-1023) daar de desktop-footer als microtekst in een
+   * schermhoge band.
+   */
+  mobielTot?: "md" | "lg";
+  /** Wonen-bij variant: links naar de hoofdsite als absolute links + uitleg. */
+  wonenBij?: boolean;
+} = {}) {
+  const totLg = mobielTot === "lg";
+  const kolom1: NavItem[] = wonenBij ? naarHoofdsite(navCol1) : navCol1;
+  const kolom2: NavItem[] = wonenBij ? naarHoofdsite(navCol2) : navCol2;
+  const onderdeelVan = wonenBij
+    ? "Wonen bij Weverskade is onderdeel van Weverskade. De links hiernaast gaan naar weverskade.com."
+    : null;
   const pathname = usePathname();
   const navigate = usePageNavigation();
   const dotRef = useRef<HTMLSpanElement>(null);
@@ -90,21 +142,32 @@ export default function Footer({ bg = "bg-blue", data }: { bg?: string; data?: F
   }, [positionDotAt]);
 
   return (
-    <footer className={`${bg} h-dvh flex flex-col justify-between pt-[4.028vw] pb-[3.333vw] pl-[2.639vw] pr-[2.431vw] max-md:h-auto max-md:pt-5 max-md:pb-5 max-md:px-5`}>
+    <footer
+      className={`${bg} h-dvh flex flex-col justify-between pt-[4.028vw] pb-[3.333vw] pl-[2.639vw] pr-[2.431vw] ${
+        totLg
+          ? "max-lg:h-auto max-lg:pt-5 max-lg:pb-5 max-lg:px-5"
+          : "max-md:h-auto max-md:pt-5 max-md:pb-5 max-md:px-5"
+      }`}
+    >
       {/* Desktop top content columns */}
-      <div className="flex max-md:hidden">
+      <div className={`flex ${totLg ? "max-lg:hidden" : "max-md:hidden"}`}>
         {/* Copyright column */}
         <div className="shrink-0 w-[31.944vw]">
           <p className="font-body font-medium text-[1.111vw] leading-[1.25vw] text-off-white">
             © {new Date().getFullYear()} | {data?.companyName ?? "Weverskade B.V."} |{" "}
             <a
-              href="/privacybeleid"
+              href={privacyHref}
               className="link-underline text-off-white pb-[0.208vw]"
               style={{ "--underline-h": "0.069vw" } as React.CSSProperties}
             >
               Privacy &amp; Disclaimer
             </a>
           </p>
+          {onderdeelVan ? (
+            <p className="mt-[1.111vw] max-w-[22.222vw] font-body font-medium text-[0.903vw] leading-[1.25vw] text-off-white/70">
+              {onderdeelVan}
+            </p>
+          ) : null}
         </div>
 
         {/* Nav columns with animated dot */}
@@ -123,12 +186,12 @@ export default function Footer({ bg = "bg-blue", data }: { bg?: string; data?: F
           {/* Nav column 1 */}
           <div className="shrink-0 w-[16.389vw]">
             <nav className="font-body font-medium text-[1.181vw] leading-[1.458vw] text-off-white">
-              {navCol1.map((item) => (
+              {kolom1.map((item) => (
                 <p key={item.label}>
                   <a
                     ref={pathname === item.href ? activeLinkRef : undefined}
                     href={item.href}
-                    onClick={(e) => navigate(e, item.href)}
+                    onClick={item.extern ? undefined : (e) => navigate(e, item.href)}
                     className="text-off-white no-underline hover:opacity-70 transition-opacity duration-200"
                     onMouseEnter={moveDot}
                   >
@@ -142,12 +205,12 @@ export default function Footer({ bg = "bg-blue", data }: { bg?: string; data?: F
           {/* Nav column 2 */}
           <div className="shrink-0 w-[16.389vw]">
             <nav className="font-body font-medium text-[1.181vw] leading-[1.458vw] text-off-white">
-              {navCol2.map((item) => (
+              {kolom2.map((item) => (
                 <p key={item.label}>
                   <a
                     ref={pathname === item.href ? activeLinkRef : undefined}
                     href={item.href}
-                    onClick={(e) => navigate(e, item.href)}
+                    onClick={item.extern ? undefined : (e) => navigate(e, item.href)}
                     className="text-off-white no-underline hover:opacity-70 transition-opacity duration-200"
                     onMouseEnter={moveDot}
                   >
@@ -207,18 +270,30 @@ export default function Footer({ bg = "bg-blue", data }: { bg?: string; data?: F
       </div>
 
       {/* Mobile top content */}
-      <div className="hidden max-md:block">
+      <div className={`hidden ${totLg ? "max-lg:block" : "max-md:block"}`}>
         {/* Copyright */}
         <p className="font-body font-medium text-[13px] leading-[18px] text-off-white">
           © {new Date().getFullYear()} | {data?.companyName ?? "Weverskade B.V."} |{" "}
           <a
-            href="/privacybeleid"
+            href={privacyHref}
             className="link-underline text-off-white pb-0.5"
             style={{ "--underline-h": "1px" } as React.CSSProperties}
           >
             Privacy &amp; Disclaimer
           </a>
         </p>
+        {wonenBij ? (
+          <p className="mt-3 font-body font-medium text-[12px] leading-[17px] text-off-white/70">
+            Wonen bij Weverskade is onderdeel van Weverskade.{" "}
+            <a
+              href={HOOFDSITE}
+              className="link-underline text-off-white/90 pb-0.5"
+              style={{ "--underline-h": "1px" } as React.CSSProperties}
+            >
+              Naar weverskade.com
+            </a>
+          </p>
+        ) : null}
 
         {/* Two-column headings */}
         <div className="flex mt-16">
@@ -295,7 +370,9 @@ export default function Footer({ bg = "bg-blue", data }: { bg?: string; data?: F
         viewBox="0 0 340 44"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
-        className="w-[95.139vw] h-auto text-off-white max-md:w-full max-md:mt-16"
+        className={`w-[95.139vw] h-auto text-off-white ${
+          totLg ? "max-lg:w-full max-lg:mt-16" : "max-md:w-full max-md:mt-16"
+        }`}
       >
         <g transform="translate(0,0)">
           <path

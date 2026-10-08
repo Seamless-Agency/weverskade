@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useImperativeHandle, useRef } from "react";
+import { useInView } from "@/hooks/useInView";
 
 const SCRIPT_SRC =
   "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
@@ -68,7 +69,15 @@ export default function TurnstileWidget({
   action?: string;
   className?: string;
 }) {
-  const containerRef = useRef<HTMLDivElement>(null);
+  // Het Cloudflare-script pas laden als het formulier in de buurt van de
+  // viewport komt, zodat het niet bij élke paginaweergave meelaadt. De ruime
+  // rootMargin zorgt dat de widget klaarstaat vóór de bezoeker het formulier
+  // bereikt; threshold 0 omdat de container leeg (hoogte 0) begint.
+  const [containerRef, inView] = useInView<HTMLDivElement>({
+    rootMargin: "600px 0px 600px 0px",
+    threshold: 0,
+    once: true,
+  });
   const widgetIdRef = useRef<string | null>(null);
   const callbacks = useRef({ onVerify, onError });
   // Aantal automatische herstelpogingen na een client-side fout, begrensd om
@@ -100,7 +109,7 @@ export default function TurnstileWidget({
   }), []);
 
   useEffect(() => {
-    if (!SITE_KEY) return;
+    if (!SITE_KEY || !inView) return;
 
     let cancelled = false;
 
@@ -169,7 +178,7 @@ export default function TurnstileWidget({
         // Widget kan al door Cloudflare zijn opgeruimd.
       }
     };
-  }, [action]);
+  }, [action, inView, containerRef]);
 
   if (!SITE_KEY) return null;
 

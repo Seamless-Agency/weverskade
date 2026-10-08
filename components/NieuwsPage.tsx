@@ -6,15 +6,15 @@ import CTASection from "@/components/CTASection";
 import { usePageNavigation } from "@/hooks/usePageNavigation";
 
 const defaultNewsItems = [
-  { id: 1, date: "30 januari, 2026", title: "En dan de titel van het nieuwsbericht", image: "/images/news-placeholder.webp", slug: "titel-van-het-nieuwsbericht-1" },
-  { id: 2, date: "30 januari, 2026", title: "En dan de titel van het nieuwsbericht", image: "/images/news-placeholder.webp", slug: "titel-van-het-nieuwsbericht-2" },
-  { id: 3, date: "30 januari, 2026", title: "En dan de titel van het nieuwsbericht", image: "/images/news-placeholder.webp", slug: "titel-van-het-nieuwsbericht-3" },
-  { id: 4, date: "30 januari, 2026", title: "En dan de titel van het nieuwsbericht", image: "/images/news-placeholder.webp", slug: "titel-van-het-nieuwsbericht-4" },
-  { id: 5, date: "30 januari, 2026", title: "En dan de titel van het nieuwsbericht", image: "/images/news-placeholder.webp", slug: "titel-van-het-nieuwsbericht-5" },
-  { id: 6, date: "30 januari, 2026", title: "En dan de titel van het nieuwsbericht", image: "/images/news-placeholder.webp", slug: "titel-van-het-nieuwsbericht-6" },
-  { id: 7, date: "30 januari, 2026", title: "En dan de titel van het nieuwsbericht", image: "/images/news-placeholder.webp", slug: "titel-van-het-nieuwsbericht-7" },
-  { id: 8, date: "30 januari, 2026", title: "En dan de titel van het nieuwsbericht", image: "/images/news-placeholder.webp", slug: "titel-van-het-nieuwsbericht-8" },
-  { id: 9, date: "30 januari, 2026", title: "En dan de titel van het nieuwsbericht", image: "/images/news-placeholder.webp", slug: "titel-van-het-nieuwsbericht-9" },
+  { id: 1, date: "30 januari 2026", title: "En dan de titel van het nieuwsbericht", image: "/images/news-placeholder.webp", slug: "titel-van-het-nieuwsbericht-1" },
+  { id: 2, date: "30 januari 2026", title: "En dan de titel van het nieuwsbericht", image: "/images/news-placeholder.webp", slug: "titel-van-het-nieuwsbericht-2" },
+  { id: 3, date: "30 januari 2026", title: "En dan de titel van het nieuwsbericht", image: "/images/news-placeholder.webp", slug: "titel-van-het-nieuwsbericht-3" },
+  { id: 4, date: "30 januari 2026", title: "En dan de titel van het nieuwsbericht", image: "/images/news-placeholder.webp", slug: "titel-van-het-nieuwsbericht-4" },
+  { id: 5, date: "30 januari 2026", title: "En dan de titel van het nieuwsbericht", image: "/images/news-placeholder.webp", slug: "titel-van-het-nieuwsbericht-5" },
+  { id: 6, date: "30 januari 2026", title: "En dan de titel van het nieuwsbericht", image: "/images/news-placeholder.webp", slug: "titel-van-het-nieuwsbericht-6" },
+  { id: 7, date: "30 januari 2026", title: "En dan de titel van het nieuwsbericht", image: "/images/news-placeholder.webp", slug: "titel-van-het-nieuwsbericht-7" },
+  { id: 8, date: "30 januari 2026", title: "En dan de titel van het nieuwsbericht", image: "/images/news-placeholder.webp", slug: "titel-van-het-nieuwsbericht-8" },
+  { id: 9, date: "30 januari 2026", title: "En dan de titel van het nieuwsbericht", image: "/images/news-placeholder.webp", slug: "titel-van-het-nieuwsbericht-9" },
 ];
 
 interface NieuwsPageData {

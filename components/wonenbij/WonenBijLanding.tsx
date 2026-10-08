@@ -1,0 +1,754 @@
+"use client";
+
+import { useId, useMemo, useRef, useState } from "react";
+import Image from "next/image";
+import TurnstileWidget, {
+  isTurnstileEnabled,
+  type TurnstileHandle,
+} from "@/components/TurnstileWidget";
+import { usePageNavigation } from "@/hooks/usePageNavigation";
+import { submitFormSubmission } from "@/lib/formSubmissionClient";
+import WonenBijHeader from "@/components/wonenbij/WonenBijHeader";
+import VimeoBackground, { parseVimeoUrl } from "@/components/VimeoBackground";
+import SleepRij from "@/components/wonenbij/SleepRij";
+import {
+  EASE,
+  HeroParallax,
+  Parallax,
+  Reveal,
+  RevealGroup,
+  RevealMedia,
+  RevealWords,
+  Statisch,
+  useHeroIntro,
+  useReducedMotion,
+} from "@/components/wonenbij/motion";
+import {
+  STATUS_TYPE_META,
+  formatPrijsRange,
+  landingDefaults,
+  type AanbodKaart,
+  type KwaliteitItem,
+  type LandingProjectKaart,
+} from "@/data/wonenbij";
+
+export interface IntroCta {
+  tekst: string;
+  knop: string;
+  href: string;
+}
+
+/**
+ * Alles is optioneel: een ontbrekend of leeg veld valt terug op de standaard
+ * uit data/wonenbij.ts (landingDefaults). Zo blijft de pagina identiek zonder
+ * Sanity-document en kan de redactie per veld overschrijven.
+ */
+export interface WonenBijLandingData {
+  heroImage?: string;
+  /** Lege string = bewust geen video (alleen de foto). */
+  heroVideoUrl?: string;
+  heroKnop?: string;
+  introStatement?: string;
+  introCtas?: IntroCta[];
+  overTitel?: string;
+  overFoto?: string;
+  overTekst?: string;
+  overFoto2?: string;
+  overTekstRechts?: string;
+  overKnop?: string;
+  kwaliteitTitel?: string;
+  kwaliteitItems?: KwaliteitItem[];
+  aanbodTitel?: string;
+  aanbodIntro?: string;
+  /** Teaser (MarkUp 50): kaarten niet aanklikbaar, met dit label ("Vanaf 12 oktober"). */
+  aanbodTeaser?: string;
+  projectenTitel?: string;
+  projectenIntro?: string;
+  contactLabel?: string;
+  contactTitel?: string;
+  contactTekst?: string;
+  aanbod?: AanbodKaart[];
+  projecten?: LandingProjectKaart[];
+}
+
+/** Lege CMS-string telt als "niet ingevuld". */
+const of = (cms: string | undefined, standaard: string) =>
+  cms && cms.trim() ? cms : standaard;
+
+/**
+ * De one-pager van wonenbij.weverskade.com - Figma "Portefeuille wonen"
+ * (update 23 juli 2026): hero, statement, over-sectie, kwaliteitsband,
+ * geaggregeerd woningaanbod, projectoverzicht en contactformulier.
+ */
+export default function WonenBijLanding({ data }: { data?: WonenBijLandingData }) {
+  const navigate = usePageNavigation();
+  const intro = useHeroIntro();
+  const reduced = useReducedMotion();
+  const d = landingDefaults;
+
+  const heroImage = of(data?.heroImage, d.heroImage);
+  // undefined = geen CMS-waarde → standaard; "" = redactie wil geen video.
+  const heroVideoUrl = data?.heroVideoUrl ?? d.heroVideoUrl;
+  const heroFragmenten = heroVideoUrl
+    ? d.heroVideoFragmenten[parseVimeoUrl(heroVideoUrl)?.id ?? ""]
+    : undefined;
+  const heroKnop = of(data?.heroKnop, d.heroKnop);
+  const introStatement = of(data?.introStatement, d.introStatement);
+  const introCtas = data?.introCtas?.length ? data.introCtas : d.introCtas;
+  const overTitel = of(data?.overTitel, d.overTitel);
+  const overFoto = of(data?.overFoto, d.overFoto);
+  const overTekst = of(data?.overTekst, d.overTekst);
+  const overFoto2 = of(data?.overFoto2, d.overFoto2);
+  const overTekstRechts = of(data?.overTekstRechts, d.overTekstRechts);
+  const overKnop = of(data?.overKnop, d.overKnop);
+  const kwaliteitTitel = of(data?.kwaliteitTitel, d.kwaliteitTitel);
+  const kwaliteitItems = data?.kwaliteitItems?.length
+    ? data.kwaliteitItems
+    : d.kwaliteitItems;
+  const aanbodTitel = of(data?.aanbodTitel, d.aanbodTitel);
+  const aanbodIntro = of(data?.aanbodIntro, d.aanbodIntro);
+  const aanbodTeaser = data?.aanbodTeaser;
+  const projectenTitel = of(data?.projectenTitel, d.projectenTitel);
+  const projectenIntro = of(data?.projectenIntro, d.projectenIntro);
+  const contactTitel = of(data?.contactTitel, d.contactTitel);
+  const contactTekst = of(data?.contactTekst, d.contactTekst);
+  const contactLabel = of(data?.contactLabel, d.contactLabel);
+  const aanbod = data?.aanbod ?? [];
+  const projecten = data?.projecten ?? [];
+
+  const [hoveredCard, setHoveredCard] = useState<string | null>(null);
+
+  const scrollNaar = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    e.preventDefault();
+    document
+      .getElementById(href.replace(/^#/, ""))
+      ?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+  const scrollNaarAanbod = (e: React.MouseEvent<HTMLAnchorElement>) =>
+    scrollNaar(e, "#aanbod");
+
+  return (
+    <section className="relative bg-white min-h-screen">
+      {/* Hero — net als de projectpagina altijd exact één viewport hoog
+          (bewuste afwijking van het 893px-Figma-frame) */}
+      <div className="relative h-svh overflow-hidden" data-nav-theme="dark">
+        {/* Zoom-out entrance, zelfde geste als de hero van de hoofdsite;
+            daarbinnen zakt de foto mee tijdens het scrollen (parallax). */}
+        <div
+          className="absolute inset-0 will-change-transform"
+          style={{
+            transform: intro ? "scale(1)" : "scale(1.18)",
+            transition: intro && !reduced ? `transform 2.4s ${EASE}` : "none",
+          }}
+        >
+          <HeroParallax>
+            {/* Dezelfde showreel als de hoofdsite-hero (comment 24); de foto
+                blijft de poster tot de video speelt en de fallback zonder URL. */}
+            {heroVideoUrl && !reduced ? (
+              <VimeoBackground url={heroVideoUrl} poster={heroImage} fit="cover" meetContainer fragmenten={heroFragmenten} />
+            ) : (
+              <Image
+                src={heroImage}
+                alt="Wonen bij Weverskade"
+                fill
+                priority
+                sizes="100vw"
+                className="object-cover"
+              />
+            )}
+          </HeroParallax>
+        </div>
+        <div className="absolute inset-0 bg-off-black/30" />
+        {/* Ankermenu zoals op de projectpagina (comment 25). */}
+        <WonenBijHeader
+          variant="licht"
+          anchors={[
+            { label: "Over", href: "#over" },
+            { label: "Aanbod", href: "#aanbod" },
+            { label: "Projecten", href: "#projecten" },
+            { label: "Contact", href: "#contact" },
+          ]}
+          ctaLabel={heroKnop}
+          ctaLabelMobiel="Aanbod"
+          ctaHref="#aanbod"
+        />
+      </div>
+
+      {/* Enige h1 van de landing; visueel is het merk in de hero de kop. */}
+      <h1 className="sr-only">Wonen bij Weverskade</h1>
+
+      {/* Statement; vaste paddings (geen hoogte) zodat langere CMS-tekst de
+          sectie laat meegroeien. Daaronder twee routes (comment 27): naar de
+          woonprojecten of direct naar het aanbod — elk een korte regel met
+          een pill, in het ritme tekst → pill van 54/32px dat de over-sectie
+          ook hanteert. */}
+      <RevealGroup className="pt-[6.181vw] pb-[16.667vw] px-[2.569vw] max-lg:pt-12 max-lg:px-5 max-lg:pb-12" data-nav-theme="white">
+        <p className="font-body font-medium text-[4.028vw] leading-[4.097vw] text-off-black indent-[10.278vw] max-w-[83.264vw] max-lg:indent-0 max-lg:text-[28px] max-lg:leading-[33px] max-lg:max-w-none">
+          <RevealWords text={introStatement} stagger={0.04} duration={1} />
+        </p>
+        <div className="mt-[3.75vw] grid grid-cols-2 gap-x-[4.167vw] max-w-[62.5vw] max-lg:mt-8 max-lg:grid-cols-1 max-lg:gap-y-8 max-lg:max-w-none">
+          {introCtas.map((cta, i) => (
+            <Reveal key={`${cta.href}-${i}`} delay={0.7 + i * 0.12} y={14}>
+              <p className="whitespace-pre-line font-body font-medium text-[1.597vw] leading-[2.153vw] tracking-[-0.032vw] text-off-black max-lg:text-[17px] max-lg:leading-[24px]">
+                {cta.tekst}
+              </p>
+              <a
+                href={cta.href}
+                onClick={(e) => scrollNaar(e, cta.href)}
+                className="pill-hover mt-[2.222vw] inline-flex items-center justify-center h-[2.847vw] px-[1.944vw] bg-green text-off-white no-underline rounded-full font-heading font-normal text-[1.181vw] tracking-[-0.024vw] lg:whitespace-nowrap max-lg:mt-5 max-lg:h-auto max-lg:px-6 max-lg:py-2.5 max-lg:text-[15px]"
+              >
+                {cta.knop}
+              </a>
+            </Reveal>
+          ))}
+        </div>
+      </RevealGroup>
+
+      {/* Over Wonen bij Weverskade — flow met vaste ankers i.p.v. een band met
+          vaste hoogte: de Figma-witruimtes (252 boven, 285 tussen de blokken,
+          248 onder) blijven exact, maar langere CMS-tekst laat de band groeien
+          in plaats van over de foto's heen te lopen */}
+      <div id="over" className="bg-off-white pt-[17.5vw] pb-[17.222vw] max-lg:py-14 max-lg:px-5 scroll-mt-[2vw]" data-nav-theme="light">
+        <div className="px-[2.778vw] max-lg:px-0">
+          {/* Blok 1: titel + foto rechts; tekst links onder-verankerd 22 boven de
+              foto-onderkant. Tekst in de flow (mt-auto) i.p.v. absoluut: bij de
+              korte tekst pixelgelijk, bij langere CMS-tekst (comment 29, twee
+              alinea's) groeit het blok in plaats van door de kop te lopen. */}
+          <div className="relative flex flex-col min-h-[43.889vw] max-lg:min-h-0 max-lg:block">
+            <h2 className="max-w-[38.194vw] font-heading font-normal text-[4.931vw] leading-[5.625vw] tracking-[-0.099vw] text-off-black whitespace-pre-line max-lg:max-w-none max-lg:text-[36px] max-lg:leading-[40px] max-lg:tracking-[-0.72px]">
+              <RevealWords text={overTitel} />
+            </h2>
+            {/* Onder-verankerd (bottom-0): bij korte tekst identiek aan top-0
+                (het blok is precies fotohoogte), bij lange tekst zakt de foto
+                mee zodat tekst en foto onderaan gelijk blijven lopen. */}
+            <RevealMedia className="absolute bottom-0 right-[-0.347vw] w-[54.514vw] h-[43.889vw] overflow-hidden max-lg:relative max-lg:inset-auto max-lg:w-full max-lg:h-auto max-lg:aspect-[785/632] max-lg:mt-8">
+              <Parallax>
+                <Image
+                  src={overFoto}
+                  alt="Interieur van een Weverskade woning"
+                  fill
+                  sizes="(max-width: 768px) 100vw, 55vw"
+                  className="object-cover"
+                />
+              </Parallax>
+            </RevealMedia>
+            <Reveal
+              as="p"
+              delay={0.15}
+              className="mt-auto pt-[2.222vw] pb-[1.528vw] w-[29.792vw] whitespace-pre-line font-body font-medium text-[1.597vw] leading-[2.153vw] tracking-[-0.032vw] text-off-black max-lg:w-full max-lg:pt-0 max-lg:pb-0 max-lg:mt-8 max-lg:text-[17px] max-lg:leading-[24px]"
+            >
+              {overTekst}
+            </Reveal>
+          </div>
+
+          {/* Blok 2: foto links; tekst + knop rechts, knop-onderkant = foto-onderkant.
+              De foto heeft de Figma-hoogte als minimum (791/559 van 54.931vw =
+              38.825vw) en rekt mee met het tekstblok, dat 2.778vw (40px)
+              bovenmarge houdt: de foto steekt dus altijd minstens 40px boven
+              de tekst uit, ook bij lange CMS-tekst (MarkUp 07-10). */}
+          <div className="relative mt-[19.792vw] flex items-end max-lg:mt-8 max-lg:block">
+            <RevealMedia className="relative ml-[0.069vw] w-[54.931vw] shrink-0 self-stretch min-h-[38.825vw] overflow-hidden max-lg:ml-0 max-lg:w-full max-lg:min-h-0 max-lg:aspect-[791/559]">
+              <Parallax>
+                <Image
+                  src={overFoto2}
+                  alt="Woonkamer van een Weverskade woning"
+                  fill
+                  sizes="(max-width: 768px) 100vw, 55vw"
+                  className="object-cover"
+                />
+              </Parallax>
+            </RevealMedia>
+            {/* Onder-verankerd: de knop-onderkant valt samen met de foto-onderkant
+                (Figma: beide op 3245); x = 64.444vw zoals voorheen absoluut */}
+            <Reveal
+              delay={0.15}
+              className="ml-[9.444vw] w-[27.986vw] shrink-0 pt-[2.778vw] max-lg:ml-0 max-lg:w-full max-lg:pt-0 max-lg:mt-8"
+            >
+          <p className="whitespace-pre-line font-body font-medium text-[1.597vw] leading-[2.153vw] tracking-[-0.032vw] text-off-black max-lg:text-[17px] max-lg:leading-[24px]">
+            {overTekstRechts}
+          </p>
+          <a
+            href="#aanbod"
+            onClick={scrollNaarAanbod}
+            className="pill-hover inline-flex items-center justify-center mt-[3.75vw] -ml-[0.139vw] w-[12.083vw] h-[2.847vw] bg-green text-off-white no-underline rounded-full font-heading font-normal text-[1.181vw] tracking-[-0.024vw] max-lg:mt-5 max-lg:ml-0 max-lg:w-auto max-lg:h-auto max-lg:px-6 max-lg:py-2.5 max-lg:text-[15px]"
+          >
+              {overKnop}
+            </a>
+            </Reveal>
+          </div>
+
+        </div>
+      </div>
+
+      {/* Kwaliteit en gebruiksgemak */}
+      {/* Figma-band is 521 hoog bij éénregelige placeholders; de maat die telt is
+          de witruimte (99 boven, 131 onder) — de band groeit mee met de inhoud */}
+      <div className="bg-green pt-[6.875vw] pb-[9.097vw] max-lg:py-14" data-nav-theme="green">
+        <div className="pl-[18.542vw] pr-[2.431vw] max-lg:px-5">
+          <h2 className="font-heading font-normal text-[4.653vw] leading-[5.736vw] tracking-[-0.093vw] text-off-white max-lg:text-[32px] max-lg:leading-[1.1] max-lg:tracking-[-0.64px]">
+            <RevealWords text={kwaliteitTitel} />
+          </h2>
+          {/* kolommen staan in Figma op 270/623/965 — ongelijke breedtes, geen uniform grid */}
+          <RevealGroup className="mt-[4.264vw] ml-[0.208vw] grid grid-cols-[24.514vw_23.75vw_15vw] gap-y-[3.125vw] max-lg:mt-8 max-lg:ml-0 max-lg:grid-cols-1 max-lg:gap-y-6">
+            {kwaliteitItems.map((item, i) => (
+              <Reveal
+                key={item.label + item.waarde}
+                delay={0.1 + i * 0.075}
+                className="max-w-[20.486vw] max-lg:max-w-none"
+              >
+                <p className="font-body font-normal text-[1.042vw] leading-[1.806vw] text-off-white max-lg:text-[13px] max-lg:leading-[20px]">
+                  {item.label}
+                </p>
+                <p className="whitespace-pre-line font-heading font-normal text-[1.458vw] leading-[1.806vw] text-off-white max-lg:mt-1 max-lg:text-[18px] max-lg:leading-[24px]">
+                  {item.waarde}
+                </p>
+              </Reveal>
+            ))}
+          </RevealGroup>
+        </div>
+      </div>
+
+      {/* Beschikbare woningen - geaggregeerd aanbod van alle projecten */}
+      {aanbod.length > 0 ? (
+        <div id="aanbod" className="pt-[6.875vw] px-[2.431vw] max-lg:pt-12 max-lg:px-5 scroll-mt-[2vw]" data-nav-theme="white">
+          {/* koppen staan in Figma op x=40, de kaarten op x=35 */}
+          <h2 className="ml-[0.347vw] font-heading font-normal text-[4.931vw] leading-[6.076vw] tracking-[-0.099vw] text-off-black max-lg:ml-0 max-lg:text-[36px] max-lg:leading-[1.1] max-lg:tracking-[-0.72px]">
+            <RevealWords text={aanbodTitel} />
+          </h2>
+          {/* Introtekst (comment 33), in hetzelfde ritme als de intro onder
+              "Onze woonprojecten". Een foto erbij hing los van het grid en
+              werd bewust weggelaten (Robin 24-09). */}
+          {aanbodIntro ? (
+            <Reveal
+              as="p"
+              delay={0.1}
+              className="mt-[2.222vw] ml-[0.347vw] max-w-[47.153vw] whitespace-pre-line font-body font-medium text-[1.597vw] leading-[2.153vw] tracking-[-0.032vw] text-off-black max-lg:mt-4 max-lg:ml-0 max-lg:max-w-none max-lg:text-[17px] max-lg:leading-[24px]"
+            >
+              {aanbodIntro}
+            </Reveal>
+          ) : null}
+          {/* Eén sleepbare rij i.p.v. een raster (comment 43): drie kaarten
+              in beeld op desktop, op mobiel één kaart met de volgende die
+              al zichtbaar is. Kaartmaat gelijk aan het oude raster. */}
+          <SleepRij label={aanbodTitel} className="mt-[2.431vw] max-lg:mt-6">
+            {aanbod.map((kaart, i) => {
+              const href = `/wonenbij/${kaart.projectSlug}/${kaart.typeSlug}`;
+              // Teaser (MarkUp 50): zelfde kaart, maar geen link en geen hover
+              // tot de verhuur start; het label vervangt status en knop.
+              return (
+                <Reveal
+                  as={aanbodTeaser ? "div" : "a"}
+                  key={kaart.projectSlug + kaart.typeSlug}
+                  href={aanbodTeaser ? undefined : href}
+                  onClick={
+                    aanbodTeaser
+                      ? undefined
+                      : (e: React.MouseEvent<HTMLAnchorElement>) => navigate(e, href)
+                  }
+                  delay={(i % 3) * 0.09}
+                  className={`block shrink-0 snap-start basis-[calc((100%-2.778vw)/3)] bg-off-white pt-[1.389vw] px-[1.25vw] pb-[1.944vw] no-underline max-lg:basis-[85%] max-lg:p-4 ${
+                    aanbodTeaser ? "" : "group"
+                  }`}
+                >
+                  <div className="relative w-full aspect-[407/275] overflow-hidden">
+                    <Image
+                      src={kaart.foto}
+                      alt={kaart.typeNaam}
+                      draggable={false}
+                      fill
+                      sizes="(max-width: 768px) 100vw, 30vw"
+                      className="object-cover transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-105"
+                    />
+                    {aanbodTeaser ? (
+                      <span className="absolute left-[0.833vw] top-[0.833vw] inline-flex items-center h-[2.222vw] px-[1.111vw] bg-green text-off-white rounded-full font-heading font-normal text-[1.042vw] tracking-[-0.021vw] max-lg:left-3 max-lg:top-3 max-lg:h-8 max-lg:px-4 max-lg:text-[14px]">
+                        {aanbodTeaser}
+                      </span>
+                    ) : null}
+                  </div>
+                  <div className="mt-[0.625vw] flex items-start justify-between gap-4 max-lg:mt-3">
+                    <p className="font-heading font-normal text-[1.667vw] leading-[2.056vw] text-off-black max-lg:text-[18px] max-lg:leading-[1.05]">
+                      {kaart.typeNaam}
+                    </p>
+                    <p className="shrink-0 mt-[0.417vw] font-body font-medium text-[0.833vw] leading-[1.389vw] text-off-black max-lg:mt-0 max-lg:text-[12px] max-lg:leading-[17px]">
+                      {aanbodTeaser
+                        ? "Binnenkort"
+                        : kaart.status === "inschrijven"
+                          ? "Inschrijven"
+                          : "Te huur"}
+                    </p>
+                  </div>
+                  <p className="mt-[0.306vw] font-body font-medium text-[0.833vw] leading-[1.389vw] text-off-black max-lg:text-[12px] max-lg:leading-[17px]">
+                    {kaart.plaats}
+                  </p>
+                  <div className="mt-[1.319vw] flex items-end justify-between max-lg:mt-3">
+                    <div className="flex items-start gap-[1.25vw] max-lg:gap-2">
+                      <div className="flex flex-col items-center gap-[1.181vw] ml-[0.139vw] mt-[0.417vw] max-lg:gap-[14px] max-lg:ml-0">
+                        <Image
+                          src="/images/wonenbij/icons/key-klein.svg"
+                          alt=""
+                          width={12}
+                          height={12}
+                          className="w-[0.833vw] h-auto max-lg:w-[11px]"
+                        />
+                        <Image
+                          src="/images/wonenbij/icons/bed-klein.svg"
+                          alt=""
+                          width={14}
+                          height={9}
+                          className="w-[0.972vw] h-auto max-lg:w-[13px]"
+                        />
+                        <Image
+                          src="/images/wonenbij/icons/m2-klein.svg"
+                          alt=""
+                          width={11}
+                          height={11}
+                          className="w-[0.764vw] h-auto max-lg:w-[10px]"
+                        />
+                      </div>
+                      <div className="font-body font-medium text-[0.833vw] leading-[1.806vw] text-off-black max-lg:text-[12px] max-lg:leading-[19px]">
+                        <p>{formatPrijsRange(kaart.prijsVan, kaart.prijsTot)} p/m</p>
+                        <p>
+                          {kaart.slaapkamers}{" "}
+                          {kaart.slaapkamers === 1 ? "slaapkamer" : "slaapkamers"}
+                        </p>
+                        <p>{kaart.oppervlakte} m²</p>
+                      </div>
+                    </div>
+                    {aanbodTeaser ? null : (
+                      <span className="inline-flex items-center justify-center w-[8.056vw] h-[1.875vw] mb-[0.417vw] bg-green text-off-white rounded-full font-heading font-normal text-[0.764vw] tracking-[-0.015vw] max-lg:w-auto max-lg:h-auto max-lg:mb-0 max-lg:px-3 max-lg:py-1.5 max-lg:text-[11px]">
+                        Naar deze woning
+                      </span>
+                    )}
+                  </div>
+                </Reveal>
+              );
+            })}
+          </SleepRij>
+        </div>
+      ) : null}
+
+      {/* Onze woonprojecten */}
+      {projecten.length > 0 ? (
+        <div id="projecten" className="pt-[5.903vw] px-[2.431vw] max-lg:pt-12 max-lg:px-5 scroll-mt-[2vw]">
+          <h2 className="ml-[0.347vw] font-heading font-normal text-[4.931vw] leading-[6.076vw] tracking-[-0.099vw] text-off-black max-lg:ml-0 max-lg:text-[36px] max-lg:leading-[1.1] max-lg:tracking-[-0.72px]">
+            <RevealWords text={projectenTitel} />
+          </h2>
+          {/* Introtekst onder de kop (comment 30). */}
+          {projectenIntro ? (
+            <Reveal
+              as="p"
+              delay={0.1}
+              className="mt-[2.222vw] ml-[0.347vw] max-w-[47.153vw] whitespace-pre-line font-body font-medium text-[1.597vw] leading-[2.153vw] tracking-[-0.032vw] text-off-black max-lg:mt-4 max-lg:ml-0 max-lg:max-w-none max-lg:text-[17px] max-lg:leading-[24px]"
+            >
+              {projectenIntro}
+            </Reveal>
+          ) : null}
+          <div className="mt-[2.917vw] grid grid-cols-3 gap-x-[1.389vw] gap-y-[1.389vw] max-lg:mt-6 max-lg:grid-cols-1 max-lg:gap-y-6">
+            {projecten.map((project, i) => {
+              const href = project.heeftWonenBijPagina
+                ? `/wonenbij/${project.slug}`
+                : `/gebouw/${project.slug}`;
+              return (
+                <Reveal
+                  as="a"
+                  key={project.slug + project.naam}
+                  href={href}
+                  delay={(i % 3) * 0.09}
+                  onClick={(e: React.MouseEvent<HTMLAnchorElement>) => navigate(e, href)}
+                  className="block no-underline"
+                  onMouseEnter={() => setHoveredCard(project.slug)}
+                  onMouseLeave={() => setHoveredCard(null)}
+                >
+                  <div className="relative w-full aspect-[443/479] overflow-hidden cursor-pointer">
+                    <Image
+                      src={project.image}
+                      alt={project.naam}
+                      fill
+                      sizes="(max-width: 768px) 100vw, 30vw"
+                      className="object-cover transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]"
+                      style={{
+                        transform:
+                          hoveredCard === project.slug ? "scale(1.05)" : "scale(1)",
+                      }}
+                    />
+                    <div
+                      className={`absolute inset-0 bg-off-black transition-opacity duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+                        hoveredCard === project.slug ? "opacity-57" : "opacity-0"
+                      }`}
+                    />
+                    <div
+                      className={`absolute inset-0 flex items-center justify-center transition-opacity duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+                        hoveredCard === project.slug ? "opacity-100" : "opacity-0"
+                      }`}
+                    >
+                      <span className="mt-[1.424vw] font-body font-medium text-[1.944vw] leading-[2.257vw] text-off-white underline decoration-solid max-lg:mt-0 max-lg:text-[20px] max-lg:leading-[24px]">
+                        Naar project pagina
+                      </span>
+                    </div>
+                  </div>
+                  <div className="mt-[0.486vw] flex items-start justify-between max-lg:mt-2">
+                    <div>
+                      <p className="font-body font-medium text-[1.389vw] leading-[1.611vw] text-off-black max-lg:text-[16px] max-lg:leading-[1.2]">
+                        {project.naam}
+                      </p>
+                      <p className="font-body font-medium text-[1.389vw] leading-[1.611vw] text-off-black max-lg:text-[16px] max-lg:leading-[1.2]">
+                        {project.plaats}
+                      </p>
+                    </div>
+                    {project.statusLabel ? (
+                      <span className="inline-flex items-center justify-center shrink-0 mt-[0.556vw] mr-[0.139vw] w-[8.056vw] h-[1.875vw] bg-green text-off-white rounded-full font-heading font-normal text-[0.764vw] tracking-[-0.015vw] max-lg:mt-0 max-lg:mr-0 max-lg:w-auto max-lg:h-auto max-lg:px-3 max-lg:py-1.5 max-lg:text-[11px]">
+                        {project.statusLabel}
+                      </span>
+                    ) : null}
+                  </div>
+                </Reveal>
+              );
+            })}
+          </div>
+        </div>
+      ) : null}
+
+      {/* Bewust statisch (geen scroll-reveal) voor ritme tussen de secties. */}
+      <Statisch>
+        <ContactSectie titel={contactTitel} tekst={contactTekst} label={contactLabel} />
+      </Statisch>
+    </section>
+  );
+}
+
+/* ─── Contactformulier (zelfde velden als het bestaande wonen_bij-formulier) ── */
+
+function ContactSectie({
+  titel,
+  tekst,
+  label,
+}: {
+  titel: string;
+  tekst: string;
+  label: string;
+}) {
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    interestedProject: "",
+    message: "",
+    agreed: false,
+  });
+  const [submitState, setSubmitState] = useState<
+    "idle" | "submitting" | "success" | "error"
+  >("idle");
+  const [submitMessage, setSubmitMessage] = useState("");
+  const [turnstileToken, setTurnstileToken] = useState("");
+  const [turnstileFout, setTurnstileFout] = useState(false);
+  const turnstileRef = useRef<TurnstileHandle>(null);
+  const turnstileHintId = useId();
+
+  const veldClass = useMemo(
+    () =>
+      "w-full bg-transparent border-b border-off-black pb-[1.458vw] font-body font-medium text-[1.319vw] leading-[1.528vw] text-off-black placeholder:text-off-black/55 outline-none focus-visible:shadow-[0_1px_0_0_currentColor] max-lg:text-[16px] max-lg:leading-normal max-lg:pt-2 max-lg:pb-3",
+    []
+  );
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSubmitState("submitting");
+    setSubmitMessage("");
+
+    try {
+      await submitFormSubmission({
+        formType: "wonen_bij",
+        sourceLabel: "Wonen bij Weverskade - one-pager",
+        ...form,
+        pageUrl: window.location.href,
+        turnstileToken,
+      });
+      setForm({
+        name: "",
+        email: "",
+        phone: "",
+        interestedProject: "",
+        message: "",
+        agreed: false,
+      });
+      setSubmitState("success");
+      setSubmitMessage("Bedankt, je formulier is verstuurd.");
+    } catch (error) {
+      setSubmitState("error");
+      setSubmitMessage(
+        error instanceof Error
+          ? error.message
+          : "Het formulier kon niet worden verstuurd."
+      );
+    } finally {
+      // Een token is eenmalig, dus na elke poging een nieuwe aanvragen.
+      setTurnstileToken("");
+      turnstileRef.current?.reset();
+    }
+  };
+
+  return (
+    <div id="contact" className="px-[2.431vw] mt-[14.583vw] pb-[15.833vw] max-lg:px-5 max-lg:mt-16 max-lg:pb-16 scroll-mt-[2vw]" data-nav-theme="white">
+      <div className="flex items-start max-lg:flex-col max-lg:gap-4">
+        <Reveal
+          as="p"
+          className="mt-[0.694vw] font-heading font-normal text-[1.389vw] leading-[1.715vw] text-off-black shrink-0 w-[31.458vw] pl-[8.056vw] max-lg:mt-0 max-lg:w-auto max-lg:text-[17px] max-lg:leading-[22px] max-lg:pl-0"
+        >
+          {label}
+        </Reveal>
+        <div className="flex-1 max-lg:w-full">
+          <h2 className="font-body font-medium text-[3.75vw] leading-[3.681vw] text-off-black max-w-[62.569vw] max-lg:text-[28px] max-lg:leading-[32px] max-lg:max-w-none">
+            <RevealWords text={titel} stagger={0.04} />
+          </h2>
+          {/* Instructiezin (comment 31) als gewone tekst; zonder tekst blijft
+              de oorspronkelijke kop→formulier-afstand staan. */}
+          {tekst ? (
+            <Reveal
+              as="p"
+              delay={0.1}
+              className="mt-[2.222vw] mb-[4.653vw] max-w-[47.153vw] whitespace-pre-line font-body font-medium text-[1.597vw] leading-[2.153vw] tracking-[-0.032vw] text-off-black max-lg:mt-4 max-lg:mb-6 max-lg:max-w-none max-lg:text-[17px] max-lg:leading-[24px]"
+            >
+              {tekst}
+            </Reveal>
+          ) : (
+            <div className="mb-[4.653vw] max-lg:mb-6" />
+          )}
+
+          <Reveal delay={0.2}>
+          <form onSubmit={handleSubmit} className="ml-[0.208vw] max-w-[46.944vw] max-lg:ml-0 max-lg:max-w-none">
+            <div className="grid grid-cols-2 gap-x-[1.389vw] gap-y-[2.639vw] max-lg:grid-cols-1 max-lg:gap-y-6">
+              <input
+                type="text"
+                name="name"
+                placeholder="Naam"
+                aria-label="Naam"
+                autoComplete="name"
+                required
+                value={form.name}
+                onChange={(e) => setForm((p) => ({ ...p, name: e.target.value }))}
+                className={veldClass}
+              />
+              <input
+                type="email"
+                name="email"
+                placeholder="Emailadres"
+                aria-label="Emailadres"
+                autoComplete="email"
+                required
+                value={form.email}
+                onChange={(e) => setForm((p) => ({ ...p, email: e.target.value }))}
+                className={veldClass}
+              />
+              <input
+                type="tel"
+                name="phone"
+                placeholder="Telefoonnummer"
+                aria-label="Telefoonnummer"
+                autoComplete="tel"
+                value={form.phone}
+                onChange={(e) => setForm((p) => ({ ...p, phone: e.target.value }))}
+                className={veldClass}
+              />
+              <input
+                type="text"
+                name="interestedProject"
+                placeholder="In welk project heb je interesse?"
+                aria-label="In welk project heb je interesse?"
+                value={form.interestedProject}
+                onChange={(e) =>
+                  setForm((p) => ({ ...p, interestedProject: e.target.value }))
+                }
+                className={veldClass}
+              />
+            </div>
+
+            <textarea
+              name="message"
+              placeholder="Eventuele vraag of opmerking"
+              aria-label="Eventuele vraag of opmerking"
+              value={form.message}
+              onChange={(e) => setForm((p) => ({ ...p, message: e.target.value }))}
+              rows={4}
+              className={`mt-[2.014vw] h-[8.889vw] resize-none max-lg:mt-6 max-lg:h-auto ${veldClass}`}
+            />
+
+            <TurnstileWidget
+              ref={turnstileRef}
+              action="wonenbij-contact"
+              onVerify={(token) => {
+                setTurnstileToken(token);
+                if (token) setTurnstileFout(false);
+              }}
+              onError={() => setTurnstileFout(true)}
+              className="mt-[2.014vw] max-lg:mt-6"
+            />
+
+            <div className="flex items-start justify-between mt-[2.153vw] max-lg:flex-col max-lg:gap-6 max-lg:mt-6">
+              <label className="flex items-start gap-[1.042vw] cursor-pointer max-lg:gap-3">
+                <input
+                  type="checkbox"
+                  name="agreed"
+                  required
+                  checked={form.agreed}
+                  onChange={(e) =>
+                    setForm((p) => ({ ...p, agreed: e.target.checked }))
+                  }
+                  className="shrink-0 mt-[0.347vw] w-[0.764vw] h-[0.764vw] border border-off-black appearance-none checked:bg-green checked:border-green cursor-pointer focus-visible:outline-2 focus-visible:outline-off-black focus-visible:outline-offset-2 max-lg:w-[16px] max-lg:h-[16px] max-lg:mt-[2px]"
+                />
+                <span className="font-body font-normal text-[0.764vw] leading-[0.889vw] text-off-black max-w-[27.431vw] max-lg:text-[11px] max-lg:leading-normal max-lg:max-w-none">
+                  Ik ga akkoord met de{" "}
+                  <a href="/wonenbij/privacybeleid" target="_blank" rel="noopener noreferrer" className="underline decoration-solid">
+                    algemene voorwaarden
+                  </a>{" "}
+                  en het gebruiken van mijn gegevens om contact met mij op te
+                  nemen.
+                </span>
+              </label>
+              <button
+                type="submit"
+                disabled={
+                  submitState === "submitting" ||
+                  (isTurnstileEnabled && !turnstileToken)
+                }
+                aria-describedby={
+                  isTurnstileEnabled && !turnstileToken
+                    ? turnstileHintId
+                    : undefined
+                }
+                className="pill-hover inline-flex items-center justify-center shrink-0 -mt-[0.694vw] w-[14.722vw] h-[3.194vw] bg-green text-off-white font-heading font-normal text-[1.181vw] tracking-[-0.024vw] rounded-full cursor-pointer border-none disabled:opacity-40 disabled:cursor-not-allowed max-lg:mt-0 max-lg:w-auto max-lg:h-auto max-lg:text-[15px] max-lg:px-6 max-lg:py-3"
+              >
+                {submitState === "submitting"
+                  ? "Versturen..."
+                  : "Formulier versturen"}
+              </button>
+            </div>
+            {isTurnstileEnabled && !turnstileToken ? (
+              <p
+                id={turnstileHintId}
+                role={turnstileFout ? "alert" : "status"}
+                className={`mt-2 font-body font-medium text-[0.833vw] leading-[1.25] max-lg:text-[12px] ${
+                  turnstileFout ? "text-red-700" : "text-off-black/50"
+                }`}
+              >
+                {turnstileFout
+                  ? "De beveiligingscheck kon niet worden geladen. Herlaad de pagina of probeer het later opnieuw."
+                  : "Beveiligingscheck wordt geladen…"}
+              </p>
+            ) : null}
+            {submitMessage ? (
+              <p
+                role={submitState === "error" ? "alert" : "status"}
+                className={`mt-4 font-body text-[0.972vw] leading-[1.25] max-lg:text-[13px] ${
+                  submitState === "error" ? "text-red-700" : "text-green"
+                }`}
+              >
+                {submitMessage}
+              </p>
+            ) : null}
+          </form>
+          </Reveal>
+        </div>
+      </div>
+    </div>
+  );
+}

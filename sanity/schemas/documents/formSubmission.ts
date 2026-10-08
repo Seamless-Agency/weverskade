@@ -34,6 +34,8 @@ export const formSubmission = defineType({
           { title: 'Contactpagina', value: 'contact' },
           { title: 'Wonen bij', value: 'wonen_bij' },
           { title: 'Gebouw wonen', value: 'gebouw_wonen' },
+          { title: 'Woningzoeker', value: 'woningzoeker' },
+          { title: 'Wonen bij — inschrijving', value: 'wonenbij_inschrijving' },
         ],
       },
       validation: (rule) => rule.required(),
@@ -67,6 +69,12 @@ export const formSubmission = defineType({
       type: 'string',
     }),
     defineField({
+      name: 'secondChoice',
+      title: 'Tweede voorkeur',
+      type: 'string',
+      readOnly: true,
+    }),
+    defineField({
       name: 'projectName',
       title: 'Projectnaam',
       type: 'string',
@@ -74,6 +82,26 @@ export const formSubmission = defineType({
     defineField({
       name: 'projectSlug',
       title: 'Project slug',
+      type: 'string',
+    }),
+    defineField({
+      name: 'age',
+      title: 'Leeftijd',
+      type: 'string',
+    }),
+    defineField({
+      name: 'occupation',
+      title: 'Werkgever / beroep',
+      type: 'string',
+    }),
+    defineField({
+      name: 'householdIncome',
+      title: 'Bruto huishoudinkomen',
+      type: 'string',
+    }),
+    defineField({
+      name: 'householdComposition',
+      title: 'Gezinssamenstelling',
       type: 'string',
     }),
     defineField({

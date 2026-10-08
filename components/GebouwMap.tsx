@@ -92,9 +92,13 @@ export default function GebouwMap({ lat, lng, projectName }: GebouwMapProps) {
           const pinSize = isMobile ? 15 : 22;
           const pinOffset = isMobile ? 9 : 13;
           const letterSpacing = isMobile ? -0.34 : -0.48;
+          // position:relative + z-index op het label: de geroteerde pin-ruit
+          // is een latere sibling met eigen stacking context en zou anders
+          // óver de labeltekst heen schilderen (zelfde valkuil als bij de
+          // eerdere statische kaartmarker).
           this.div.innerHTML = `
             <div style="display:flex;flex-direction:column;align-items:center;transform:translate(-50%,-100%)">
-              <div style="background:#848F71;padding:${padY}px ${padX}px;font-family:var(--font-heading),serif;font-size:${fontSize}px;color:#F7F5F0;white-space:nowrap;letter-spacing:${letterSpacing}px">${this.label}</div>
+              <div style="position:relative;z-index:1;background:#848F71;padding:${padY}px ${padX}px;font-family:var(--font-heading),serif;font-size:${fontSize}px;color:#F7F5F0;white-space:nowrap;letter-spacing:${letterSpacing}px">${this.label}</div>
               <div style="width:${pinSize}px;height:${pinSize}px;background:#848F71;transform:rotate(45deg);margin-top:-${pinOffset}px"></div>
             </div>
           `;
@@ -157,7 +161,7 @@ export default function GebouwMap({ lat, lng, projectName }: GebouwMapProps) {
         }} />
         {/* Green marker */}
         <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-full flex flex-col items-center z-10">
-          <div className="bg-green px-[1.667vw] py-[0.694vw] max-md:px-6 max-md:py-2.5">
+          <div className="relative z-10 bg-green px-[1.667vw] py-[0.694vw] max-md:px-6 max-md:py-2.5">
             <span className="font-heading font-normal text-[1.667vw] text-off-white tracking-[-0.033vw] whitespace-nowrap max-md:text-[17px] max-md:tracking-[-0.34px]">
               {projectName}
             </span>

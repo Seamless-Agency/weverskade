@@ -9,6 +9,8 @@ export const project = defineType({
     { name: 'general', title: 'Algemeen', default: true },
     { name: 'details', title: 'Project details' },
     { name: 'visibility', title: 'Zichtbaarheid' },
+    { name: 'woningzoeker', title: 'Woningzoeker' },
+    { name: 'wonenbij', title: 'Wonen bij pagina' },
     { name: 'media', title: 'Media' },
     { name: 'content', title: 'Tekst & Quote' },
     { name: 'location', title: 'Locatie & Kaart' },
@@ -194,6 +196,308 @@ export const project = defineType({
       fieldset: 'autoReply',
     }),
 
+    // ─── Woningzoeker ───
+    // Eén render per gebouw, met per woning een éénmalig overgetrokken vlak.
+    // Daarna wisselt alleen de status van een woning nog.
+    defineField({
+      name: 'woningzoekerEnabled',
+      title: 'Woningzoeker tonen',
+      description:
+        'Zet aan om de interactieve woningkiezer op de projectpagina te tonen. Vereist een render én minimaal één overgetrokken woning.',
+      type: 'boolean',
+      group: 'woningzoeker',
+      initialValue: false,
+    }),
+    defineField({
+      name: 'projectFase',
+      title: 'Fase',
+      description:
+        'Bepaalt de pill op de woningzoeker en op de wonen-bij pagina.',
+      type: 'string',
+      group: 'woningzoeker',
+      initialValue: 'binnenkort',
+      options: {
+        list: [
+          { title: 'Binnenkort', value: 'binnenkort' },
+          { title: 'Inschrijving open', value: 'inschrijving' },
+          { title: 'In verhuur', value: 'in-verhuur' },
+        ],
+        layout: 'radio',
+      },
+    }),
+    defineField({
+      name: 'woningzoekerIntro',
+      title: 'Introtekst',
+      description: 'Korte uitleg naast de kop van de woningzoeker.',
+      type: 'text',
+      rows: 3,
+      group: 'woningzoeker',
+    }),
+    defineField({
+      name: 'woningzoekerRender',
+      title: 'Render van het gebouw',
+      description:
+        'De afbeelding waarop de woningen worden overgetrokken. Vervang je deze later door een andere uitsnede, dan moeten de vlakken opnieuw worden nagelopen.',
+      type: 'image',
+      group: 'woningzoeker',
+      options: { hotspot: false },
+    }),
+    defineField({
+      name: 'woningen',
+      title: 'Woningen',
+      description:
+        'Eén item per woning. Open een woning om de omtrek op de render over te trekken.',
+      type: 'array',
+      group: 'woningzoeker',
+      of: [{ type: 'woning' }],
+    }),
+    defineField({
+      name: 'aanzichten',
+      title: 'Aanzichten',
+      description:
+        'Meerdere aanzichten (bijv. luchtfoto + voorgevel + achtergevel), elk met een eigen render en eigen overgetrokken woningen. Als hier aanzichten staan, winnen die van de losse render hierboven.',
+      type: 'array',
+      group: 'woningzoeker',
+      of: [{ type: 'aanzicht' }],
+    }),
+
+    // ─── Wonen bij pagina (wonenbij.weverskade.com) ───
+    defineField({
+      name: 'wonenBijEnabled',
+      title: 'Wonen bij projectpagina tonen',
+      description:
+        'Zet aan om voor dit project een eigen pagina op wonenbij.weverskade.com te genereren.',
+      type: 'boolean',
+      group: 'wonenbij',
+      initialValue: false,
+    }),
+    defineField({
+      name: 'verhuurStart',
+      title: 'Verhuur start op',
+      description:
+        'Tot dit moment is de projectpagina een voorpremière: een aftelklok in de hero en bij inschrijven, de woningzoeker als voorproefje en de woningpagina\'s nog dicht. Daarna is alles vanzelf open. Leeg laten = direct open.',
+      type: 'datetime',
+      group: 'wonenbij',
+      options: { dateFormat: 'D MMMM YYYY', timeFormat: 'HH:mm' },
+    }),
+    defineField({
+      name: 'wonenBijHero',
+      title: 'Hero afbeelding (wonen bij)',
+      type: 'image',
+      group: 'wonenbij',
+      options: { hotspot: true },
+      description:
+        'Eigen herobeeld voor de wonen-bij pagina. Leeg gelaten? Dan gebruikt de pagina de algemene "Hero afbeelding" onder Media, die ook op de gebouwpagina van weverskade.com staat.',
+    }),
+    defineField({
+      name: 'wonenBijIntro',
+      title: 'Introtekst ("Over het project")',
+      type: 'text',
+      rows: 6,
+      group: 'wonenbij',
+    }),
+    defineField({
+      name: 'feiten',
+      title: 'Feiten en cijfers',
+      description: 'De blokjes met icoon in de groene band.',
+      type: 'array',
+      group: 'wonenbij',
+      of: [
+        {
+          type: 'object',
+          name: 'feit',
+          fields: [
+            defineField({
+              name: 'icoon',
+              title: 'Icoon',
+              type: 'string',
+              options: {
+                list: [
+                  { title: 'Locatie (speld)', value: 'locatie' },
+                  { title: 'Woningen (gebouw)', value: 'woningen' },
+                  { title: 'Oppervlakte (m²)', value: 'oppervlakte' },
+                  { title: 'Slaapkamers (bed)', value: 'slaapkamers' },
+                  { title: 'Buitenruimte (balkon)', value: 'buitenruimte' },
+                  { title: 'Duurzaamheid (blad)', value: 'duurzaamheid' },
+                  { title: 'Huurprijs (sleutel)', value: 'huurprijs' },
+                  { title: 'Beschikbaarheid (vinkje)', value: 'beschikbaarheid' },
+                ],
+              },
+            }),
+            defineField({ name: 'label', title: 'Label', type: 'string' }),
+            defineField({ name: 'waarde', title: 'Waarde', type: 'text', rows: 2 }),
+          ],
+          preview: { select: { title: 'label', subtitle: 'waarde' } },
+        },
+      ],
+    }),
+    defineField({
+      name: 'hurenFotos',
+      title: 'Fotocarrousel "Huren in …"',
+      type: 'array',
+      group: 'wonenbij',
+      of: [{ type: 'image', options: { hotspot: true } }],
+    }),
+    defineField({
+      name: 'welkomTekst',
+      title: 'Welkom-sectie: tekst links',
+      type: 'text',
+      rows: 4,
+      group: 'wonenbij',
+    }),
+    defineField({
+      name: 'welkomTekstRechts',
+      title: 'Welkom-sectie: tekst rechts',
+      type: 'text',
+      rows: 4,
+      group: 'wonenbij',
+    }),
+    defineField({
+      name: 'welkomFotos',
+      title: "Welkom-sectie: foto's (2)",
+      type: 'array',
+      group: 'wonenbij',
+      of: [{ type: 'image', options: { hotspot: true } }],
+    }),
+    defineField({
+      name: 'carouselFotos',
+      title: 'Horizontale fotostrip',
+      type: 'array',
+      group: 'wonenbij',
+      of: [{ type: 'image', options: { hotspot: true } }],
+    }),
+    defineField({
+      name: 'locatieTitel',
+      title: 'Locatie: titel',
+      description: 'Bijv. "Midden in Maassluis".',
+      type: 'string',
+      group: 'wonenbij',
+    }),
+    defineField({
+      name: 'locatieIntro',
+      title: 'Locatie: introtekst',
+      type: 'text',
+      rows: 4,
+      group: 'wonenbij',
+    }),
+    defineField({
+      name: 'locatieItems',
+      title: 'Locatie: uitklapblokken',
+      description: 'Bijv. "De stad", "De omgeving", "Bereikbaarheid".',
+      type: 'array',
+      group: 'wonenbij',
+      of: [
+        {
+          type: 'object',
+          name: 'locatieItem',
+          fields: [
+            defineField({ name: 'titel', title: 'Titel', type: 'string' }),
+            defineField({ name: 'tekst', title: 'Tekst', type: 'text', rows: 4 }),
+          ],
+          preview: { select: { title: 'titel' } },
+        },
+      ],
+    }),
+    defineField({
+      name: 'planning',
+      title: 'Projectplanning',
+      type: 'array',
+      group: 'wonenbij',
+      of: [
+        {
+          type: 'object',
+          name: 'planningFase',
+          fields: [
+            defineField({ name: 'periode', title: 'Periode', description: 'Bijv. "April 2026".', type: 'string' }),
+            defineField({ name: 'titel', title: 'Fase', type: 'string' }),
+            defineField({ name: 'omschrijving', title: 'Omschrijving', type: 'text', rows: 3 }),
+            defineField({
+              name: 'verwachtingen',
+              title: 'Dit mag je verwachten',
+              type: 'array',
+              of: [{ type: 'string' }],
+            }),
+            defineField({
+              name: 'actief',
+              title: 'Huidige fase',
+              type: 'boolean',
+              initialValue: false,
+            }),
+          ],
+          preview: { select: { title: 'titel', subtitle: 'periode' } },
+        },
+      ],
+    }),
+    defineField({
+      name: 'downloads',
+      title: 'Downloads',
+      type: 'array',
+      group: 'wonenbij',
+      of: [
+        {
+          type: 'object',
+          name: 'downloadItem',
+          fields: [
+            defineField({ name: 'titel', title: 'Titel', type: 'string' }),
+            defineField({ name: 'bestand', title: 'Bestand', type: 'file' }),
+          ],
+          preview: { select: { title: 'titel' } },
+        },
+      ],
+    }),
+    defineField({
+      name: 'faq',
+      title: 'Veelgestelde vragen',
+      type: 'array',
+      group: 'wonenbij',
+      of: [
+        {
+          type: 'object',
+          name: 'faqItem',
+          fields: [
+            defineField({ name: 'vraag', title: 'Vraag', type: 'string' }),
+            defineField({ name: 'antwoord', title: 'Antwoord', type: 'text', rows: 4 }),
+          ],
+          preview: { select: { title: 'vraag' } },
+        },
+      ],
+    }),
+    defineField({
+      name: 'wonenBijNieuws',
+      title: 'Nieuwsberichten op deze pagina',
+      description:
+        'Kies welke nieuwsberichten onder "Nieuws en updates" staan. Leeg gelaten? Dan toont de pagina automatisch alleen berichten die de projectnaam in de titel hebben.',
+      type: 'array',
+      group: 'wonenbij',
+      of: [{ type: 'reference', to: [{ type: 'nieuwsArtikel' }] }],
+    }),
+    defineField({
+      name: 'wonenBijDisclaimer',
+      title: 'Disclaimer bij de beelden',
+      description:
+        'Kleine regel onderin de hero. Leeg gelaten? Dan staat er "De getoonde beelden zijn impressies en kunnen afwijken van de werkelijkheid."',
+      type: 'string',
+      group: 'wonenbij',
+    }),
+    defineField({
+      name: 'prijsToelichting',
+      title: 'Toelichting bij de huurprijzen',
+      description:
+        'Kleine regel onder de prijzen op de woningpagina\'s en onder de woningzoeker. Leeg gelaten? Dan staat er geen toelichting.',
+      type: 'text',
+      rows: 2,
+      group: 'wonenbij',
+    }),
+    defineField({
+      name: 'woningTypes',
+      title: 'Woningtypes',
+      description:
+        'De woningtypes van dit project. Elk type krijgt een eigen woningpagina op wonenbij.weverskade.com.',
+      type: 'array',
+      group: 'wonenbij',
+      of: [{ type: 'woningType' }],
+    }),
+
     // ─── Media ───
     defineField({
       name: 'portfolioImage',
@@ -208,7 +512,8 @@ export const project = defineType({
       type: 'image',
       group: 'media',
       options: { hotspot: true },
-      description: 'Wordt gebruikt als er geen Hero video URL is ingevuld.',
+      description:
+        'Wordt gebruikt als er geen Hero video URL is ingevuld. Let op: staat op de gebouwpagina van weverskade.com; de wonen-bij pagina heeft onder "Wonen bij pagina" een eigen hero-veld.',
     }),
     defineField({
       name: 'heroVideoUrl',

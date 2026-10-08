@@ -20,8 +20,13 @@ function detectTheme(): NavTheme {
     document.querySelectorAll<HTMLElement>("[data-nav-theme]");
   let current: NavTheme = "dark";
   for (const section of sections) {
+    // De snapshot-kloon van een lopende page transition telt niet mee.
+    if (section.closest("[data-page-snapshot]")) continue;
     if (section.getBoundingClientRect().top <= 60) {
-      current = (section.dataset.navTheme as NavTheme) || "dark";
+      // Alleen bekende thema's; de wonen-bij omgeving gebruikt dezelfde
+      // attributen met extra waarden (bv. "white") voor haar eigen kop.
+      const theme = section.dataset.navTheme;
+      if (theme && theme in themes) current = theme as NavTheme;
     }
   }
   return current;
@@ -30,7 +35,9 @@ function detectTheme(): NavTheme {
 export default function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
-  const isStudio = pathname?.startsWith("/studio");
+  // De wonen-bij omgeving (wonenbij.weverskade.com) heeft zijn eigen header.
+  const isStudio =
+    pathname?.startsWith("/studio") || pathname?.startsWith("/wonenbij");
   const [menuOpen, setMenuOpen] = useState(false);
   const closeMenu = useCallback(() => setMenuOpen(false), []);
   const navigate = usePageNavigation();
@@ -164,6 +171,7 @@ export default function Navbar() {
   return (
     <>
     <nav
+      data-main-nav
       className="fixed top-0 left-0 right-0 z-50"
       style={{
         color: activeText,

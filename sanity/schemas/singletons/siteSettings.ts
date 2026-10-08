@@ -46,6 +46,18 @@ export const siteSettings = defineType({
       type: 'url',
     }),
     defineField({
+      name: 'instagram',
+      title: 'Instagram URL',
+      description: 'Wordt getoond bij "Nieuws en updates" op de wonen-bij projectpagina\'s. Leeg laten = niet tonen.',
+      type: 'url',
+    }),
+    defineField({
+      name: 'facebook',
+      title: 'Facebook URL',
+      description: 'Wordt getoond bij "Nieuws en updates" op de wonen-bij projectpagina\'s. Leeg laten = niet tonen.',
+      type: 'url',
+    }),
+    defineField({
       name: 'metaTitle',
       title: 'Browser titel (SEO)',
       description: 'De titel die in de browser tab en Google zoekresultaten verschijnt. Bijv. "Weverskade | Aandacht voor ruimte"',

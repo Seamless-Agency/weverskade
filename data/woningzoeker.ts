@@ -1,0 +1,129 @@
+/**
+ * Woningzoeker - datamodel voor de render + overlay woningkiezer.
+ *
+ * Het uitgangspunt: per gebouw is er één render (of foto). Daar wordt éénmalig
+ * een polygoon per woning overheen getekend. Die polygonen staan als
+ * genormaliseerde coördinaten (0–1) in het CMS, dus ze blijven kloppen op elk
+ * schermformaat en bij elke uitsnede van dezelfde render. Daarna hoeft de
+ * redactie alleen nog de status om te zetten: beschikbaar → in optie → bezet.
+ */
+
+import { voorgevelWoningen } from "@/data/wonenbij";
+
+export type WoningStatus = "beschikbaar" | "in-optie" | "bezet";
+
+/** Fase van het project als geheel - bepaalt de pill op de wonen-bij pagina. */
+export type ProjectFase = "binnenkort" | "inschrijving" | "in-verhuur";
+
+/** Genormaliseerd punt: 0 = linker-/bovenrand, 1 = rechter-/onderrand. */
+export interface PolygonPoint {
+  x: number;
+  y: number;
+}
+
+export interface Woning {
+  /** Stabiele sleutel - in Sanity is dit de _key van het array-item. */
+  id: string;
+  /** Huisnummer of bouwnummer zoals getoond, bijv. "114". */
+  nummer: string;
+  /** Bouwnummer uit de splitsingsakte, bijv. "T3.01R". */
+  bouwnummer?: string;
+  /** Woningtype, bijv. "Type B - hoekwoning". */
+  woningType: string;
+  status: WoningStatus;
+  verdieping: number;
+  /** Gebruiksoppervlakte in m². */
+  oppervlakte: number;
+  slaapkamers: number;
+  /** Kale huur per maand in hele euro's. */
+  huurprijs: number;
+  /** Toon de huurprijs als vanaf-prijs ("v.a. €X") zolang alleen een
+   *  indicatieve range per type bekend is. */
+  prijsVanaf?: boolean;
+  /** Bovenkant van een indicatieve range: dan toont de woning
+   *  "€huurprijs - €huurprijsTot" en telt huurprijs als ondergrens. */
+  huurprijsTot?: number;
+  orientatie?: string;
+  buitenruimte?: string;
+  /** Pad naar de plattegrond. */
+  plattegrond?: string;
+  /** De getekende omtrek. Minimaal 3 punten. */
+  polygon: PolygonPoint[];
+}
+
+export interface WoningzoekerProject {
+  slug: string;
+  name: string;
+  tagline?: string;
+  fase: ProjectFase;
+  /** Korte toelichting boven de kiezer. */
+  intro?: string;
+  render: string;
+  renderAlt: string;
+  /** Natuurlijke afmetingen van de render - bepaalt de aspect ratio van de viewer. */
+  renderWidth: number;
+  renderHeight: number;
+  woningen: Woning[];
+}
+
+/* ─── Statuspresentatie ─────────────────────────────────────────────── */
+
+export const STATUS_META: Record<
+  WoningStatus,
+  { label: string; color: string; textOnColor: string }
+> = {
+  beschikbaar: { label: "Beschikbaar", color: "#848F71", textOnColor: "#F7F5F0" },
+  "in-optie": { label: "In optie", color: "#9A755D", textOnColor: "#F7F5F0" },
+  bezet: { label: "Bezet", color: "#717F8B", textOnColor: "#F7F5F0" },
+};
+
+export const STATUS_ORDER: WoningStatus[] = ["beschikbaar", "in-optie", "bezet"];
+
+export const FASE_META: Record<ProjectFase, { label: string; color: string }> = {
+  binnenkort: { label: "Binnenkort", color: "#717F8B" },
+  inschrijving: { label: "Inschrijving open", color: "#9A755D" },
+  "in-verhuur": { label: "In verhuur", color: "#848F71" },
+};
+
+export function formatHuur(bedrag: number): string {
+  return `€${bedrag.toLocaleString("nl-NL")}`;
+}
+
+/** Prijs van één woning: range, vanaf-prijs of vast bedrag. */
+export function formatWoningHuur(woning: Pick<Woning, "huurprijs" | "huurprijsTot" | "prijsVanaf">): string {
+  if (woning.huurprijsTot) {
+    return `${formatHuur(woning.huurprijs)} - ${formatHuur(woning.huurprijsTot)}`;
+  }
+  return `${woning.prijsVanaf ? "v.a. " : ""}${formatHuur(woning.huurprijs)}`;
+}
+
+/* ─── Demodata ──────────────────────────────────────────────────────────
+ * Taanschuurkade - 15 woningen over 3 verdiepingen, getekend over de
+ * bestaande luchtfoto. Dit staat los van Sanity zodat de proof of concept
+ * ook draait zonder CMS-content; zodra het project in Sanity staat wint
+ * Sanity altijd (zie app/woningzoeker/[slug]/page.tsx).
+ * ------------------------------------------------------------------- */
+
+export const demoProjecten: WoningzoekerProject[] = [
+  {
+    slug: "taanschuurkade",
+    name: "Taanschuurkade",
+    tagline: "Wonen aan het water",
+    fase: "inschrijving",
+    intro:
+      "Klik een woning aan op het gevelaanzicht om de plattegrond, oppervlakte en huurprijs te bekijken. De kleur geeft de actuele status aan.",
+    render: "/images/woningzoeker/taanschuur-voorgevel.jpg",
+    renderAlt: "Voorgevel Zuidwest van Taanschuurkade met beschikbare woningen",
+    renderWidth: 2560,
+    renderHeight: 1672,
+    woningen: voorgevelWoningen,
+  },
+];
+
+export function getDemoProjectBySlug(slug: string): WoningzoekerProject | undefined {
+  return demoProjecten.find((p) => p.slug === slug);
+}
+
+export function getAllDemoSlugs(): string[] {
+  return demoProjecten.map((p) => p.slug);
+}

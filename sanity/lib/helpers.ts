@@ -38,5 +38,7 @@ export function formatSanityDate(dateStr: string | undefined, fallback: string):
     'januari', 'februari', 'maart', 'april', 'mei', 'juni',
     'juli', 'augustus', 'september', 'oktober', 'november', 'december',
   ]
-  return `${date.getDate()} ${months[date.getMonth()]}, ${date.getFullYear()}`
+  // Nederlandse datumnotatie heeft geen komma voor het jaartal ("1 september
+  // 2026", niet "1 september, 2026" — dat is de Engelse conventie).
+  return `${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()}`
 }

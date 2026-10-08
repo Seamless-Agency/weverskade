@@ -1,18 +1,22 @@
 "use client";
 
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import { useRouter, usePathname } from "next/navigation";
 
-export function usePageNavigation() {
+type PageNavigate = ((
+  e: React.MouseEvent<HTMLAnchorElement>,
+  href: string
+) => void) & {
+  /** Programmatische variant voor navigatie zonder anchor-event. */
+  to: (href: string) => void;
+};
+
+export function usePageNavigation(): PageNavigate {
   const router = useRouter();
   const pathname = usePathname();
 
-  const navigate = useCallback(
-    (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
-      // Let external links pass through
-      if (href.startsWith("http")) return;
-
-      e.preventDefault();
+  const goTo = useCallback(
+    (href: string) => {
       if (href === pathname) return;
 
       // Capture old page DOM as a live node clone and attach it to
@@ -45,5 +49,18 @@ export function usePageNavigation() {
     [pathname, router]
   );
 
-  return navigate;
+  return useMemo(
+    () =>
+      Object.assign(
+        (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+          // Let external links pass through
+          if (href.startsWith("http")) return;
+
+          e.preventDefault();
+          goTo(href);
+        },
+        { to: goTo }
+      ) as PageNavigate,
+    [goTo]
+  );
 }

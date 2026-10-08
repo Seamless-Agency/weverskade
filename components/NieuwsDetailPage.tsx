@@ -14,7 +14,7 @@ interface NewsArticle {
 
 const defaultArticle: NewsArticle = {
   title: "Weverskade geselecteerd als ontwikkelaar van De Kuip.",
-  date: "30 januari, 2026",
+  date: "30 januari 2026",
   category: "Nieuws",
   image: "/images/news-placeholder.webp",
   body: [

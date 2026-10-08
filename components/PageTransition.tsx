@@ -40,6 +40,13 @@ export default function PageTransition({
     if (pathname === prevPathname.current) return;
     prevPathname.current = pathname;
 
+    // Een server-redirect (bijv. alias-slug → hoofdslug) laat de pathname een
+    // twééde keer verspringen terwijl de transition nog loopt, zonder nieuw
+    // snapshot (er was geen nieuwe klik). Laat dan de lopende animatie én
+    // haar opruimtimer gewoon uitspelen: die annuleren liet de pagina
+    // bevroren achter met body overflow:hidden en het snapshot in de DOM.
+    if (!window.__pageSnapshot && snapshotNodeRef.current) return;
+
     // Cancel any ongoing transition
     cancelAnimationFrame(rafRef.current);
     if (timerRef.current) clearTimeout(timerRef.current);
