@@ -302,6 +302,10 @@ function fromSanity(raw: any): WonenBijProject | null {
     disclaimer: raw.wonenBijDisclaimer?.trim() || fallback.disclaimer,
     prijsToelichting: raw.prijsToelichting?.trim() || fallback.prijsToelichting,
     verhuurStart: raw.verhuurStart ?? fallback.verhuurStart,
+    projectFilm: raw.projectFilm ?? fallback.projectFilm,
+    projectFilmPoster: raw.projectFilmPoster
+      ? sanityImageUrl(raw.projectFilmPoster, "")
+      : fallback.projectFilmPoster,
     nieuws: raw.wonenBijNieuws?.length
       ? raw.wonenBijNieuws
           .filter((a: any) => a?.slug && a?.title)

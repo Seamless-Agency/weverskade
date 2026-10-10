@@ -336,6 +336,22 @@ export const project = defineType({
       ],
     }),
     defineField({
+      name: 'projectFilm',
+      title: 'Projectfilm (mp4)',
+      type: 'file',
+      group: 'wonenbij',
+      options: { accept: 'video/mp4' },
+      description:
+        'Film zonder geluid die als brede band vóór "De locatie" staat en in beeld vanzelf afspeelt. Liefst kleiner dan 15 MB. Leeg laten = geen band.',
+    }),
+    defineField({
+      name: 'projectFilmPoster',
+      title: 'Projectfilm: stilstaand beeld',
+      type: 'image',
+      group: 'wonenbij',
+      description: 'Beeld dat zichtbaar is tot de film speelt.',
+    }),
+    defineField({
       name: 'hurenFotos',
       title: 'Fotocarrousel "Huren in …"',
       type: 'array',

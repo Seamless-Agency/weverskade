@@ -6,7 +6,10 @@ import { useEffect, useRef, useState } from "react";
 interface VimeoPlayer {
   ready(): Promise<void>;
   on(event: "timeupdate", cb: (d: { seconds: number }) => void): void;
+  on(event: "playing", cb: () => void): void;
   setCurrentTime(seconds: number): Promise<number>;
+  play(): Promise<void>;
+  pause(): Promise<void>;
   destroy?(): Promise<void>;
 }
 declare global {
@@ -43,6 +46,7 @@ export default function VimeoBackground({
   fit = "cover",
   meetContainer = false,
   fragmenten,
+  extraClip,
 }: {
   url: string;
   poster?: string;
@@ -61,6 +65,13 @@ export default function VimeoBackground({
    */
   fragmenten?: [number, number][];
   /**
+   * Eigen videobestand (mp4) dat na het laatste fragment speelt, waarna de
+   * reeks opnieuw begint. Zo "plak" je een shot achter een Vimeo-video die je
+   * niet kunt knippen (wonen bij, 09-10: Taanschuur-drone na de showreel).
+   * Werkt alleen samen met fragmenten.
+   */
+  extraClip?: string;
+  /**
    * "cover" — iframe fills the container, overflow is cropped.
    * "contain" — iframe fits inside the container (letterbox if aspect mismatch).
    * Sizing is based on the parent container, not the viewport.
@@ -76,6 +87,10 @@ export default function VimeoBackground({
   // Met fragmenten blijft de poster staan tot de besturing actief is, zodat
   // er nooit een shot buiten de fragmenten in beeld komt.
   const [fragmentKlaar, setFragmentKlaar] = useState(false);
+  const extraRef = useRef<HTMLVideoElement>(null);
+  const [toonExtra, setToonExtra] = useState(false);
+  // De speler-besturing leeft in het effect; het einde van de clip roept hem aan.
+  const naExtraRef = useRef<(() => void) | null>(null);
 
   useEffect(() => {
     if (!fragmentSleutel) return;
@@ -89,6 +104,31 @@ export default function VimeoBackground({
         await speler.ready();
         let stuk = 0;
         let springt = false;
+        let inExtra = false;
+        let hervat = false;
+        let rafId = 0;
+        const extra = extraRef.current;
+        // Vimeo heeft na play() een fractie van een seconde nodig voordat er
+        // weer beeld is. Daarom krijgt Vimeo het startsein ruim vóór het einde
+        // van de eigen clip; die loopt intussen door, en er wordt pas geknipt
+        // zodra Vimeo écht speelt. Zo staat er nooit een bevroren laatste frame.
+        const VOORSPRONG = 0.6;
+        const hervatVimeo = () => {
+          if (hervat || gestopt) return;
+          hervat = true;
+          void speler.play();
+        };
+        const knipTerug = () => {
+          if (!inExtra) return;
+          cancelAnimationFrame(rafId);
+          inExtra = false;
+          hervat = false;
+          setToonExtra(false);
+        };
+        speler.on("playing", () => {
+          // Eén beeldje marge zodat het eerste Vimeo-frame al geschilderd is.
+          if (inExtra && hervat) window.setTimeout(knipTerug, 60);
+        });
         const spring = async (naar: number) => {
           springt = true;
           stuk = naar;
@@ -100,11 +140,47 @@ export default function VimeoBackground({
         };
         // timeupdate komt ~4x per seconde; de eindgrenzen hebben daarom
         // een marge vóór de volgende shot in de bronvideo.
+        // Na het laatste fragment: harde cut naar de eigen clip (zoals de
+        // shotwissels in de showreel), Vimeo staat intussen stil op het begin.
+        const startExtra = () => {
+          if (!extra) return false;
+          inExtra = true;
+          hervat = false;
+          extra.currentTime = 0;
+          const bewaak = () => {
+            if (!inExtra || gestopt) return;
+            const duur = extra.duration;
+            if (duur && extra.currentTime >= duur - VOORSPRONG) hervatVimeo();
+            rafId = requestAnimationFrame(bewaak);
+          };
+          rafId = requestAnimationFrame(bewaak);
+          const p = extra.play();
+          if (p) {
+            p.catch(() => {
+              // Afspelen geweigerd: gewoon door met de showreel.
+              inExtra = false;
+              setToonExtra(false);
+              void spring(0);
+            });
+          }
+          setToonExtra(true);
+          void speler.pause().then(() => spring(0));
+          return true;
+        };
+        // Vangnet: clip afgelopen voordat Vimeo "playing" meldde.
+        naExtraRef.current = () => {
+          if (gestopt || !inExtra) return;
+          hervatVimeo();
+          window.setTimeout(knipTerug, 150);
+        };
         speler.on("timeupdate", ({ seconds }) => {
-          if (gestopt || springt) return;
+          if (gestopt || springt || inExtra) return;
           const [start, eind] = stukken[stuk];
-          if (seconds >= eind) void spring((stuk + 1) % stukken.length);
-          else if (seconds < start - 0.3) void spring(stuk);
+          if (seconds >= eind) {
+            const laatste = stuk === stukken.length - 1;
+            if (laatste && startExtra()) return;
+            void spring((stuk + 1) % stukken.length);
+          } else if (seconds < start - 0.3) void spring(stuk);
         });
         if (!gestopt) {
           await spring(0);
@@ -116,6 +192,7 @@ export default function VimeoBackground({
       });
     return () => {
       gestopt = true;
+      naExtraRef.current = null;
     };
   }, [fragmentSleutel]);
   const [gemeten, setGemeten] = useState<{ w: number; h: number } | null>(null);
@@ -203,6 +280,20 @@ export default function VimeoBackground({
           transition: "opacity 0.8s ease-out",
         }}
       />
+      {extraClip && fragmentSleutel ? (
+        <video
+          ref={extraRef}
+          src={extraClip}
+          muted
+          playsInline
+          preload="auto"
+          aria-hidden
+          tabIndex={-1}
+          onEnded={() => naExtraRef.current?.()}
+          className="absolute inset-0 w-full h-full object-cover"
+          style={{ opacity: toonExtra ? 1 : 0 }}
+        />
+      ) : null}
     </div>
   );
 }

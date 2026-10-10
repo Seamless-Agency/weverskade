@@ -129,6 +129,8 @@ export const WONENBIJ_PROJECT_BY_SLUG_QUERY = `*[_type == "project" && slug.curr
   partners,
   mapCoordinates,
   wonenBijIntro,
+  "projectFilm": projectFilm.asset->url,
+  projectFilmPoster,
   feiten[]{ icoon, label, waarde },
   hurenFotos,
   welkomTekst,
@@ -212,6 +214,7 @@ export const WONENBIJ_PROJECT_SLUGS_QUERY = `*[_type == "project" && wonenBijEna
 /* Singleton van de wonen-bij landingspagina; elk veld optioneel (code-fallback). */
 export const WONENBIJ_LANDING_QUERY = `*[_type == "wonenBijLanding"][0]{
   heroVideoUrl,
+  "heroExtraVideo": heroExtraVideo.asset->url,
   heroImage,
   heroKnop,
   introStatement,
