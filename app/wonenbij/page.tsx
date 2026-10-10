@@ -67,6 +67,7 @@ function landingUitSanity(raw: any): WonenBijLandingData {
     // null/undefined = niet ingevuld → standaardvideo; lege string = geen video
     heroVideoUrl:
       typeof raw.heroVideoUrl === "string" ? raw.heroVideoUrl.trim() : undefined,
+    heroExtraVideo: tekst(raw.heroExtraVideo),
     heroKnop: tekst(raw.heroKnop),
     introStatement: tekst(raw.introStatement),
     introCtas: (raw.introCtas ?? [])

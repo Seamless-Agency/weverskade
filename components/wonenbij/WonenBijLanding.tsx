@@ -47,6 +47,8 @@ export interface WonenBijLandingData {
   heroImage?: string;
   /** Lege string = bewust geen video (alleen de foto). */
   heroVideoUrl?: string;
+  /** Eigen shot (mp4-URL) dat na de showreel-fragmenten speelt. */
+  heroExtraVideo?: string;
   heroKnop?: string;
   introStatement?: string;
   introCtas?: IntroCta[];
@@ -145,7 +147,7 @@ export default function WonenBijLanding({ data }: { data?: WonenBijLandingData }
             {/* Dezelfde showreel als de hoofdsite-hero (comment 24); de foto
                 blijft de poster tot de video speelt en de fallback zonder URL. */}
             {heroVideoUrl && !reduced ? (
-              <VimeoBackground url={heroVideoUrl} poster={heroImage} fit="cover" meetContainer fragmenten={heroFragmenten} />
+              <VimeoBackground url={heroVideoUrl} poster={heroImage} fit="cover" meetContainer fragmenten={heroFragmenten} extraClip={data?.heroExtraVideo} />
             ) : (
               <Image
                 src={heroImage}

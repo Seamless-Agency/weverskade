@@ -10,6 +10,7 @@ import DownloadsSection from "@/components/wonenbij/DownloadsSection";
 import FaqSection from "@/components/wonenbij/FaqSection";
 import InschrijfForm from "@/components/wonenbij/InschrijfForm";
 import Aftelklok from "@/components/wonenbij/Aftelklok";
+import ProjectFilm from "@/components/wonenbij/ProjectFilm";
 import {
   FacebookIcon,
   InstagramIcon,
@@ -517,6 +518,12 @@ export default function WonenBijProjectPage({
           </Reveal>
         ) : null}
       </div>
+
+      {/* Projectfilm (09-10): dronebeeld van project en omgeving, als
+          overgang van het wonen naar de locatie. */}
+      {project.projectFilm ? (
+        <ProjectFilm src={project.projectFilm} poster={project.projectFilmPoster} naam={project.naam} />
+      ) : null}
 
       {/* De locatie — Figma: label én content op x=384, kaart 115 onder de
           laatste accordionlijn, planningband 81 onder de kaart.

@@ -33,6 +33,15 @@ export const wonenBijLanding = defineType({
         'Bijvoorbeeld https://vimeo.com/1184821093. Leeg laten om alleen de hero afbeelding te tonen.',
     }),
     defineField({
+      name: 'heroExtraVideo',
+      title: 'Extra shot na de video (mp4)',
+      type: 'file',
+      group: 'hero',
+      options: { accept: 'video/mp4' },
+      description:
+        'Kort videobestand dat na de woonprojecten uit de showreel speelt, waarna de video opnieuw begint. Liefst 3 tot 6 seconden, zonder geluid en kleiner dan 5 MB.',
+    }),
+    defineField({
       name: 'heroImage',
       title: 'Hero afbeelding',
       type: 'image',

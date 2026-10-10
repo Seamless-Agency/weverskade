@@ -161,6 +161,9 @@ export interface WonenBijProject {
   prijsToelichting?: string;
   /** Start van de verhuur (ISO); daarvóór is de pagina een voorpremière. */
   verhuurStart?: string;
+  /** Projectfilm (mp4-URL) als brede band vóór de locatie. */
+  projectFilm?: string;
+  projectFilmPoster?: string;
   /**
    * Door de redactie gekozen nieuwsberichten (CMS-referenties). Zonder
    * selectie kiest de projectpagina zelf op projectnaam in de titel.
