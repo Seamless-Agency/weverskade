@@ -332,6 +332,12 @@ export default function WonenBijLanding({ data }: { data?: WonenBijLandingData }
           {/* Eén sleepbare rij i.p.v. een raster (comment 43): drie kaarten
               in beeld op desktop, op mobiel één kaart met de volgende die
               al zichtbaar is. Kaartmaat gelijk aan het oude raster. */}
+          {/* RevealGroup: de kaarten verschijnen samen zodra de rij in beeld
+              komt. Per kaart observeren werkte niet voor kaarten die rechts
+              buiten de scrollrij staan: die bleven onzichtbaar tot je ging
+              slepen, zodat de uitstekende tweede kaart (de hint dat je kunt
+              scrollen) ontbrak. */}
+          <RevealGroup>
           <SleepRij label={aanbodTitel} className="mt-[2.431vw] max-lg:mt-6">
             {aanbod.map((kaart, i) => {
               const href = `/wonenbij/${kaart.projectSlug}/${kaart.typeSlug}`;
@@ -426,6 +432,7 @@ export default function WonenBijLanding({ data }: { data?: WonenBijLandingData }
               );
             })}
           </SleepRij>
+          </RevealGroup>
         </div>
       ) : null}
 
