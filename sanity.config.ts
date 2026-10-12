@@ -4,6 +4,7 @@ import { visionTool } from '@sanity/vision'
 import { schemaTypes, singletonTypes } from './sanity/schemas'
 import { structure } from './sanity/desk'
 import { projectWonenBij, wonenBijStructure } from './sanity/wonenBijStudio'
+import { inschrijvingenExport } from './sanity/tools/inschrijvingenExport'
 import { apiVersion, dataset, projectId } from './sanity/env'
 
 // In de wonen-bij Studio alleen opslaan, publiceren en terugdraaien: een
@@ -21,6 +22,7 @@ export function createConfig({ wonenBij }: { wonenBij: boolean }) {
       ? [structureTool({ structure: wonenBijStructure })]
       : [
           structureTool({ structure }),
+          inschrijvingenExport(),
           visionTool({ defaultApiVersion: apiVersion }),
         ],
     schema: {
