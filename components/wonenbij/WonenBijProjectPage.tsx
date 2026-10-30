@@ -11,6 +11,7 @@ import FaqSection from "@/components/wonenbij/FaqSection";
 import InschrijfForm from "@/components/wonenbij/InschrijfForm";
 import Aftelklok from "@/components/wonenbij/Aftelklok";
 import ProjectFilm from "@/components/wonenbij/ProjectFilm";
+import InschrijvingGeslotenMelding from "@/components/wonenbij/InschrijvingGeslotenMelding";
 import {
   FacebookIcon,
   InstagramIcon,
@@ -23,6 +24,7 @@ import GebouwMap from "@/components/GebouwMap";
 import {
   STANDAARD_DISCLAIMER,
   inschrijvenViaWoning,
+  inschrijvingGeslotenTekst,
   type NieuwsKaart,
   type WonenBijProject,
 } from "@/data/wonenbij";
@@ -73,13 +75,17 @@ export default function WonenBijProjectPage({
   nieuws,
   socials,
   voorpremiere,
+  gesloten = false,
 }: {
   project: WonenBijProject;
   nieuws: NieuwsKaart[];
   socials?: SocialLinks;
   /** Voorpremière tot de verhuurstart (server-side bepaald), anders null. */
   voorpremiere?: { tot: string; datum: string; dag: string } | null;
+  /** Inschrijving gesloten (server-side bepaald): melding, geen formulier. */
+  gesloten?: boolean;
 }) {
+  const geslotenTekst = inschrijvingGeslotenTekst(project);
   const socialKanalen = [
     { label: "LinkedIn", href: socials?.linkedIn, Icoon: LinkedInIcon },
     { label: "Instagram", href: socials?.instagram, Icoon: InstagramIcon },
@@ -169,6 +175,14 @@ export default function WonenBijProjectPage({
 
   return (
     <section className="bg-white min-h-screen">
+      {gesloten ? (
+        <InschrijvingGeslotenMelding
+          projectSlug={project.slug}
+          tekst={geslotenTekst}
+          naarAnker={heeftAanbod ? "aanbod" : undefined}
+          knopLabel={heeftAanbod ? "Bekijk de woningen" : "Sluiten"}
+        />
+      ) : null}
       {/* Hero — bewuste afwijking van Figma (903px-frame): altijd exact één
           viewport hoog zodat titel en navigatie op elk scherm in beeld zijn */}
       <div className="relative h-svh overflow-hidden" data-nav-theme="dark">
@@ -208,8 +222,8 @@ export default function WonenBijProjectPage({
         <WonenBijHeader
           variant="licht"
           anchors={anchors}
-          ctaLabel="Inschrijven"
-          ctaHref="#inschrijven"
+          ctaLabel={gesloten && heeftAanbod ? "Aanbod" : "Inschrijven"}
+          ctaHref={gesloten && heeftAanbod ? "#aanbod" : "#inschrijven"}
         />
         {voorpremiere ? (
           <>
@@ -340,6 +354,7 @@ export default function WonenBijProjectPage({
                   Bekijk het aanbod
                 </a>
               ) : null}
+              {gesloten ? null : (
               <a
                 href="#inschrijven"
                 onClick={(e) => scrollNaar(e, "inschrijven")}
@@ -347,6 +362,7 @@ export default function WonenBijProjectPage({
               >
                 Direct inschrijven
               </a>
+              )}
             </Reveal>
           </div>
         </RevealGroup>
@@ -415,6 +431,7 @@ export default function WonenBijProjectPage({
           aanzichten={project.aanzichten}
           prijsToelichting={project.prijsToelichting}
           gesloten={voorpremiere ? `Vanaf ${voorpremiere.datum}` : undefined}
+          inschrijvingGesloten={gesloten}
         />
       ) : null}
 
@@ -764,7 +781,17 @@ export default function WonenBijProjectPage({
           wegwijzer naar het aanbod i.p.v. het algemene formulier, zodat
           inschrijven altijd op een specifieke woning gebeurt. */}
       <Statisch>
-      {voorpremiere ? (
+      {gesloten ? (
+        <InschrijfForm
+          gesloten
+          label="Beschikbaarheid"
+          heading="De inschrijving is gesloten"
+          intro={geslotenTekst}
+          projectName={project.naam}
+          projectSlug={project.slug}
+          voorkeurOpties={[]}
+        />
+      ) : voorpremiere ? (
         <InschrijfForm
           wegwijzer
           aftellenTot={voorpremiere.tot}

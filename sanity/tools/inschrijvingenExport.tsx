@@ -62,6 +62,21 @@ function waarde(rij: Inzending, key: string): string | number | Date | null {
   return String(v)
 }
 
+// Wonen bij gebruikt voor Taanschuurkade een eigen slug; het project heet in
+// Sanity anders (zie aliasSlugs in data/wonenbij.ts). Zo vallen beide
+// formulieren onder hetzelfde project in de keuzelijst.
+const SLUG_ALIAS: Record<string, string> = {
+  taanschuurkade: 'taanschuur-appartementen-maasluis',
+}
+
+interface ProjectOptie {
+  /** Sanity-slug van het project; sleutel van de keuzelijst. */
+  slug: string
+  naam: string
+  /** Alle projectSlug-waarden in de inzendingen die bij dit project horen. */
+  slugs: string[]
+}
+
 function vandaag() {
   return new Date().toISOString().slice(0, 10)
 }
@@ -69,10 +84,11 @@ function vandaag() {
 function InschrijvingenExport() {
   const client = useClient({ apiVersion: API_VERSION })
   const [formulier, setFormulier] = useState('wonenbij_inschrijving')
-  const [project, setProject] = useState('')
+  const [project, setProject] = useState('') // Sanity-slug, '' = alle
   const [van, setVan] = useState('')
   const [tot, setTot] = useState('')
-  const [projecten, setProjecten] = useState<string[]>([])
+  const [projecten, setProjecten] = useState<ProjectOptie[]>([])
+  const gekozen = projecten.find((p) => p.slug === project)
   const [aantal, setAantal] = useState<number | null>(null)
   const [bezig, setBezig] = useState(false)
   const [fout, setFout] = useState('')
@@ -80,15 +96,15 @@ function InschrijvingenExport() {
   const filter = useMemo(() => {
     const delen = ['_type == "formSubmission"']
     if (formulier !== 'alle') delen.push('formType == $formulier')
-    if (project) delen.push('projectName == $project')
+    if (gekozen) delen.push('projectSlug in $projectSlugs')
     if (van) delen.push('coalesce(submittedAt, _createdAt) >= $van')
     if (tot) delen.push('coalesce(submittedAt, _createdAt) < $tot')
     return delen.join(' && ')
-  }, [formulier, project, van, tot])
+  }, [formulier, gekozen, van, tot])
 
   const params = useMemo(() => {
     // Datums zijn Nederlandse kalenderdagen; "tot en met" telt de hele dag mee.
-    const p: Record<string, string> = { formulier, project }
+    const p: Record<string, string | string[]> = { formulier, projectSlugs: gekozen?.slugs ?? [] }
     if (van) p.van = new Date(`${van}T00:00:00`).toISOString()
     if (tot) {
       const eind = new Date(`${tot}T00:00:00`)
@@ -96,17 +112,35 @@ function InschrijvingenExport() {
       p.tot = eind.toISOString()
     }
     return p
-  }, [formulier, project, van, tot])
+  }, [formulier, gekozen, van, tot])
 
+  // Keuzelijst per Sanity-project, niet per projectnaam: wonen bij en de
+  // gebouwpagina van weverskade.com schrijven dezelfde woning anders weg
+  // ("Dirigent" vs "De Dirigent - Naaldwijk"), de slug is wel eenduidig.
   useEffect(() => {
     let weg = false
     client
       .fetch<string[]>(
-        `array::unique(*[_type == "formSubmission" && ($formulier == "alle" || formType == $formulier) && defined(projectName) && projectName != ""].projectName)`,
+        `array::unique(*[_type == "formSubmission" && ($formulier == "alle" || formType == $formulier) && defined(projectSlug) && projectSlug != ""].projectSlug)`,
         { formulier }
       )
-      .then((lijst) => {
-        if (!weg) setProjecten([...lijst].sort((a, b) => a.localeCompare(b, 'nl')))
+      .then(async (ruw) => {
+        const perProject = new Map<string, string[]>()
+        for (const s of ruw) {
+          const slug = SLUG_ALIAS[s] ?? s
+          perProject.set(slug, [...(perProject.get(slug) ?? []), s])
+        }
+        const namen = await client.fetch<{ slug: string; name?: string }[]>(
+          `*[_type == "project" && slug.current in $slugs && !(_id in path("drafts.**"))]{ "slug": slug.current, name }`,
+          { slugs: [...perProject.keys()] }
+        )
+        const lijst = [...perProject].map(([slug, slugs]) => ({
+          slug,
+          slugs,
+          // "De Taanschuurkade -  Maassluis": dubbele spaties uit het CMS weg.
+          naam: (namen.find((n) => n.slug === slug)?.name ?? slug).replace(/\s+/g, ' '),
+        }))
+        if (!weg) setProjecten(lijst.sort((a, b) => a.naam.localeCompare(b.naam, 'nl')))
       })
       .catch(() => {})
     return () => {
@@ -163,7 +197,7 @@ function InschrijvingenExport() {
       const blob = new Blob([buffer], {
         type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
       })
-      const naamDelen = ['inschrijvingen', project || (formulier === 'alle' ? 'alle-formulieren' : formulier), vandaag()]
+      const naamDelen = ['inschrijvingen', gekozen?.naam || (formulier === 'alle' ? 'alle-formulieren' : formulier), vandaag()]
       const a = document.createElement('a')
       a.href = URL.createObjectURL(blob)
       a.download = `${naamDelen.join('-').toLowerCase().replace(/[^a-z0-9-]+/g, '-')}.xlsx`
@@ -204,7 +238,7 @@ function InschrijvingenExport() {
                 <Select value={project} onChange={(e) => setProject(e.currentTarget.value)}>
                   <option value="">Alle projecten</option>
                   {projecten.map((p) => (
-                    <option key={p} value={p}>{p}</option>
+                    <option key={p.slug} value={p.slug}>{p.naam}</option>
                   ))}
                 </Select>
               </Stack>

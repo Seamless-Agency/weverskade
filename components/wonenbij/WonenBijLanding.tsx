@@ -380,7 +380,9 @@ export default function WonenBijLanding({ data }: { data?: WonenBijLandingData }
                     <p className="shrink-0 mt-[0.417vw] font-body font-medium text-[0.833vw] leading-[1.389vw] text-off-black max-lg:mt-0 max-lg:text-[12px] max-lg:leading-[17px]">
                       {aanbodTeaser
                         ? "Binnenkort"
-                        : kaart.status === "inschrijven"
+                        : kaart.gesloten && kaart.status === "inschrijven"
+                          ? "Gesloten"
+                          : kaart.status === "inschrijven"
                           ? "Inschrijven"
                           : "Te huur"}
                     </p>

@@ -1,5 +1,9 @@
 import { notFound, redirect } from "next/navigation";
-import { getWonenBijProjectByAlias, voorpremiere } from "@/data/wonenbij";
+import {
+  getWonenBijProjectByAlias,
+  inschrijvingGesloten,
+  voorpremiere,
+} from "@/data/wonenbij";
 import WoningTypePage from "@/components/wonenbij/WoningTypePage";
 import Footer from "@/components/Footer";
 import FooterReveal from "@/components/FooterReveal";
@@ -96,6 +100,7 @@ export default async function WoningType({
         project={project}
         type={type}
         volgendeTypeSlug={volgendeType?.slug}
+        gesloten={inschrijvingGesloten(project.inschrijvingSluit)}
       />
       {/* Nav-thema voor de wonen-bij kop: groen zodra de footer bovenin komt */}
       <div data-nav-theme="green">

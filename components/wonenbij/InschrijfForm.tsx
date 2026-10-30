@@ -56,6 +56,8 @@ interface InschrijfFormProps {
   wegwijzer?: boolean;
   /** Voorpremière: in plaats van de wegwijzer een kleine aftelklok. */
   aftellenTot?: string;
+  /** Inschrijving gesloten: alleen kop en intro, geen formulier of knop. */
+  gesloten?: boolean;
 }
 
 /**
@@ -75,6 +77,7 @@ export default function InschrijfForm({
   tweedeVoorkeurOpties,
   wegwijzer = false,
   aftellenTot,
+  gesloten = false,
 }: InschrijfFormProps) {
   const [form, setForm] = useState({
     voornaam: "",
@@ -212,7 +215,7 @@ export default function InschrijfForm({
             <Reveal delay={0.25} className="mt-[2.222vw] ml-[0.625vw] max-lg:mt-8 max-lg:ml-0">
               <Aftelklok tot={aftellenTot} variant="klein" />
             </Reveal>
-          ) : wegwijzer ? (
+          ) : gesloten ? null : wegwijzer ? (
             /* Launchmodus: zelfde sectie en witruimteritme, maar in plaats
                van het formulier één duidelijke route naar de woningzoeker. */
             <Reveal delay={0.25}>

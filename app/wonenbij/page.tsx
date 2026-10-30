@@ -17,6 +17,7 @@ import {
   demoAanbod,
   demoLandingProjecten,
   getWonenBijProjectByAlias,
+  inschrijvingGesloten,
   landingDefaults,
   type AanbodKaart,
   type LandingProjectKaart,
@@ -162,6 +163,7 @@ export default async function WonenBijHome() {
           slaapkamers: t.slaapkamers ?? 0,
           oppervlakte: t.oppervlakte ?? 0,
           foto: t.foto ?? "/images/wonenbij/aanbod-card.png",
+          gesloten: inschrijvingGesloten(p.inschrijvingSluit),
         }))
     );
     if (sanityAanbod.length) {
