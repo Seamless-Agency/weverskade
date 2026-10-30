@@ -285,6 +285,25 @@ export const project = defineType({
       options: { dateFormat: 'D MMMM YYYY', timeFormat: 'HH:mm' },
     }),
     defineField({
+      name: 'inschrijvingSluit',
+      title: 'Inschrijving sluit op',
+      description:
+        'Vanaf dit moment is inschrijven gesloten: bezoekers van de projectpagina en de woningpagina\'s krijgen een melding, het inschrijfformulier verdwijnt en nieuwe inschrijvingen worden geweigerd. De woningen blijven te bekijken. Leeg laten = inschrijven blijft open.',
+      type: 'datetime',
+      group: 'wonenbij',
+      options: { dateFormat: 'D MMMM YYYY', timeFormat: 'HH:mm' },
+    }),
+    defineField({
+      name: 'inschrijvingGeslotenTekst',
+      title: 'Melding na sluiting',
+      description:
+        'De tekst in de melding (en bij inschrijven) zodra de inschrijving gesloten is. Leeg laten = standaardtekst.',
+      type: 'text',
+      rows: 3,
+      group: 'wonenbij',
+      hidden: ({ document }) => !document?.inschrijvingSluit,
+    }),
+    defineField({
       name: 'wonenBijHero',
       title: 'Hero afbeelding (wonen bij)',
       type: 'image',

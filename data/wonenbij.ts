@@ -161,6 +161,10 @@ export interface WonenBijProject {
   prijsToelichting?: string;
   /** Start van de verhuur (ISO); daarvóór is de pagina een voorpremière. */
   verhuurStart?: string;
+  /** Sluiting van de inschrijving (ISO); daarna geen nieuwe inschrijvingen. */
+  inschrijvingSluit?: string;
+  /** Eigen tekst voor de melding na sluiting; leeg = standaardtekst. */
+  inschrijvingGeslotenTekst?: string;
   /** Projectfilm (mp4-URL) als brede band vóór de locatie. */
   projectFilm?: string;
   projectFilmPoster?: string;
@@ -231,6 +235,30 @@ export function voorpremiere(
     datum: fmt({ day: "numeric", month: "long" }),
     dag: fmt({ weekday: "long", day: "numeric", month: "long" }),
   };
+}
+
+/**
+ * Inschrijving gesloten (wens Vivianne, 30-10): vanaf het sluitmoment geen
+ * nieuwe inschrijvingen meer. Net als de voorpremière server-side bepaald;
+ * de API weigert na het moment ook inzendingen vanuit open tabbladen.
+ */
+export function inschrijvingGesloten(
+  sluit: string | undefined,
+  nu = Date.now()
+): boolean {
+  if (!sluit) return false;
+  const moment = Date.parse(sluit);
+  return Number.isFinite(moment) && nu >= moment;
+}
+
+export function inschrijvingGeslotenTekst(project: {
+  naam: string;
+  inschrijvingGeslotenTekst?: string;
+}): string {
+  return (
+    project.inschrijvingGeslotenTekst?.trim() ||
+    `De inschrijving voor ${project.naam} is gesloten. Bedankt voor je belangstelling. Je kunt de woningen nog wel bekijken.`
+  );
 }
 
 /** "€1.400 - €1.450", of alleen de ondergrens als er geen bovengrens is. */
@@ -1622,6 +1650,8 @@ export interface AanbodKaart {
   slaapkamers: number;
   oppervlakte: number;
   foto: string;
+  /** Inschrijving van het project gesloten: label "Gesloten" op de kaart. */
+  gesloten?: boolean;
 }
 
 export function demoAanbod(): AanbodKaart[] {

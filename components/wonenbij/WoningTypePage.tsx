@@ -6,10 +6,17 @@ import WonenBijHeader from "@/components/wonenbij/WonenBijHeader";
 import ProjectPlanning from "@/components/wonenbij/ProjectPlanning";
 import DownloadsSection from "@/components/wonenbij/DownloadsSection";
 import InschrijfForm from "@/components/wonenbij/InschrijfForm";
+import InschrijvingGeslotenMelding from "@/components/wonenbij/InschrijvingGeslotenMelding";
 import { PijlIcon } from "@/components/wonenbij/icons";
 import { usePageNavigation } from "@/hooks/usePageNavigation";
 import { useFocusTrap } from "@/hooks/useFocusTrap";
-import { formatPrijs, type WonenBijProject, type WoningType } from "@/data/wonenbij";
+import {
+  formatPrijs,
+  inschrijvingGeslotenTekst,
+  type WonenBijProject,
+  type WoningType,
+  type WoningTypeStatus,
+} from "@/data/wonenbij";
 import {
   Reveal,
   RevealMedia,
@@ -22,7 +29,17 @@ interface WoningTypePageProps {
   type: WoningType;
   /** Slug van het volgende woningtype binnen het project. */
   volgendeTypeSlug?: string;
+  /** Inschrijving gesloten (server-side bepaald): melding, geen formulier. */
+  gesloten?: boolean;
 }
+
+// Statusregel in het specgrid: volgt de status uit de Studio.
+const STATUS_SPEC: Record<WoningTypeStatus, string> = {
+  inschrijven: "Inschrijven mogelijk",
+  beschikbaar: "Direct beschikbaar",
+  "in-optie": "In optie",
+  bezet: "Verhuurd",
+};
 
 /**
  * Woningpagina van een woningtype - Figma "Woningpagina / overlay"
@@ -32,6 +49,7 @@ export default function WoningTypePage({
   project,
   type,
   volgendeTypeSlug,
+  gesloten = false,
 }: WoningTypePageProps) {
   const navigate = usePageNavigation();
   const intro = useHeroIntro();
@@ -133,6 +151,13 @@ export default function WoningTypePage({
     // rechterkolom op x=818, plattegrondkaart 39 onder de foto, 153 wit
     // tussen de kaart en de planningband.
     <section className="bg-off-white min-h-screen" data-nav-theme="light">
+      {gesloten ? (
+        <InschrijvingGeslotenMelding
+          projectSlug={project.slug}
+          tekst={inschrijvingGeslotenTekst(project)}
+          knopLabel="Bekijk de woning"
+        />
+      ) : null}
       <div className="relative pt-[13.472vw] pb-[10.625vw] max-lg:pt-[90px] max-lg:pb-12">
         <WonenBijHeader
           variant="donker"
@@ -275,7 +300,10 @@ export default function WoningTypePage({
               {type.buitenruimte ? (
                 <Spec icoon="buitenruimte-klein.svg" tekst={type.buitenruimte} />
               ) : null}
-              <Spec icoon="inschrijven.svg" tekst="Inschrijven mogelijk" />
+              <Spec
+                icoon="inschrijven.svg"
+                tekst={gesloten ? "Inschrijving gesloten" : STATUS_SPEC[type.status]}
+              />
             </Reveal>
 
             {/* Adresregel (wens Vivianne, call 05-09): via de gevelkiezer op
@@ -355,6 +383,7 @@ export default function WoningTypePage({
               y={20}
               className="mt-[4.792vw] flex gap-[1.181vw] max-lg:mt-6 max-lg:flex-wrap max-lg:gap-3"
             >
+              {gesloten ? null : (
               <a
                 href="#inschrijven"
                 onClick={scrollNaarInschrijven}
@@ -362,6 +391,7 @@ export default function WoningTypePage({
               >
                 Schrijf je nu in
               </a>
+              )}
               {volgendeTypeSlug ? (
                 <a
                   href={`/wonenbij/${project.slug}/${volgendeTypeSlug}`}
@@ -387,8 +417,13 @@ export default function WoningTypePage({
 
       <InschrijfForm
         variant="woning"
-        heading="Interesse in deze woning?"
-        intro="Schrijf je vrijblijvend in en laat je gegevens achter. We houden je op de hoogte van de beschikbaarheid en de vervolgstappen."
+        gesloten={gesloten}
+        heading={gesloten ? "De inschrijving is gesloten" : "Interesse in deze woning?"}
+        intro={
+          gesloten
+            ? inschrijvingGeslotenTekst(project)
+            : "Schrijf je vrijblijvend in en laat je gegevens achter. We houden je op de hoogte van de beschikbaarheid en de vervolgstappen."
+        }
         projectName={project.naam}
         projectSlug={project.slug}
         voorkeurOpties={inschrijfOpties}

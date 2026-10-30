@@ -302,6 +302,9 @@ function fromSanity(raw: any): WonenBijProject | null {
     disclaimer: raw.wonenBijDisclaimer?.trim() || fallback.disclaimer,
     prijsToelichting: raw.prijsToelichting?.trim() || fallback.prijsToelichting,
     verhuurStart: raw.verhuurStart ?? fallback.verhuurStart,
+    // Bewust geen code-fallback: leegmaken in de Studio = weer open.
+    inschrijvingSluit: raw.inschrijvingSluit ?? undefined,
+    inschrijvingGeslotenTekst: raw.inschrijvingGeslotenTekst ?? undefined,
     projectFilm: raw.projectFilm ?? fallback.projectFilm,
     projectFilmPoster: raw.projectFilmPoster
       ? sanityImageUrl(raw.projectFilmPoster, "")

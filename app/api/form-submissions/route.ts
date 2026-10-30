@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { createClient } from "next-sanity";
 import { apiVersion, dataset, projectId } from "@/sanity/env";
 import { getClientIp, verifyTurnstile } from "@/lib/turnstile";
+import { getWonenBijProject, inschrijvingGesloten } from "@/data/wonenbij";
 
 export const runtime = "nodejs";
 
@@ -278,6 +279,26 @@ export async function POST(request: Request) {
         { error: "Ga akkoord met de voorwaarden om het formulier te versturen." },
         { status: 400 }
       );
+    }
+
+    // Inschrijving gesloten (veld "Inschrijving sluit op" in de Studio): ook
+    // een formulier uit een tabblad dat nog openstond wordt dan geweigerd.
+    // De projectslug van wonen bij kan een alias zijn van de Sanity-slug
+    // (Taanschuurkade), dus beide zoeken.
+    if (formType === "wonenbij_inschrijving" && projectSlug) {
+      const slugs = [projectSlug, ...(getWonenBijProject(projectSlug)?.aliasSlugs ?? [])];
+      const sluit = await createClient({ projectId, dataset, apiVersion, token, useCdn: false })
+        .fetch<string | null>(
+          `*[_type == "project" && slug.current in $slugs && !(_id in path("drafts.**"))][0].inschrijvingSluit`,
+          { slugs }
+        )
+        .catch(() => null);
+      if (inschrijvingGesloten(sluit ?? undefined)) {
+        return NextResponse.json(
+          { error: "De inschrijving voor dit project is gesloten." },
+          { status: 403 }
+        );
+      }
     }
 
     // Spamcontrole vóór het opslaan en mailen: een afgekeurde inzending mag geen

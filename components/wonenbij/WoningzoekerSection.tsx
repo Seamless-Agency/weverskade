@@ -71,6 +71,8 @@ interface WoningzoekerSectionProps {
    * doorklik naar de woningpagina's, die tot de verhuurstart dicht zijn.
    */
   gesloten?: string;
+  /** Inschrijving gesloten: types met "inschrijven" tonen dat als status. */
+  inschrijvingGesloten?: boolean;
 }
 
 /**
@@ -90,6 +92,7 @@ export default function WoningzoekerSection({
   aanzichten,
   prijsToelichting,
   gesloten,
+  inschrijvingGesloten = false,
 }: WoningzoekerSectionProps) {
   const navigate = usePageNavigation();
   const [sortering, setSortering] = useState<Sortering>("standaard");
@@ -187,6 +190,8 @@ export default function WoningzoekerSection({
       }
     });
   }, [woningTypes, sortering]);
+
+  const toonFilterbalk = woningen.length > 0 || woningTypes.length > 1;
 
   const sorteerMenu = {
     waarde: sortering,
@@ -319,7 +324,9 @@ export default function WoningzoekerSection({
               ? gefilterd.length < woningen.length
                 ? `${gefilterd.length} van ${woningen.length} woningen gevonden`
                 : `${woningen.length} woningen gevonden`
-              : `${woningTypes.length} woningtypes gevonden`}
+              : woningTypes.length === 1
+                ? "1 woning gevonden"
+                : `${woningTypes.length} woningtypes gevonden`}
             {woningen.length && filtersActief ? (
               <button
                 onClick={() =>
@@ -340,6 +347,9 @@ export default function WoningzoekerSection({
         {/* Filterbalk (desktop): status, slaapkamers en max. huur links,
             sorteren rechts — één geheel op één onderlijn. Zonder woningen
             valt er niets te filteren en blijft alleen het sorteermenu over. */}
+        {/* Eén los woningtype zonder gevel (bijv. één vrije woning in De
+            Dirigent): niets te filteren of te sorteren, dus geen balk. */}
+        {toonFilterbalk ? (
         <Reveal
           delay={0.1}
           className="mt-[2.361vw] hidden pl-[2.5vw] pr-[2.847vw] lg:block"
@@ -362,6 +372,7 @@ export default function WoningzoekerSection({
             </div>
           )}
         </Reveal>
+        ) : null}
 
         {/* Lijst + render */}
         <Reveal
@@ -372,6 +383,7 @@ export default function WoningzoekerSection({
           }`}
         >
           <div>
+            {toonFilterbalk ? (
             <div className="mb-5 lg:hidden">
               {woningen.length ? (
                 <WoningFilters
@@ -389,6 +401,7 @@ export default function WoningzoekerSection({
                 <SorteerVeld sortering={sorteerMenu} />
               )}
             </div>
+            ) : null}
             {zichtbareTypes.map((type, i) => (
               <a
                 key={type.slug}
@@ -426,7 +439,11 @@ export default function WoningzoekerSection({
                     {type.naam}
                   </p>
                   <p className="font-body font-medium text-[0.833vw] leading-[1.389vw] text-off-black max-lg:mt-1 max-lg:text-[12px] max-lg:leading-[17px]">
-                    {gesloten ? "Status: binnenkort beschikbaar" : STATUS_TYPE_META[type.status]}
+                    {gesloten
+                      ? "Status: binnenkort beschikbaar"
+                      : inschrijvingGesloten && type.status === "inschrijven"
+                        ? "Status: inschrijving gesloten"
+                        : STATUS_TYPE_META[type.status]}
                   </p>
                   <div className="mt-[2.222vw] max-lg:mt-2">
                     {[
